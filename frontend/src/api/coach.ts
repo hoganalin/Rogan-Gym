@@ -3,6 +3,7 @@ import type {
   ApiSuccess,
   CoachCourseDetail,
   CoachCourseListItem,
+  CoachCourseMutationResult,
   CoachCoursePayload,
   CoachSelf,
   CoachSelfUpdatePayload,
@@ -28,11 +29,11 @@ export function getCoachCourseDetail(courseId: string) {
 }
 
 export function postCoachCourse(data: CoachCoursePayload) {
-  return request.post<never, ApiSuccess<{ course: CoachCourseDetail }>>("admin/coaches/courses", data);
+  return request.post<never, ApiSuccess<{ course: CoachCourseMutationResult }>>("admin/coaches/courses", data);
 }
 
 export function putCoachCourse(courseId: string, data: CoachCoursePayload) {
-  return request.put<never, ApiSuccess<{ course: CoachCourseDetail }>>(`admin/coaches/courses/${courseId}`, data);
+  return request.put<never, ApiSuccess<{ course: CoachCourseMutationResult }>>(`admin/coaches/courses/${courseId}`, data);
 }
 
 export function getMonthlyRevenue(month: string) {
