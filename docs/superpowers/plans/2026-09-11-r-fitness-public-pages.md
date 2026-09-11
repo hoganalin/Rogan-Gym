@@ -552,10 +552,16 @@ import { postCreditPackage } from "../api/creditPackage";
 import { extractErrorMessage } from "../lib/errors";
 
 export function usePackageActions() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   async function buyPackage(packageId: string, packageName: string) {
+    // AuthContext is still restoring the session from the cookie on mount —
+    // treating this the same as "logged out" would spuriously redirect an
+    // actually-authenticated user who clicks right after page load. (Same
+    // fix applied to useCourseActions after Task 3's code review.)
+    if (loading) return;
+
     if (!user) {
       navigate("/login");
       return;
