@@ -162,6 +162,27 @@ export interface CoachCoursePayload {
   meeting_url: string;
 }
 
+// POST/PUT `admin/coaches/courses` return the raw saved course row, which
+// (unlike GET `admin/coaches/courses/:id`) has no joined `skill_name` and
+// differs slightly between create (`user_id`) and update (`coach_id`) — only
+// the fields both responses actually share are declared here.
+export interface CoachCourseMutationResult {
+  id: string;
+  skill_id: string;
+  name: string;
+  description: string;
+  start_at: string;
+  end_at: string;
+  max_participants: number;
+  meeting_url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiOk {
+  status: "success";
+}
+
 export interface RevenueResult {
   total: {
     revenue: number;
