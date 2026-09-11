@@ -42,3 +42,4 @@ _Avoid_: Registration, Enrollment（後端／資料模型用 CourseBooking，UI 
 ## Flagged ambiguities
 
 - 先前版本的前端路由中有 `/admin` 區段（含 promote-trainer、skills 管理），但後端與資料模型中**沒有獨立的 Admin 角色／實體**——這其實是「User 升級為 Coach」與「Skill 維護」功能，先前只是把它們歸類在 admin 路徑下。重新設計前端時，這兩個功能應依角色歸類到對應介面，不應暗示存在後端未定義的 Admin 角色。
+  **已解決**：React 版前端將這兩個功能重新歸類為 `/user/become-coach`（USER 角色可見）與 `/coach/skills`（COACH 角色可見），不再有 `/admin/*` 路徑。
