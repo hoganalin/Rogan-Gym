@@ -1,34 +1,32 @@
 {
-  "name": "2025-backend-camp-frontend",
+  "name": "r-fitness-frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.16",
     "axios": "^1.13.1",
     "dayjs": "^1.11.19",
-    "echarts": "^6.0.0",
     "jwt-decode": "^4.0.0",
-    "pinia": "^3.0.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^6.28.1",
+    "recharts": "^2.15.0",
     "sweetalert2": "^11.26.3",
-    "tailwindcss": "^4.1.16",
-    "vue": "^3.5.22",
-    "vue-router": "^4.6.3"
+    "tailwindcss": "^4.1.16"
   },
   "devDependencies": {
-    "@eslint/css": "^0.14.0",
-    "@eslint/js": "^9.39.0",
-    "@eslint/json": "^0.13.2",
-    "@eslint/markdown": "^7.5.0",
-    "@vitejs/plugin-vue": "^6.0.1",
-    "eslint": "^9.39.0",
-    "eslint-plugin-vue": "^10.5.1",
-    "globals": "^16.5.0",
+    "@playwright/test": "^1.49.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
     "vite": "^7.1.7"
   }
 }
