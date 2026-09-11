@@ -1,0 +1,30 @@
+{
+  "name": "fitness-backend-final",
+  "version": "1.0.0",
+  "private": true,
+  "description": "R Fitness — 健身房課程預約平台，後端 API 與前端。",
+  "scripts": {
+    "start": "node .github/scripts/check-backend.js && npm --prefix backend start",
+    "test": "jest --runInBand",
+    "test:m1": "jest test/m1.test.js --runInBand",
+    "test:m2": "jest test/m2.test.js --runInBand",
+    "test:m3": "jest test/m3.test.js --runInBand",
+    "test:m4": "jest test/m4.test.js --runInBand",
+    "test:m5": "jest test/m5.test.js --runInBand",
+    "test:m6": "jest test/m6.test.js --runInBand",
+    "test:smoke": "jest test/smoke.test.js --runInBand",
+    "db:reset": "docker compose down -v && docker compose up -d"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testTimeout": 15000,
+    "modulePathIgnorePatterns": [
+      "<rootDir>/backend/"
+    ]
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jsonwebtoken": "^9.0.2",
+    "supertest": "^7.0.0"
+  }
+}
