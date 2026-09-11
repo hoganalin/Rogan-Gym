@@ -5,10 +5,15 @@ import { postCourseBooking } from "../api/courses";
 import { extractErrorMessage } from "../lib/errors";
 
 export function useCourseActions() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   async function bookCourse(courseId: string, courseName: string) {
+    // AuthContext is still restoring the session from the cookie on mount —
+    // treating this the same as "logged out" would spuriously redirect an
+    // actually-authenticated user who clicks right after page load.
+    if (loading) return;
+
     if (!user) {
       navigate("/login");
       return;
