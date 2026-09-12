@@ -11,6 +11,7 @@ export interface ApiErrorBody {
 export type Role = "USER" | "COACH";
 
 export interface AuthUser {
+  id: string;
   name: string;
   role: Role;
 }
