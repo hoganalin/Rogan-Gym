@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     getUserProfile()
       .then(({ data }) => {
         const decoded = jwtDecode<DecodedToken>(token);
-        setUser({ name: data.user.name, role: decoded.role });
+        setUser({ id: decoded.id, name: data.user.name, role: decoded.role });
       })
       .catch(() => {
         removeCookie("token");
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data } = await postLogin(payload);
     const decoded = jwtDecode<DecodedToken>(data.token);
     setKeyFromCookie("token", data.token, decoded.exp);
-    setUser({ name: data.user.name, role: decoded.role });
+    setUser({ id: decoded.id, name: data.user.name, role: decoded.role });
   }
 
   async function signup(payload: SignupPayload) {
