@@ -7,13 +7,17 @@ import type { Skill } from "../../types/api";
 export default function SkillTagsView() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
 
   async function loadSkills() {
     setLoading(true);
+    setError(null);
     try {
       const { data } = await getSkills();
       setSkills(data);
+    } catch {
+      setError("載入技能標籤失敗，請稍後再試。");
     } finally {
       setLoading(false);
     }
@@ -56,6 +60,7 @@ export default function SkillTagsView() {
   }
 
   if (loading) return <p className="text-slate-500">載入中…</p>;
+  if (error) return <p className="text-rose-600">{error}</p>;
 
   return (
     <div>
@@ -63,7 +68,11 @@ export default function SkillTagsView() {
       <p className="mt-2 text-slate-600">新增或移除課程與教練檔案可選用的技能標籤。</p>
 
       <form onSubmit={handleAdd} className="mt-6 flex max-w-sm gap-2">
+        <label className="sr-only" htmlFor="skill-name">
+          技能名稱
+        </label>
         <input
+          id="skill-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="技能名稱"
