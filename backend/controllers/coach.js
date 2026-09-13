@@ -133,6 +133,7 @@ const coachController = {
     coach.experience_years = experience_years;
     coach.description = description;
     coach.profile_image_url = profile_image_url;
+    await coachRepo.save(coach);
 
     //覆蓋整批教練技能
     await coachSkillRepo.delete({ coach_id: coach.id }); //先刪掉舊的技能關聯
