@@ -12,6 +12,7 @@ export default function ProfileView() {
   const [description, setDescription] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,9 @@ export default function ProfileView() {
         setProfileImageUrl(coachRes.data.profile_image_url ?? "");
         setSkillIds(coachRes.data.skill_ids);
         setSkills(skillsRes.data);
+      })
+      .catch(() => {
+        if (!cancelled) setError("載入教練檔案失敗，請稍後再試。");
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -60,6 +64,7 @@ export default function ProfileView() {
   }
 
   if (loading) return <p className="text-slate-500">載入中…</p>;
+  if (error) return <p className="text-rose-600">{error}</p>;
 
   return (
     <div>
