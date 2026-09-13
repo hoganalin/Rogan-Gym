@@ -38,6 +38,14 @@ test.describe("coach journey: skills, profile, course create/edit, earnings", ()
     await expect(page.locator(".swal2-title")).toHaveText("檔案已更新");
     await page.locator(".swal2-confirm").click();
 
+    // Reload and confirm the profile edit actually persisted server-side,
+    // not just a client-side echo of the PUT response (this exact page once
+    // had a backend bug where the save looked successful but never wrote the
+    // scalar fields to the database — see commit 6e2f67c).
+    await page.reload();
+    await expect(page.getByLabel("教學經驗（年）")).toHaveValue("5");
+    await expect(page.getByLabel(skillName, { exact: true })).toBeChecked();
+
     // Create a course using that skill
     await page.goto("/coach/courses");
     await page.getByRole("button", { name: "新增課程" }).click();
@@ -57,7 +65,10 @@ test.describe("coach journey: skills, profile, course create/edit, earnings", ()
     await page.locator(".swal2-confirm").click();
     await expect(page.getByRole("heading", { name: courseName })).toBeVisible();
 
-    // Edit the course
+    // Edit the course — actually submit a change and confirm it persists,
+    // not just open-then-cancel the form (PUT .../courses/:id resends every
+    // field, so this also proves the pre-fill from GET .../courses/:id round-trips
+    // correctly into a successful full resend).
     const courseHeading = page.getByRole("heading", { name: courseName });
     // CoursesView's course card wraps the heading (and its detail paragraphs) in
     // its own inner div, sibling to the "編輯" button, both inside an outer
@@ -65,8 +76,19 @@ test.describe("coach journey: skills, profile, course create/edit, earnings", ()
     // is a sibling two levels up from the heading, not one.
     await courseHeading.locator("xpath=../..").getByRole("button", { name: "編輯" }).click();
     await expect(page.getByRole("heading", { name: "編輯課程" })).toBeVisible();
-    await page.getByRole("button", { name: "取消" }).click();
+    const updatedCourseName = `${courseName}（已編輯）`;
+    await page.getByLabel("課程名稱").fill(updatedCourseName);
+    await page.getByRole("button", { name: "儲存" }).click();
+    await expect(page.locator(".swal2-title")).toHaveText("課程已更新");
+    await page.locator(".swal2-confirm").click();
     await expect(page.getByRole("heading", { name: "課程管理" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: updatedCourseName })).toBeVisible();
+    await expect(page.getByRole("heading", { name: courseName, exact: true })).not.toBeVisible();
+
+    // Reload and confirm the edit persisted server-side, not just a
+    // client-side echo of the PUT response.
+    await page.reload();
+    await expect(page.getByRole("heading", { name: updatedCourseName })).toBeVisible();
 
     // Earnings page renders
     await page.goto("/coach/earnings");
