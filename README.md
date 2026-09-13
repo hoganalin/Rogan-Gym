@@ -22,10 +22,11 @@ npm test              # 全部後端 contract tests
 npm run test:m1       # 分模組測試（m1 ~ m6）
 ```
 
-前端 E2E：
+前端 E2E（需要後端與 PostgreSQL 已啟動，見上方「本機啟動」）：
 
 ```bash
-cd frontend && npm run test:e2e
+cd frontend && npm run test:e2e         # 執行 E2E 測試（Playwright 會自動啟動前端 dev server）
+cd frontend && npm run test:e2e:types   # 型別檢查 e2e/ 底下的測試程式（npm run test:e2e 本身不會做型別檢查）
 ```
 
 ## 專案文件
