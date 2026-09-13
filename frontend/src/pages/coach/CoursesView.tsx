@@ -62,18 +62,22 @@ export default function CoursesView() {
   }
 
   async function startEdit(courseId: string) {
-    const { data } = await getCoachCourseDetail(courseId);
-    setForm({
-      skillId: data.skill_id,
-      name: data.name,
-      description: data.description,
-      startAt: dayjs(data.start_at).format("YYYY-MM-DDTHH:mm"),
-      endAt: dayjs(data.end_at).format("YYYY-MM-DDTHH:mm"),
-      maxParticipants: String(data.max_participants),
-      meetingUrl: data.meeting_url,
-    });
-    setEditingId(courseId);
-    setMode("edit");
+    try {
+      const { data } = await getCoachCourseDetail(courseId);
+      setForm({
+        skillId: data.skill_id,
+        name: data.name,
+        description: data.description,
+        startAt: dayjs(data.start_at).format("YYYY-MM-DDTHH:mm"),
+        endAt: dayjs(data.end_at).format("YYYY-MM-DDTHH:mm"),
+        maxParticipants: String(data.max_participants),
+        meetingUrl: data.meeting_url,
+      });
+      setEditingId(courseId);
+      setMode("edit");
+    } catch (err) {
+      await Swal.fire({ icon: "error", title: "載入課程失敗", text: extractErrorMessage(err) });
+    }
   }
 
   function cancelForm() {
