@@ -62,12 +62,13 @@ export function useCourseActions() {
       }
 
       const successResult = await Swal.fire({
+        icon: "success",
+        iconColor: "#f4501e",
+        title: "報名成功",
         html: `
           <div style="text-align:left">
-            <div style="width:52px;height:52px;border-radius:50%;background:rgba(244,80,30,.14);border:1px solid #f4501e;display:flex;align-items:center;justify-content:center;color:#f4501e;font-size:22px">✓</div>
-            <div style="margin-top:24px;font:800 26px/1.15 Archivo,'Noto Sans TC',sans-serif;letter-spacing:-.02em;color:#f6f4f1">報名成功</div>
-            <p style="margin:12px 0 0;font-size:14px;line-height:1.75;color:#a29d97;font-weight:300">${course.name} 已加入你的課表，開課前 24 小時可免費取消。</p>
-            <div style="margin-top:24px;border:1px solid #22242a;border-radius:5px;padding:16px;display:flex;flex-direction:column;gap:10px">
+            <p style="margin:0;font-size:14px;line-height:1.75;color:#a29d97;font-weight:300">${course.name} 已加入你的課表，開課前 24 小時可免費取消。</p>
+            <div style="margin-top:20px;border:1px solid #22242a;border-radius:5px;padding:16px;display:flex;flex-direction:column;gap:10px">
               <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8a857f">時間</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#f6f4f1">${formatCourseTime(course.start_at, course.end_at)}</span></div>
               <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8a857f">教練</span><span style="color:#f6f4f1">${course.coach_name}</span></div>
               <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8a857f">扣除堂數</span><span style="color:#f4501e;font-weight:700">1 堂 ${remainNote}</span></div>
@@ -76,6 +77,7 @@ export function useCourseActions() {
         `,
         width: 440,
         background: "#121316",
+        color: "#f6f4f1",
         showCancelButton: true,
         confirmButtonText: "查看我的課表",
         cancelButtonText: "繼續瀏覽",

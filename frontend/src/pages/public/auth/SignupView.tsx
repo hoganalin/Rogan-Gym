@@ -78,7 +78,7 @@ export default function SignupView() {
               type="submit"
               className="mt-1 w-full rounded-[4px] bg-brand-500 py-4 text-[15px] font-bold text-ink hover:bg-brand-400"
             >
-              建立帳號
+              註冊
             </button>
           </form>
         </div>

@@ -63,7 +63,7 @@ export function RootLayout() {
                     <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-500 font-display text-xs font-bold text-ink">
                       {user.name.charAt(0)}
                     </span>
-                    <span className="hidden md:inline">{user.name}</span>
+                    <span>教練後台</span>
                   </Link>
                 )}
                 <button type="button" onClick={logout} className="text-muted hover:text-brand-400">
