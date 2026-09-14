@@ -2612,7 +2612,7 @@ paths:
       post:
         tags:
           - M5 購買與報名
-        summary: 報名課程（學員用 token 報名一門課，最容易踩雷）
+        summary: 報名課程（會員用 token 報名一門課，錯誤情境較多，請留意）
         description: |
           【重要：四句固定錯誤訊息文字都在這支 API】
 

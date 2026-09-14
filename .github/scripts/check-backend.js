@@ -9,7 +9,7 @@ function fail(message) {
 }
 
 if (!fs.existsSync(backendPackagePath)) {
-  fail('⛔ 找不到 backend/package.json：請確認已在專案根目錄建立 backend/，並將其 commit、push。')
+  fail('⛔ 找不到 backend/package.json：請確認已在專案根目錄建立 backend/，並已 commit、push。')
 }
 
 let backendPackage
@@ -20,6 +20,6 @@ try {
 }
 
 if (!backendPackage.scripts || !backendPackage.scripts.start) {
-  fail('⛔ backend/package.json 缺少 scripts.start：正式繳交時，根目錄 npm start 會代理執行 npm --prefix backend start。')
+  fail('⛔ backend/package.json 缺少 scripts.start：根目錄 npm start 會代理執行 npm --prefix backend start。')
 }
 

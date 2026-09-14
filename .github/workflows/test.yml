@@ -20,7 +20,7 @@ env:
 
 jobs:
   contract:
-    name: 驗收
+    name: 合約測試
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -58,10 +58,10 @@ jobs:
       - name: 安裝後端依賴
         run: npm --prefix backend install
 
-      - name: 啟動你的後端（根目錄 npm start 會代理到 backend/start，公約①）
+      - name: 啟動後端（根目錄 npm start 會代理到 backend/start）
         run: |
           npm start > server.log 2>&1 &
-          echo "等待 server 就緒（公約④：GET /healthcheck 要在資料庫可用後回 200）"
+          echo "等待 server 就緒（GET /healthcheck 要在資料庫可用後回 200）"
           for i in $(seq 1 30); do
             if curl -sf "http://localhost:8080/healthcheck" > /dev/null; then
               echo "✅ server 就緒"
@@ -69,16 +69,16 @@ jobs:
             fi
             sleep 2
           done
-          echo "❌ 等了 60 秒 server 還沒就緒 — 下面是你的 server log："
+          echo "❌ 等了 60 秒 server 還沒就緒 — 下面是 server log："
           cat server.log
           exit 1
 
       - name: 跑 ${{ matrix.milestone }} 合約測試
         run: npx jest test/${{ matrix.milestone }}.test.js --runInBand --json --outputFile=jest-result.json
 
-      - name: 📊 驗收結果總表（看這裡就知道哪些對哪些沒對）
+      - name: 📊 測試結果總表（看這裡就知道哪些對哪些沒對）
         if: always()
-        run: node .github/scripts/summary.js "驗收 (${{ matrix.milestone }})" jest-result.json
+        run: node .github/scripts/summary.js "合約測試 (${{ matrix.milestone }})" jest-result.json
 
       - name: 測試失敗 → 印出 server log 幫你 debug
         if: failure()
@@ -87,12 +87,12 @@ jobs:
           cat server.log || echo "(沒有 server.log)"
 
   dockerize:
-    name: 壓軸：容器化驗收（W10）
+    name: 容器化測試
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: docker compose 起你的後端 + 資料庫（backend 服務，壓軸規則）
+      - name: docker compose 啟動後端 + 資料庫（backend 服務）
         run: |
           docker compose up -d --build backend postgres
           echo "等待 backend 容器就緒"
@@ -121,7 +121,7 @@ jobs:
 
       - name: 📊 smoke 結果總表
         if: always()
-        run: node .github/scripts/summary.js "壓軸 smoke（容器化）" jest-result.json
+        run: node .github/scripts/summary.js "smoke（容器化）" jest-result.json
 
       - name: 持久化檢查（資料要存在 PostgreSQL，重啟不能消失）
         run: |
@@ -138,7 +138,7 @@ jobs:
           done
           echo "重啟後資料還在嗎？"
           if curl -sf "http://localhost:8080/api/coaches/skill" | grep -q "$MARK"; then
-            echo "✅ 資料活過了重啟 — 你真的有用資料庫"
+            echo "✅ 資料活過了重啟 — 資料確實存進資料庫"
             echo "| ✅ | 持久化檢查：重啟容器後資料還在（資料真的存進 PostgreSQL） |" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "❌ 重啟後資料不見了 — 資料必須存進 PostgreSQL，不能放在程式記憶體裡"
