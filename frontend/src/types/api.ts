@@ -97,6 +97,17 @@ export interface CoachDetail {
   };
 }
 
+// Frontend-only composite: `GET /coaches` only returns id/user_id/name, so the
+// card views recompose it with per-coach detail + course calls to get the
+// fields the redesign needs (image, years, skills, upcoming courses).
+export interface CoachCard extends CoachListItem {
+  experience_years: number;
+  description: string;
+  profile_image_url: string | null;
+  skills: string[];
+  upcomingCourses: PublicCourse[];
+}
+
 export interface PublicCourse {
   id: string;
   name: string;

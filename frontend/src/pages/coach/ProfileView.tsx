@@ -3,9 +3,12 @@ import Swal from "sweetalert2";
 import { getCoachSelf, putCoachSelf } from "../../api/coach";
 import { getSkills } from "../../api/skill";
 import { extractErrorMessage } from "../../lib/errors";
+import { useAuth } from "../../context/AuthContext";
+import { CoachMedia } from "../../components/CoachMedia";
 import type { Skill } from "../../types/api";
 
 export default function ProfileView() {
+  const { user } = useAuth();
   const [skills, setSkills] = useState<Skill[]>([]);
   const [skillIds, setSkillIds] = useState<string[]>([]);
   const [experienceYears, setExperienceYears] = useState("");
@@ -63,72 +66,113 @@ export default function ProfileView() {
     }
   }
 
-  if (loading) return <p className="text-slate-500">載入中…</p>;
-  if (error) return <p className="text-rose-600">{error}</p>;
+  if (loading) return <p className="text-muted">載入中…</p>;
+  if (error) return <p className="text-rose-400">{error}</p>;
+
+  const selectedSkillNames = skills.filter((s) => skillIds.includes(s.id)).map((s) => s.name);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold">教練檔案</h1>
-      <p className="mt-2 text-slate-600">維護個人簡介、經歷年資與技能標籤。</p>
+    <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_400px]">
+      <div>
+        <h1 className="font-display text-[34px] font-extrabold tracking-tight">教練檔案</h1>
+        <p className="mt-3 text-sm font-light text-muted">
+          維護個人簡介、經歷年資與技能標籤。右側即時預覽你在教練列表上的樣子。
+        </p>
 
-      <form onSubmit={handleSubmit} className="mt-6 max-w-sm">
-        <label className="block text-sm">
-          教學經驗（年）
-          <input
-            type="number"
-            min={0}
-            value={experienceYears}
-            onChange={(e) => setExperienceYears(e.target.value)}
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
-            required
-          />
-        </label>
-        <label className="mt-3 block text-sm">
-          自我介紹
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
-            rows={4}
-            required
-          />
-        </label>
-        <label className="mt-3 block text-sm">
-          個人照片網址（需以 https 開頭）
-          <input
-            type="url"
-            value={profileImageUrl}
-            onChange={(e) => setProfileImageUrl(e.target.value)}
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
-            placeholder="https://"
-            pattern="https://.*"
-            required
-          />
-        </label>
+        <form onSubmit={handleSubmit} className="mt-8 flex max-w-[560px] flex-col gap-5">
+          <label className="block">
+            <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">教學經驗（年）</span>
+            <input
+              type="number"
+              min={0}
+              value={experienceYears}
+              onChange={(e) => setExperienceYears(e.target.value)}
+              className="mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
+              required
+            />
+          </label>
+          <label className="block">
+            <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">自我介紹</span>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={5}
+              className="mt-2.5 w-full resize-y rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] leading-relaxed text-body outline-none focus:border-brand-500"
+              required
+            />
+          </label>
+          <label className="block">
+            <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">個人照片網址（需 https）</span>
+            <input
+              type="url"
+              value={profileImageUrl}
+              onChange={(e) => setProfileImageUrl(e.target.value)}
+              placeholder="https://"
+              pattern="https://.*"
+              className="mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] font-mono text-sm text-body outline-none focus:border-brand-500"
+              required
+            />
+          </label>
 
-        <fieldset className="mt-3">
-          <legend className="text-sm">技能標籤</legend>
-          {skills.length === 0 && (
-            <p className="mt-1 text-sm text-slate-500">尚無技能標籤，請先在「技能標籤」頁新增。</p>
-          )}
-          <div className="mt-1 flex flex-wrap gap-3">
-            {skills.map((skill) => (
-              <label key={skill.id} className="flex items-center gap-1 text-sm">
-                <input type="checkbox" checked={skillIds.includes(skill.id)} onChange={() => toggleSkill(skill.id)} />
-                {skill.name}
-              </label>
-            ))}
+          <div>
+            <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">技能標籤</span>
+            {skills.length === 0 && (
+              <p className="mt-2 text-sm font-light text-faint">尚無技能標籤，請先在「技能標籤」頁新增。</p>
+            )}
+            <div className="mt-3 flex flex-wrap gap-2">
+              {skills.map((skill) => {
+                const on = skillIds.includes(skill.id);
+                return (
+                  <button
+                    key={skill.id}
+                    type="button"
+                    onClick={() => toggleSkill(skill.id)}
+                    className={`flex items-center gap-2 rounded-[4px] px-[15px] py-[11px] text-sm font-medium ${
+                      on ? "border border-brand-500 bg-brand-500/10 text-[#ffb494]" : "border border-[#2a2d33] text-muted"
+                    }`}
+                  >
+                    <span className="text-[10px]">{on ? "✓" : "＋"}</span>
+                    {skill.name}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </fieldset>
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="mt-4 rounded bg-brand-600 px-4 py-2 text-sm text-white disabled:opacity-50"
-        >
-          儲存
-        </button>
-      </form>
+          <div className="mt-2 flex items-center gap-3">
+            <button
+              type="submit"
+              disabled={saving}
+              className="rounded-[4px] bg-brand-500 px-[34px] py-[15px] text-[15px] font-bold text-ink hover:bg-brand-400 disabled:opacity-50"
+            >
+              儲存變更
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div className="rounded-md border border-line bg-[#0a0b0c] p-[22px] lg:sticky lg:top-10 lg:self-start">
+        <div className="font-mono text-[11px] tracking-wider text-[#57524c]">LIVE PREVIEW — 教練列表卡片</div>
+        <div className="mt-[18px] overflow-hidden rounded-md border border-line bg-surface">
+          <div className="relative h-[240px] bg-[#16181b]">
+            <CoachMedia src={profileImageUrl || null} name={user?.name ?? "教"} className="h-full w-full" />
+            <span className="absolute top-3.5 right-3.5 rounded-[3px] border border-[#2f3238] bg-ink/70 px-2.5 py-1.5 font-mono text-[11px] text-brand-500">
+              {experienceYears || 0}Y
+            </span>
+          </div>
+          <div className="p-5">
+            <div className="text-xl font-bold">{user?.name}</div>
+            <p className="mt-2.5 text-[13px] leading-relaxed font-light text-[#8a857f]">{description}</p>
+            <div className="mt-3.5 flex flex-wrap gap-1.5">
+              {selectedSkillNames.map((sk) => (
+                <span key={sk} className="rounded-[3px] border border-[#2a2d33] px-2.5 py-1 text-[11px] text-[#cfc9c2]">
+                  {sk}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

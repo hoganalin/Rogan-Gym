@@ -13,9 +13,27 @@
   --color-brand-900: #71200e;
   --color-brand-950: #3d0e05;
 
-  --font-display: "system-ui", "Noto Sans TC", sans-serif;
+  /* 深色重訓風 surfaces */
+  --color-ink: #08090a;
+  --color-surface: #121316;
+  --color-line: #22242a;
+
+  /* 文字階層 */
+  --color-body: #f6f4f1;
+  --color-muted: #a29d97;
+  --color-faint: #6f6a64;
+
+  --font-display: "Archivo", "Noto Sans TC", sans-serif;
+  --font-sans: "Noto Sans TC", "Archivo", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  @apply bg-ink text-body antialiased;
+  font-family: var(--font-sans);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-faint);
 }

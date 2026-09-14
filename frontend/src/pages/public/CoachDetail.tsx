@@ -80,7 +80,7 @@ export default function CoachDetail() {
               </div>
               <button
                 type="button"
-                onClick={() => bookCourse(course.id, course.name)}
+                onClick={() => bookCourse(course)}
                 className="shrink-0 rounded bg-brand-600 px-4 py-2 text-sm text-white"
               >
                 報名
