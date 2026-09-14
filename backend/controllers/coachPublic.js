@@ -9,13 +9,10 @@ const uuidRegex =
 
 const coachPublicController = {
   async getCoachPublic(req, res, next) {
-    // 回傳教練列表，支援分頁。per 是每頁筆數、page 是第幾頁（從 1 開始）。 分頁要真的有作用：回第 page 頁、每頁最多 per 筆；該頁沒資料就回空陣列（仍是成功），不算錯誤。
-    // ⚠️ 地雷一：per 和 page 都是「必填」。少帶任何一個、或帶了不能轉成非負整數的值（例如 per=test），都要回失敗。
-    // message 可參考「欄位未填寫正確」，驗收重點是 4xx + status: failed。
-    //  ⚠️ 地雷二：回傳的 id 是「教練 id」，不是使用者 id。前端會拿這個 id 去打 GET /api/coaches/{coachId}，
+    // 回傳教練列表，支援分頁。per 是每頁筆數、page 是第幾頁（從 1 開始）。分頁要真的有作用：回第 page 頁、每頁最多 per 筆；該頁沒資料就回空陣列（仍是成功），不算錯誤。
+    // per 和 page 都是必填：少帶任何一個、或帶了不能轉成非負整數的值（例如 per=test），都回 4xx + status: failed，message 為「欄位未填寫正確」。
+    // 注意：回傳的 id 是「教練 id」，不是使用者 id。前端會拿這個 id 去打 GET /api/coaches/{coachId}，
     // user_id 才是這位教練對應的使用者 id，兩個欄位都要給、不要搞混。
-    // 補充：前端頁面固定用 per=6&page=1 呼叫且只用到 id，但驗收會帶其他值測分頁與欄位完整性，不能寫死。
-    // 狀態碼尺度：文件寫的 200／400 是實際參考值，驗收只看「2xx／4xx」加上 body 的 status 欄位。
     const { per, page } = req.query;
     const perNumber = Number(per);
     const pageNumber = Number(page);

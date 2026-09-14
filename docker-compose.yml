@@ -2,7 +2,7 @@ volumes:
   pgData:
 
 services:
-  # 健身房前端（成品，不要改它 — 它是你的驗收機）
+  # 健身房前端（成品）
   frontend:
     build:
       context: ./frontend
@@ -40,21 +40,12 @@ services:
       retries: 3
 
   # ============================================================
-  # W10 容器化挑戰：將專案內既有的 backend 加入 Docker Compose
-  # 規則（GitHub Actions 的壓軸驗收按這個來）：
-  #   - 服務名稱必須叫 backend
-  #   - 對外要開 8080（"8080:你的PORT"）
-  # 提示：
-  #   - 在 backend/ 裡寫 Dockerfile
-  #   - 在 backend/ 加上 .dockerignore，至少排除 node_modules 與 .env
-  #   - build context 建議用 ./backend
-  #   - 容器裡連資料庫，DB_HOST 不再是 localhost，而是 postgres
-  #   - 要有 healthcheck（打你的 GET /healthcheck）
-  #   - depends_on postgres 的 healthy
+  # 後端容器化：backend/ 內既有的 Express 應用
+  #   - 服務名稱 backend，對外開放 8080
+  #   - 容器裡連資料庫走 postgres（不是 localhost）
+  #   - healthcheck 打 GET /healthcheck，並等待 postgres healthy 後才啟動
   # ============================================================
-  #  服務的名稱自定義,跟backend資料夾相同名稱
   backend:
-    # Docker build 要打包的目錄。必須對應到程式碼所在位置。
     build:
       context: ./backend
 
