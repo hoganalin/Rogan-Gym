@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import dayjs from "dayjs";
 import { getCoachDetail, getCoachCourses } from "../../api/coachesPublic";
 import { useCourseActions } from "../../hooks/useCourseActions";
-import { formatCourseTime } from "../../lib/formatDateTime";
+import { CoachMedia } from "../../components/CoachMedia";
 import type { CoachDetail as CoachDetailData, PublicCourse } from "../../types/api";
 
 export default function CoachDetail() {
@@ -37,57 +38,73 @@ export default function CoachDetail() {
     };
   }, [coachId]);
 
-  if (loading) return <p className="text-slate-500">載入中…</p>;
-  if (error) return <p className="text-rose-600">{error}</p>;
+  if (loading) return <div className="mx-auto max-w-6xl px-6 py-24 text-center text-muted">載入中…</div>;
+  if (error) return <div className="mx-auto max-w-6xl px-6 py-24 text-center text-rose-400">{error}</div>;
   if (!detail) return null;
 
   return (
-    <div>
-      <div className="flex items-center gap-4">
-        <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-100 font-display text-2xl font-bold text-brand-700">
-          {detail.user.name.charAt(0)}
-        </span>
-        <div>
-          <h1 className="text-2xl font-bold">{detail.user.name}</h1>
-          <p className="text-sm text-slate-500">{detail.coach.experience_years} 年教學經驗</p>
+    <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="overflow-hidden rounded-md border border-line bg-surface">
+        <div className="relative h-[320px] bg-[#16181b]">
+          <CoachMedia src={detail.coach.profile_image_url} name={detail.user.name} className="h-full w-full" />
+          <span className="absolute top-4 right-4 rounded-[3px] border border-[#2f3238] bg-ink/70 px-2.5 py-1.5 font-mono text-[11px] text-brand-500">
+            {detail.coach.experience_years}Y
+          </span>
+        </div>
+        <div className="p-8">
+          <div className="font-display text-3xl font-extrabold tracking-tight">{detail.user.name}</div>
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed font-light text-[#8a857f]">
+            {detail.coach.description}
+          </p>
+          {detail.coach.skills.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {detail.coach.skills.map((skill) => (
+                <span key={skill} className="rounded-[3px] border border-[#2a2d33] px-2.5 py-1 text-[11px] text-[#cfc9c2]">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      <p className="mt-4 text-slate-700">{detail.coach.description}</p>
+      <h2 className="mt-14 font-display text-[28px] font-extrabold tracking-tight">開設課程</h2>
+      {courses.length === 0 && <p className="mt-3 text-muted">目前沒有開放報名的課程。</p>}
 
-      {detail.coach.skills.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {detail.coach.skills.map((skill) => (
-            <span key={skill} className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
-              {skill}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <h2 className="mt-8 text-xl font-bold">開設課程</h2>
-      {courses.length === 0 && <p className="mt-2 text-slate-500">目前沒有開放報名的課程。</p>}
-      <div className="mt-4 flex flex-col gap-3">
-        {courses.map((course) => (
-          <div key={course.id} className="rounded-lg border border-slate-200 bg-white p-4">
-            <div className="flex items-start justify-between gap-4">
+      <div className="mt-6 overflow-x-auto rounded-md border border-line">
+        <div className="min-w-[640px]">
+          {courses.map((course) => (
+            <div
+              key={course.id}
+              className="grid grid-cols-[130px_1fr_150px_120px] items-center gap-5 border-b border-[#1d1f24] bg-[#0f1012] px-6 py-5 last:border-b-0"
+            >
               <div>
-                <h3 className="font-semibold">{course.name}</h3>
-                <p className="mt-1 text-sm text-slate-500">
-                  {formatCourseTime(course.start_at, course.end_at)}・{course.skill_name}
-                </p>
-                <p className="mt-2 text-sm text-slate-600">{course.description}</p>
+                <div className="font-display text-[15px] font-bold text-brand-500">
+                  {dayjs(course.start_at).format("ddd D").toUpperCase()}
+                </div>
+                <div className="mt-1.5 font-mono text-xs text-[#8a857f]">
+                  {dayjs(course.start_at).format("HH:mm")}–{dayjs(course.end_at).format("HH:mm")}
+                </div>
+              </div>
+              <div>
+                <div className="text-base font-medium">{course.name}</div>
+                <div className="mt-1 text-xs font-light text-faint">{course.description}</div>
+              </div>
+              <div>
+                <span className="rounded-[3px] border border-[#2a2d33] px-2.5 py-1 text-[11px] text-muted">
+                  {course.skill_name}
+                </span>
               </div>
               <button
                 type="button"
                 onClick={() => bookCourse(course)}
-                className="shrink-0 rounded bg-brand-600 px-4 py-2 text-sm text-white"
+                className="rounded-[4px] bg-brand-500 py-2.5 text-[13px] font-bold text-ink hover:bg-brand-400"
               >
                 報名
               </button>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -62,34 +62,39 @@ export default function EarningsView() {
     };
   }, []);
 
-  if (loading) return <p className="text-slate-500">載入中…</p>;
-  if (error) return <p className="text-rose-600">{error}</p>;
+  if (loading) return <p className="text-muted">載入中…</p>;
+  if (error) return <p className="text-rose-400">{error}</p>;
 
   const current = data.find((d) => d.month === selected);
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">營收報表</h1>
-      <p className="mt-2 text-slate-600">查看今年各月份的營收統計。</p>
+      <h1 className="font-display text-[34px] font-extrabold tracking-tight">營收報表</h1>
+      <p className="mt-3 text-sm font-light text-muted">查看今年各月份的營收統計。</p>
 
-      <div className="mt-6 h-72 w-full">
+      <div className="mt-8 h-72 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="label" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="revenue" fill="#ea580c" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#1d1f24" />
+            <XAxis dataKey="label" tick={{ fill: "#8a857f", fontSize: 12 }} axisLine={{ stroke: "#22242a" }} tickLine={false} />
+            <YAxis tick={{ fill: "#8a857f", fontSize: 12 }} axisLine={{ stroke: "#22242a" }} tickLine={false} />
+            <Tooltip
+              contentStyle={{ background: "#121316", border: "1px solid #2a2d33", borderRadius: 4 }}
+              labelStyle={{ color: "#f6f4f1" }}
+              itemStyle={{ color: "#f4501e" }}
+              cursor={{ fill: "rgba(244,80,30,.08)" }}
+            />
+            <Bar dataKey="revenue" fill="#f4501e" radius={[3, 3, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      <label className="mt-6 block max-w-xs text-sm">
-        選擇月份查看明細
+      <label className="mt-8 block max-w-xs">
+        <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">選擇月份查看明細</span>
         <select
           value={selected}
           onChange={(e) => setSelected(e.target.value)}
-          className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
+          className="mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
         >
           {MONTHS.map((m) => (
             <option key={m.value} value={m.value}>
@@ -100,12 +105,21 @@ export default function EarningsView() {
       </label>
 
       {current && (
-        <div className="mt-4 flex gap-6 text-sm text-slate-600">
-          <p>
-            營收：<span className="font-semibold text-brand-600">${current.revenue}</span>
-          </p>
-          <p>參與人次：{current.participants}</p>
-          <p>報名數：{current.course_count}</p>
+        <div className="mt-6 flex flex-wrap gap-6">
+          <div className="rounded-md border border-line bg-surface px-5 py-4">
+            <div className="font-mono text-[11px] tracking-wider text-[#8a857f]">營收</div>
+            <div className="mt-1.5 font-display text-2xl font-bold text-brand-500">
+              NT$&thinsp;{current.revenue.toLocaleString()}
+            </div>
+          </div>
+          <div className="rounded-md border border-line bg-surface px-5 py-4">
+            <div className="font-mono text-[11px] tracking-wider text-[#8a857f]">參與人次</div>
+            <div className="mt-1.5 font-display text-2xl font-bold">{current.participants}</div>
+          </div>
+          <div className="rounded-md border border-line bg-surface px-5 py-4">
+            <div className="font-mono text-[11px] tracking-wider text-[#8a857f]">報名數</div>
+            <div className="mt-1.5 font-display text-2xl font-bold">{current.course_count}</div>
+          </div>
         </div>
       )}
     </div>
