@@ -1,0 +1,95 @@
+name: 前端建置與 E2E 測試
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  PORT: 8080
+  DB_HOST: localhost
+  DB_PORT: 5432
+  DB_USERNAME: student
+  DB_PASSWORD: student666
+  DB_DATABASE: fitness
+  DB_SYNCHRONIZE: "true"
+  DB_ENABLE_SSL: "false"
+  JWT_SECRET: ci-only-secret-666
+  JWT_EXPIRES_DAY: 30d
+  LOG_LEVEL: warn
+
+jobs:
+  build-and-e2e:
+    name: 型別檢查、建置與 E2E 測試
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16.4-alpine3.20
+        env:
+          POSTGRES_USER: student
+          POSTGRES_PASSWORD: student666
+          POSTGRES_DB: fitness
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U student -d fitness"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      - name: 安裝後端依賴
+        run: npm ci --prefix backend
+
+      - name: 啟動後端
+        run: |
+          npm --prefix backend start > server.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -sf "http://localhost:8080/healthcheck" > /dev/null; then
+              echo "✅ 後端已就緒"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "❌ 後端 60 秒內未就緒，server log："
+          cat server.log
+          exit 1
+
+      - name: 安裝前端依賴
+        run: npm ci --prefix frontend
+
+      - name: 建立前端環境變數
+        run: cp frontend/.env.example frontend/.env
+
+      - name: 前端型別檢查與建置
+        run: npm --prefix frontend run build
+
+      - name: E2E 測試程式型別檢查
+        run: npm --prefix frontend run test:e2e:types
+
+      - name: 安裝 Playwright 瀏覽器
+        run: npx --prefix frontend playwright install --with-deps chromium
+
+      - name: 執行 E2E 測試
+        run: npm --prefix frontend run test:e2e
+
+      - name: 失敗時上傳 Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 7
+
+      - name: 失敗時印出後端 server log
+        if: failure()
+        run: cat server.log || echo "(沒有 server.log)"
