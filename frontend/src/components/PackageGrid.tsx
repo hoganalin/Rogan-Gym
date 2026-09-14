@@ -39,7 +39,7 @@ export function PackageGrid({
                 BEST VALUE
               </span>
             )}
-            <div className="text-lg font-bold">{pkg.name}</div>
+            <h3 className="text-lg font-bold">{pkg.name}</h3>
             <div className="mt-5 flex items-baseline gap-1.5">
               <span className="font-display text-lg font-medium text-[#8a857f]">NT$</span>
               <span className="font-display text-[54px] font-black tracking-tight">

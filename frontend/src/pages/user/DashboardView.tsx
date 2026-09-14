@@ -24,7 +24,8 @@ function mondayOf(d: Dayjs): Dayjs {
 export default function DashboardView() {
   const { dashboard, loading, refresh } = useOutletContext<UserLayoutContext>();
   const { cancelBooking } = useCourseActions();
-  const [view, setView] = useState<ViewMode>("week");
+  // 清單檢視能立刻看到完整明細與取消動作，比週曆／月曆的縮小格子更適合當預設。
+  const [view, setView] = useState<ViewMode>("list");
   const [weekOffset, setWeekOffset] = useState(0);
   const [monthOffset, setMonthOffset] = useState(0);
 
@@ -264,7 +265,7 @@ export default function DashboardView() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <span className={`text-[17px] font-bold ${cancelled ? "text-faint" : "text-body"}`}>{b.name}</span>
+                    <h3 className={`text-[17px] font-bold ${cancelled ? "text-faint" : "text-body"}`}>{b.name}</h3>
                     {cancelled && (
                       <span className="rounded-[3px] border border-[#2a2d33] px-2.5 py-1 text-[11px] text-[#8a857f]">
                         已取消

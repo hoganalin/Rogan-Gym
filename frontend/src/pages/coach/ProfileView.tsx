@@ -123,17 +123,22 @@ export default function ProfileView() {
               {skills.map((skill) => {
                 const on = skillIds.includes(skill.id);
                 return (
-                  <button
+                  <label
                     key={skill.id}
-                    type="button"
-                    onClick={() => toggleSkill(skill.id)}
-                    className={`flex items-center gap-2 rounded-[4px] px-[15px] py-[11px] text-sm font-medium ${
+                    className={`relative flex items-center gap-2 rounded-[4px] px-[15px] py-[11px] text-sm font-medium ${
                       on ? "border border-brand-500 bg-brand-500/10 text-[#ffb494]" : "border border-[#2a2d33] text-muted"
                     }`}
                   >
+                    <input
+                      type="checkbox"
+                      checked={on}
+                      onChange={() => toggleSkill(skill.id)}
+                      aria-label={skill.name}
+                      className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                    />
                     <span className="text-[10px]">{on ? "✓" : "＋"}</span>
                     {skill.name}
-                  </button>
+                  </label>
                 );
               })}
             </div>

@@ -45,7 +45,10 @@ test.describe("member journey: signup, buy credits, book a course, view schedule
     await page.getByRole("button", { name: "登入" }).click();
     await expect(page).toHaveURL(/\/$/);
 
-    await page.getByRole("link", { name: "教練列表" }).click();
+    // Scoped to the header nav: the new dark-theme footer also links to
+    // "教練列表" (see frontend/src/components/RootLayout.tsx), so an
+    // unscoped query is ambiguous now that both exist.
+    await page.getByRole("navigation").getByRole("link", { name: "教練列表" }).click();
     await expect(page.getByRole("heading", { name: "教練列表" })).toBeVisible();
 
     // Buy the fixture credit package
