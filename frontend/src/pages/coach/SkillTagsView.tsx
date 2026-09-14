@@ -59,15 +59,15 @@ export default function SkillTagsView() {
     }
   }
 
-  if (loading) return <p className="text-slate-500">載入中…</p>;
-  if (error) return <p className="text-rose-600">{error}</p>;
+  if (loading) return <p className="text-muted">載入中…</p>;
+  if (error) return <p className="text-rose-400">{error}</p>;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">技能標籤</h1>
-      <p className="mt-2 text-slate-600">新增或移除課程與教練檔案可選用的技能標籤。</p>
+      <h1 className="font-display text-[34px] font-extrabold tracking-tight">技能標籤</h1>
+      <p className="mt-3 text-sm font-light text-muted">新增或移除課程與教練檔案可選用的技能標籤。</p>
 
-      <form onSubmit={handleAdd} className="mt-6 flex max-w-sm gap-2">
+      <form onSubmit={handleAdd} className="mt-8 flex max-w-[420px] gap-3">
         <label className="sr-only" htmlFor="skill-name">
           技能名稱
         </label>
@@ -76,24 +76,28 @@ export default function SkillTagsView() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="技能名稱"
-          className="flex-1 rounded border border-slate-300 px-3 py-2"
+          className="flex-1 rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
           required
         />
-        <button type="submit" className="rounded bg-brand-600 px-4 py-2 text-sm text-white">
+        <button type="submit" className="shrink-0 rounded-[4px] bg-brand-500 px-[22px] py-3 text-sm font-bold text-ink hover:bg-brand-400">
           新增
         </button>
       </form>
 
-      {skills.length === 0 && <p className="mt-6 text-slate-500">目前沒有技能標籤。</p>}
+      {skills.length === 0 && <p className="mt-8 text-muted">目前沒有技能標籤。</p>}
 
-      <ul className="mt-6 flex flex-col gap-2">
+      <ul className="mt-8 flex max-w-[420px] flex-col gap-2.5">
         {skills.map((skill) => (
           <li
             key={skill.id}
-            className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-2"
+            className="flex items-center justify-between rounded-[4px] border border-line bg-surface px-4 py-3"
           >
             <span>{skill.name}</span>
-            <button type="button" onClick={() => handleDelete(skill)} className="text-sm text-rose-600">
+            <button
+              type="button"
+              onClick={() => handleDelete(skill)}
+              className="text-sm text-[#e8735c] hover:text-[#ff8a70]"
+            >
               刪除
             </button>
           </li>
