@@ -4,7 +4,7 @@
  */
 const fs = require('fs');
 
-const title = process.argv[2] || '驗收';
+const title = process.argv[2] || '測試';
 const file = process.argv[3] || 'jest-result.json';
 const out = process.env.GITHUB_STEP_SUMMARY;
 
@@ -16,7 +16,7 @@ if (!fs.existsSync(file)) {
   md = [
     `## 🛑 ${title}：測試沒有執行`,
     '',
-    '通常是 server 沒起來（公約①～④哪裡破了）。往上看「啟動你的後端」步驟印出的 server log，',
+    '通常是 server 沒起來。往上看「啟動後端」步驟印出的 server log，',
     '最常見原因：`npm start` 沒換成自己的啟動指令、沒聽 `PORT` 環境變數、資料表沒建出來。',
     '',
   ].join('\n');
