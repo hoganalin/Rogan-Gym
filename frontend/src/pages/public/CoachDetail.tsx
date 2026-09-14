@@ -87,7 +87,7 @@ export default function CoachDetail() {
                 </div>
               </div>
               <div>
-                <div className="text-base font-medium">{course.name}</div>
+                <h3 className="text-base font-medium">{course.name}</h3>
                 <div className="mt-1 text-xs font-light text-faint">{course.description}</div>
               </div>
               <div>
