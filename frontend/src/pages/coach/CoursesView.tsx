@@ -1,10 +1,12 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useOutletContext } from "react-router-dom";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import { getCoachCourseList, getCoachCourseDetail, postCoachCourse, putCoachCourse } from "../../api/coach";
 import { getSkills } from "../../api/skill";
 import { extractErrorMessage } from "../../lib/errors";
 import { formatCourseTime } from "../../lib/formatDateTime";
+import type { CoachLayoutContext } from "../../layouts/CoachLayout";
 import type { CoachCourseListItem, Skill } from "../../types/api";
 
 interface CourseFormState {
@@ -32,6 +34,7 @@ const inputClass =
 const labelClass = "font-mono text-[11px] tracking-wider text-[#8a857f]";
 
 export default function CoursesView() {
+  const { refreshSummary } = useOutletContext<CoachLayoutContext>();
   const [courses, setCourses] = useState<CoachCourseListItem[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
@@ -113,6 +116,7 @@ export default function CoursesView() {
       setMode("list");
       setEditingId(null);
       loadCourses();
+      refreshSummary();
     } catch (err) {
       await Swal.fire({ icon: "error", title: "儲存失敗", text: extractErrorMessage(err) });
     } finally {

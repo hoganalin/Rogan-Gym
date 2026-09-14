@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import { getCoachCourseList, getMonthlyRevenue } from "../api/coach";
@@ -11,6 +11,10 @@ const NAV = [
   { label: "技能標籤", to: "/coach/skills" },
 ];
 
+export interface CoachLayoutContext {
+  refreshSummary: () => void;
+}
+
 export function CoachLayout() {
   const location = useLocation();
   const [courseCount, setCourseCount] = useState<number | null>(null);
@@ -19,13 +23,11 @@ export function CoachLayout() {
     null,
   );
 
-  useEffect(() => {
-    let cancelled = false;
+  const refreshSummary = useCallback(() => {
     const month = dayjs().format("MMMM").toLowerCase();
 
     Promise.all([getCoachCourseList(), getSkills(), getMonthlyRevenue(month)])
       .then(([coursesRes, skillsRes, revenueRes]) => {
-        if (cancelled) return;
         setCourseCount(coursesRes.data.length);
         setSkillCount(skillsRes.data.length);
         setRevenue(revenueRes.data.total);
@@ -33,11 +35,11 @@ export function CoachLayout() {
       .catch((err) => {
         console.error("Failed to load coach layout summary", err);
       });
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
+
+  useEffect(() => {
+    refreshSummary();
+  }, [refreshSummary]);
 
   return (
     <div className="mx-auto flex max-w-6xl">
@@ -81,7 +83,7 @@ export function CoachLayout() {
         </div>
       </aside>
       <section className="flex-1 p-10">
-        <Outlet />
+        <Outlet context={{ refreshSummary } satisfies CoachLayoutContext} />
       </section>
     </div>
   );

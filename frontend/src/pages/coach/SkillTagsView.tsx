@@ -1,10 +1,13 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useOutletContext } from "react-router-dom";
 import Swal from "sweetalert2";
 import { getSkills, postSkill, deleteSkill } from "../../api/skill";
 import { extractErrorMessage } from "../../lib/errors";
+import type { CoachLayoutContext } from "../../layouts/CoachLayout";
 import type { Skill } from "../../types/api";
 
 export default function SkillTagsView() {
+  const { refreshSummary } = useOutletContext<CoachLayoutContext>();
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,6 +37,7 @@ export default function SkillTagsView() {
       setName("");
       await Swal.fire({ icon: "success", title: "已新增技能標籤" });
       loadSkills();
+      refreshSummary();
     } catch (err) {
       await Swal.fire({ icon: "error", title: "新增失敗", text: extractErrorMessage(err) });
     }
@@ -54,6 +58,7 @@ export default function SkillTagsView() {
       await deleteSkill(skill.id);
       await Swal.fire({ icon: "success", title: "已刪除" });
       loadSkills();
+      refreshSummary();
     } catch (err) {
       await Swal.fire({ icon: "error", title: "刪除失敗", text: extractErrorMessage(err) });
     }
