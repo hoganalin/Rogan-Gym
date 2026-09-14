@@ -25,13 +25,15 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          {/* 登入／註冊沿用設計稿的獨立分割版面，不套 RootLayout 的導覽列與頁尾。 */}
+          <Route path="login" element={<LoginView />} />
+          <Route path="signup" element={<SignupView />} />
+
           <Route element={<RootLayout />}>
             <Route index element={<HomeView />} />
             <Route path="coaches" element={<CoachesView />} />
             <Route path="coaches/:coachId" element={<CoachDetail />} />
             <Route path="fitness-plans" element={<FitnessPlans />} />
-            <Route path="login" element={<LoginView />} />
-            <Route path="signup" element={<SignupView />} />
 
             <Route path="user" element={<ProtectedRoute requiredRole="USER" />}>
               <Route element={<UserLayout />}>
