@@ -12,7 +12,7 @@ const courses = require("./routes/courses"); //註冊公開課程路由
 const creditPackage = require("./routes/credit_page"); //註冊路由
 const app = express();
 
-app.use(cors()); // W3：前端在 3000、我們在 8080，沒它前端全被擋
+app.use(cors()); // 前端在 3000、後端在 8080，沒它前端全被擋
 app.use(express.json());
 
 //啟動後端時，先連線資料庫,全部移動到www.js
@@ -24,9 +24,7 @@ app.use(express.json());
 //   process.exit(1); // 沒有資料庫就不營業
 // });
 
-// M0：健康檢查——回純文字 OK，不是 JSON；路徑不在 /api 底下
-//各種api
-// 之後每完成一個里程碑，路由就多掛一條：
+// 健康檢查——回純文字 OK，不是 JSON；路徑不在 /api 底下
 app.use("/api/credit-package", creditPackage);
 
 app.get("/healthcheck", async (req, res, next) => {
@@ -42,13 +40,12 @@ app.use("/api/users", users);
 app.use("/api/admin/coaches", coach);
 app.use("/api/coaches", coachPublic);
 app.use("/api/courses", courses);
-// 404（W3）
+// 404
 app.use((req, res, next) => {
-  // res.status(404).json({ status: "failed", message: "無此路由" });
   next(appError(404, "無此路由")); // 交給錯誤處理守門員
 });
 
-// 錯誤處理守門員（W4：四個參數）
+// 錯誤處理守門員（Express 慣例：四個參數）
 app.use((err, req, res, next) => {
   const statusCode = err.status || 500;
   console.error(err);
