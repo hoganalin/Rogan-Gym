@@ -27,6 +27,10 @@ const emptyForm: CourseFormState = {
   meetingUrl: "",
 };
 
+const inputClass =
+  "mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500";
+const labelClass = "font-mono text-[11px] tracking-wider text-[#8a857f]";
+
 export default function CoursesView() {
   const [courses, setCourses] = useState<CoachCourseListItem[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -116,21 +120,23 @@ export default function CoursesView() {
     }
   }
 
-  if (loading) return <p className="text-slate-500">載入中…</p>;
-  if (error) return <p className="text-rose-600">{error}</p>;
+  if (loading) return <p className="text-muted">載入中…</p>;
+  if (error) return <p className="text-rose-400">{error}</p>;
 
   if (mode === "create" || mode === "edit") {
     return (
       <div>
-        <h1 className="text-2xl font-bold">{mode === "edit" ? "編輯課程" : "新增課程"}</h1>
+        <h1 className="font-display text-[34px] font-extrabold tracking-tight">
+          {mode === "edit" ? "編輯課程" : "新增課程"}
+        </h1>
 
-        <form onSubmit={handleSubmit} className="mt-6 max-w-sm">
-          <label className="block text-sm">
-            技能標籤
+        <form onSubmit={handleSubmit} className="mt-8 flex max-w-[480px] flex-col gap-4.5">
+          <label className="block">
+            <span className={labelClass}>技能標籤</span>
             <select
               value={form.skillId}
               onChange={(e) => setForm({ ...form, skillId: e.target.value })}
-              className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
+              className={inputClass}
               required
             >
               <option value="" disabled>
@@ -143,78 +149,82 @@ export default function CoursesView() {
               ))}
             </select>
           </label>
-          <label className="mt-3 block text-sm">
-            課程名稱
+          <label className="block">
+            <span className={labelClass}>課程名稱</span>
             <input
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
+              className={inputClass}
               required
             />
           </label>
-          <label className="mt-3 block text-sm">
-            課程說明
+          <label className="block">
+            <span className={labelClass}>課程說明</span>
             <textarea
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
               rows={3}
+              className={`${inputClass} resize-y leading-relaxed`}
               required
             />
           </label>
-          <label className="mt-3 block text-sm">
-            開始時間
+          <label className="block">
+            <span className={labelClass}>開始時間</span>
             <input
               type="datetime-local"
               value={form.startAt}
               onChange={(e) => setForm({ ...form, startAt: e.target.value })}
-              className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
+              className={inputClass}
               required
             />
           </label>
-          <label className="mt-3 block text-sm">
-            結束時間
+          <label className="block">
+            <span className={labelClass}>結束時間</span>
             <input
               type="datetime-local"
               value={form.endAt}
               onChange={(e) => setForm({ ...form, endAt: e.target.value })}
-              className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
+              className={inputClass}
               required
             />
           </label>
-          <label className="mt-3 block text-sm">
-            人數上限
+          <label className="block">
+            <span className={labelClass}>人數上限</span>
             <input
               type="number"
               min={0}
               value={form.maxParticipants}
               onChange={(e) => setForm({ ...form, maxParticipants: e.target.value })}
-              className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
+              className={inputClass}
               required
             />
           </label>
-          <label className="mt-3 block text-sm">
-            會議連結（需以 https 開頭）
+          <label className="block">
+            <span className={labelClass}>會議連結（需以 https 開頭）</span>
             <input
               type="url"
               value={form.meetingUrl}
               onChange={(e) => setForm({ ...form, meetingUrl: e.target.value })}
-              className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
               placeholder="https://"
               pattern="https://.*"
+              className={`${inputClass} font-mono text-sm`}
               required
             />
           </label>
 
-          <div className="mt-4 flex gap-2">
+          <div className="mt-1 flex gap-3">
             <button
               type="submit"
               disabled={saving}
-              className="rounded bg-brand-600 px-4 py-2 text-sm text-white disabled:opacity-50"
+              className="rounded-[4px] bg-brand-500 px-[26px] py-3 text-sm font-bold text-ink hover:bg-brand-400 disabled:opacity-50"
             >
               儲存
             </button>
-            <button type="button" onClick={cancelForm} className="rounded border border-slate-300 px-4 py-2 text-sm">
+            <button
+              type="button"
+              onClick={cancelForm}
+              className="rounded-[4px] border border-[#2a2d33] px-[26px] py-3 text-sm font-medium text-muted hover:text-body"
+            >
               取消
             </button>
           </div>
@@ -226,30 +236,36 @@ export default function CoursesView() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">課程管理</h1>
-        <button type="button" onClick={startCreate} className="rounded bg-brand-600 px-4 py-2 text-sm text-white">
+        <h1 className="font-display text-[34px] font-extrabold tracking-tight">課程管理</h1>
+        <button
+          type="button"
+          onClick={startCreate}
+          className="rounded-[4px] bg-brand-500 px-[22px] py-3 text-sm font-bold text-ink hover:bg-brand-400"
+        >
           新增課程
         </button>
       </div>
-      <p className="mt-2 text-slate-600">新增、編輯你開設的課程。</p>
+      <p className="mt-3 text-sm font-light text-muted">新增、編輯你開設的課程。</p>
 
-      {courses.length === 0 && <p className="mt-6 text-slate-500">目前沒有課程。</p>}
+      {courses.length === 0 && <p className="mt-8 text-muted">目前沒有課程。</p>}
 
-      <div className="mt-6 flex flex-col gap-3">
+      <div className="mt-8 flex flex-col gap-3">
         {courses.map((course) => (
-          <div key={course.id} className="rounded-lg border border-slate-200 bg-white p-4">
+          <div key={course.id} className="rounded-md border border-line bg-surface p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="font-semibold">{course.name}</h3>
-                <p className="mt-1 text-sm text-slate-500">{formatCourseTime(course.start_at, course.end_at)}</p>
-                <p className="mt-1 text-sm text-slate-500">
-                  {course.status}・{course.participants}/{course.max_participants} 人
+                <h3 className="font-bold">{course.name}</h3>
+                <p className="mt-1.5 font-mono text-xs text-[#8a857f]">
+                  {formatCourseTime(course.start_at, course.end_at)}
+                </p>
+                <p className="mt-1 text-sm text-muted">
+                  {course.status} · {course.participants}/{course.max_participants} 人
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => startEdit(course.id)}
-                className="shrink-0 rounded border border-slate-300 px-4 py-2 text-sm"
+                className="shrink-0 rounded-[4px] border border-[#2a2d33] px-[18px] py-2.5 text-sm font-medium text-muted hover:text-body"
               >
                 編輯
               </button>

@@ -56,69 +56,75 @@ export default function ProfileView() {
     }
   }
 
-  if (loading) return <p className="text-slate-500">載入中…</p>;
+  if (loading) return <p className="text-muted">載入中…</p>;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">會員資料</h1>
+      <h1 className="font-display text-[34px] font-extrabold tracking-tight">會員資料</h1>
 
-      <form onSubmit={handleNameSubmit} className="mt-6 max-w-sm">
-        <h2 className="font-semibold">基本資料</h2>
-        <label className="mt-3 block text-sm text-slate-500">
-          Email
+      <form onSubmit={handleNameSubmit} className="mt-8 flex max-w-[420px] flex-col gap-4.5">
+        <div className="font-mono text-[11px] tracking-widest text-[#57524c]">基本資料</div>
+        <label className="block">
+          <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">EMAIL</span>
           <input
             value={email}
             disabled
-            className="mt-1 w-full rounded border border-slate-200 bg-slate-50 px-3 py-2 text-slate-400"
+            className="mt-2.5 w-full rounded-[4px] border border-[#22242a] bg-[#0f1012] px-4 py-[14px] text-faint outline-none"
           />
         </label>
-        <label className="mt-3 block text-sm">
-          暱稱
+        <label className="block">
+          <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">暱稱</span>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
+            className="mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
             required
           />
         </label>
-        <button type="submit" className="mt-4 rounded bg-brand-600 px-4 py-2 text-sm text-white">
+        <button
+          type="submit"
+          className="mt-1 w-fit rounded-[4px] bg-brand-500 px-[26px] py-3 text-sm font-bold text-ink hover:bg-brand-400"
+        >
           儲存暱稱
         </button>
       </form>
 
-      <form onSubmit={handlePasswordSubmit} className="mt-10 max-w-sm">
-        <h2 className="font-semibold">修改密碼</h2>
-        <label className="mt-3 block text-sm">
-          目前密碼
+      <form onSubmit={handlePasswordSubmit} className="mt-12 flex max-w-[420px] flex-col gap-4.5">
+        <div className="font-mono text-[11px] tracking-widest text-[#57524c]">修改密碼</div>
+        <label className="block">
+          <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">目前密碼</span>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
+            className="mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
             required
           />
         </label>
-        <label className="mt-3 block text-sm">
-          新密碼
+        <label className="block">
+          <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">新密碼</span>
           <input
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
+            className="mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
             required
           />
         </label>
-        <label className="mt-3 block text-sm">
-          確認新密碼
+        <label className="block">
+          <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">確認新密碼</span>
           <input
             type="password"
             value={confirmNewPassword}
             onChange={(e) => setConfirmNewPassword(e.target.value)}
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
+            className="mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
             required
           />
         </label>
-        <button type="submit" className="mt-4 rounded bg-brand-600 px-4 py-2 text-sm text-white">
+        <button
+          type="submit"
+          className="mt-1 w-fit rounded-[4px] bg-brand-500 px-[26px] py-3 text-sm font-bold text-ink hover:bg-brand-400"
+        >
           更新密碼
         </button>
       </form>

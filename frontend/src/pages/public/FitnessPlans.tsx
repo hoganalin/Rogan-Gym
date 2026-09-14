@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getCreditPackages } from "../../api/creditPackage";
 import { usePackageActions } from "../../hooks/usePackageActions";
+import { PackageGrid } from "../../components/PackageGrid";
 import type { CreditPackage } from "../../types/api";
 
 export default function FitnessPlans() {
@@ -29,30 +30,19 @@ export default function FitnessPlans() {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold">健身方案</h1>
-      <p className="mt-2 text-slate-600">購買堂數方案，開始報名課程。</p>
+    <div className="mx-auto max-w-6xl px-6 py-16">
+      <div className="text-center">
+        <div className="font-mono text-xs tracking-[.2em] text-brand-500">CREDIT PACKAGES</div>
+        <h1 className="mt-4 font-display text-4xl font-extrabold tracking-tight md:text-[46px]">健身方案</h1>
+        <p className="mt-3 text-[15px] font-light text-muted">買堂數，報名任一位教練的課程。每堂均價由方案價格與堂數換算。</p>
+      </div>
 
-      {loading && <p className="mt-6 text-slate-500">載入中…</p>}
-      {error && <p className="mt-6 text-rose-600">{error}</p>}
+      {loading && <p className="mt-12 text-center text-muted">載入中…</p>}
+      {error && <p className="mt-12 text-center text-rose-400">{error}</p>}
 
       {!loading && !error && (
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {packages.map((pkg) => (
-            <div key={pkg.id} className="flex flex-col rounded-lg border border-slate-200 bg-white p-5">
-              <h3 className="font-semibold">{pkg.name}</h3>
-              <p className="mt-2 text-3xl font-bold text-brand-600">${pkg.price}</p>
-              <p className="mt-1 text-sm text-slate-500">{pkg.credit_amount} 堂</p>
-              <button
-                type="button"
-                onClick={() => buyPackage(pkg.id, pkg.name)}
-                className="mt-4 rounded bg-brand-600 py-2 text-sm text-white"
-              >
-                購買
-              </button>
-            </div>
-          ))}
-          {packages.length === 0 && <p className="text-slate-500">目前沒有可購買的方案。</p>}
+        <div className="mt-12">
+          <PackageGrid packages={packages} onBuy={buyPackage} />
         </div>
       )}
     </div>
