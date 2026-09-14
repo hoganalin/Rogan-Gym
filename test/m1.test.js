@@ -28,7 +28,7 @@ const {
   createCreditPackage,
 } = require('./helpers');
 
-/** 合法 uuid「格式」但資料庫裡不存在的假 id（格式錯的 id 不在驗收範圍） */
+/** 合法 uuid「格式」但資料庫裡不存在的假 id（格式錯誤的 id 由另一組測試涵蓋） */
 const FAKE_UUID = '00000000-0000-4000-8000-000000000000';
 
 describe('M0 健康檢查', () => {

@@ -115,7 +115,7 @@ describe('M5-3 四句逐字 UI 合約（前端 modal 靠這些字串，一字不
 
   test('報名一堂不存在的課程（合法 uuid 但查無此課）→ 失敗（檢查：課程不存在）', async () => {
     // courseId 查無此課程。會員有堂數、也沒報過任何課，
-    // 「ID錯誤」不在四句固定訊息裡（驗收只看 4xx + status: failed），所以這裡不逐字比對 message。
+    // 「ID錯誤」不在四句固定訊息裡（這裡只檢查 4xx + status: failed），所以不逐字比對 message。
     const member = await signupAndLogin();
     const pkg = await createCreditPackage({ credit_amount: 7, price: 1400 });
     expectSuccess(await buyPackage(member.token, pkg.id));
