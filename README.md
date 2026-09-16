@@ -1,50 +1,118 @@
 # R Fitness
 
-健身房課程預約平台。會員可以瀏覽教練、購買堂數方案、報名課程；教練可以維護個人檔案、開設課程、查看月營收統計。
+## 面試示範資料與部署
 
-## 技術棧
+啟動資料庫並安裝後端依賴後，執行 `npm run seed:demo`，即可建立示範教練、會員、未來課程，以及今年 1 月至本月的歷史報名與營收資料。既有資料保留，同日重跑不會重複新增。
 
-- **後端**：Node.js、Express、TypeORM、PostgreSQL、JWT 驗證
-- **前端**：React、TypeScript、Vite、Tailwind CSS、Recharts
-- **測試**：Jest + Supertest（後端 API contract tests）、Playwright（前端 E2E）
-- **容器化**：Docker Compose（frontend / backend / postgres / swagger）
+API 啟動後執行 `npm run verify:demo` 驗證每位教練的逐月報表。新建示範教練：`chen.jianhong@rfitness.tw`，示範會員：`demo.member1@example.com`，預設密碼皆為 `Demo12345`（既有帳號密碼不變）。
+
+完整操作、資料口徑與 Render 前後端／PostgreSQL 部署設定：[面試示範與部署指南](docs/demo-and-deployment.md)。
+
+一個讓會員購買堂數、預約課程，並讓教練管理課程與檢視月營收的全端健身課程平台。
+
+**技術亮點：** 以 Node.js／Express／PostgreSQL 實作 RESTful API 與 JWT 授權；以 React／TypeScript 建構雙角色介面；以 Docker Compose、OpenAPI、Jest + Supertest contract tests 與 Playwright E2E 驗證交付品質。
+
+## 功能一覽
+
+| 使用者 | 可完成的流程 | 技術／商業規則 |
+| --- | --- | --- |
+| 訪客 | 瀏覽教練、課程與堂數方案 | 公開 API、分頁與角色導向頁面 |
+| 會員（User） | 註冊登入、購買堂數、報名／取消課程、查看課表 | JWT、剩餘堂數即時計算、取消軟刪除 |
+| 教練（Coach） | 維護個人檔案與技能、開設／修改課程、查看月營收 | 角色授權、課程所有權檢查、SQL 聚合、Recharts |
+
+### 核心商業規則
+
+- 報名會依序檢查：課程存在、是否曾報名、剩餘堂數與課程名額。
+- 取消報名採軟刪除；紀錄保留，且堂數會由即時計算自動回補。
+- 剩餘堂數不儲存於資料庫，公式為「購買總堂數 − 未取消報名數」。
+- 教練營收排除取消報名，並依所有方案的平均單堂價格計算。
+
+## 架構與技術棧
+
+```text
+React 19 + TypeScript + Vite
+        │ Axios / JWT
+        ▼
+Node.js + Express 5 ── TypeORM ── PostgreSQL 16
+        │
+        ├── OpenAPI / Swagger UI
+        ├── Jest + Supertest API contract tests
+        └── Playwright E2E tests
+```
+
+| 區域 | 語言、框架與主要套件 |
+| --- | --- |
+| 前端 | TypeScript、React 19、Vite、React Router、Tailwind CSS 4、Axios、Recharts、GSAP、SweetAlert2、Day.js、jwt-decode |
+| 後端 | JavaScript、Node.js 20、Express 5、TypeORM、pg、bcrypt、jsonwebtoken、CORS、dotenv |
+| 資料庫／基礎設施 | PostgreSQL 16、Docker、Docker Compose、Swagger UI |
+| 品質保證 | Jest、Supertest、Playwright、GitHub Actions、TypeScript 型別檢查 |
 
 ## 本機啟動
 
-1. 安裝 [Docker Desktop](https://www.docker.com/products/docker-desktop/)，並確認 Node.js 版本 >= 20
-2. `docker compose up -d` 啟動前端（`http://localhost:3000`）、Swagger 文件（`http://localhost:8081`）、PostgreSQL（`localhost:5433`，對應容器內部的 5432）
-3. 進入 `backend/`，複製 `.env.example` 為 `.env`，執行 `npm install` 後 `npm run dev`，後端會跑在 `http://localhost:8080`
+### 方式 A：完整 Docker 環境
 
-## 測試
+需求：Docker Desktop。
 
 ```bash
-npm test              # 全部後端 contract tests
-npm run test:m1       # 分模組測試（m1 ~ m6）
+docker compose up --build
 ```
 
-前端 E2E（需要後端與 PostgreSQL 已啟動，見上方「本機啟動」）：
+| 服務 | 網址／連線資訊 |
+| --- | --- |
+| 前端 | http://localhost:3000 |
+| 後端 API | http://localhost:8080 |
+| Swagger UI | http://localhost:8081 |
+| PostgreSQL | `localhost:5433`（容器內為 5432） |
+
+停止服務使用 `docker compose down`。若需要重建資料庫，使用 `npm run db:reset`；這會移除 Docker volume 中既有資料。
+
+### 方式 B：本機開發（前後端分開啟動）
+
+需求：Node.js 20+、Docker Desktop。
 
 ```bash
-cd frontend && npm run test:e2e         # 執行 E2E 測試（Playwright 會自動啟動前端 dev server）
-cd frontend && npm run test:e2e:types   # 型別檢查 e2e/ 底下的測試程式（npm run test:e2e 本身不會做型別檢查）
+# 終端機 1：只啟動資料庫與 API 文件
+docker compose up -d postgres swagger
+
+# 終端機 2：啟動後端
+Copy-Item .env.example backend/.env
+npm ci --prefix backend
+npm --prefix backend run dev
+
+# 終端機 3：啟動前端
+Copy-Item frontend/.env.example frontend/.env
+npm ci --prefix frontend
+npm --prefix frontend run dev
 ```
 
-## AI 輔助開發
+`.env.example` 的 `DB_PORT=5433` 是給本機後端連 Docker PostgreSQL 使用；完整 Docker 環境的後端則使用容器內的 `DB_PORT=5432`。
 
+## 測試與驗證
 
-- **改版與整合**：對照設計稿逐畫面重寫，接上 `GET /coaches` 之外還要再打 `GET /coaches/:id` 才能組出卡片資料的前端邏輯、GSAP `ScrollTrigger` 動畫
-- **抓 bug**：追出 React StrictMode 開發模式下 GSAP count-up 動畫「讀到自己動畫過程中的中間值當目標值」而卡在 0 的問題；追出改版意外讓既有 Playwright 測試依賴的 DOM 結構（`<h3>` 標題、真的 `<input type="checkbox">`、SweetAlert 的 `.swal2-title`）跟著跑掉
-- **驗證方式，不是只看 AI 說「完成了」**：
-  - `npm run build`（TypeScript 型別檢查 + Vite build）每個畫面完成後都跑一次
-  - `npx playwright test` 實際重跑既有 E2E 測試，抓到上面那些跟改版衝突的地方並修好，而不是憑印象猜測沒事
-  - `npm test`（根目錄的黑箱合約測試，`test/m1~m6` + `smoke`，共 68 項）確認改版與資料庫清理沒有破壞任何既有的自動化測試
-  - Playwright 截圖 + `prefers-reduced-motion` 模擬，逐項比對設計稿與無障礙行為
-  - 直接查詢資料庫（`psql`）核對 demo 種子資料與 API 回應一致
+```bash
+# 後端 API contract tests（需先啟動後端與 PostgreSQL）
+npm test
 
+# 前端型別檢查與 production build
+npm --prefix frontend run build
 
-延伸：教練後台的月營收頁（`coach/EarningsView`）用 Recharts 畫月營收長條圖、依月份查看營收／參與人次／報名數明細，是這個專案裡最接近「資料視覺化／基礎統計」的部分；沒有 Kubernetes 部署經驗，目前只到 Docker Compose（`backend`／`frontend`／`postgres`／`swagger` 四個服務）。
+# 前端端對端測試（需先啟動後端與 PostgreSQL）
+npm --prefix frontend run test:e2e:types
+npm --prefix frontend run test:e2e
+```
+
+GitHub Actions 在推送至 `main` 時會啟動 PostgreSQL、建置前後端，並執行前端型別檢查與 Playwright E2E。
+
+## API 與存取控制
+
+- OpenAPI 規格：[docs/openapi.yaml](docs/openapi.yaml)；完整 Docker 環境可在 Swagger UI 試打。
+- 寫入會員資料、購買方案、報名與取消課程都需要 JWT。
+- 教練後台、技能與方案管理需要 JWT 與 Coach 角色；教練只能讀寫自己的課程與資料。
+- 升級教練使用 `POST /api/users/me/coach`，由登入 token 取得本人身分，不能指定或升級其他帳號。
 
 ## 專案文件
 
-- 領域詞彙與關係：[CONTEXT.md](CONTEXT.md)
-- API 規格：[docs/openapi.yaml](docs/openapi.yaml)（Swagger UI：`http://localhost:8081`）
+- [領域詞彙與關係](CONTEXT.md)：User、Coach、CourseBooking 等名詞與資料關係。
+- [OpenAPI 規格](docs/openapi.yaml)：請求／回應格式與驗證規則。
+
+

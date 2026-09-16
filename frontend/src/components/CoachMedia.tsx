@@ -1,14 +1,21 @@
 import { useState } from "react";
 
-export function CoachMedia({
-  src,
-  name,
-  className = "",
-}: {
+type CoachMediaProps = {
   src: string | null;
   name: string;
   className?: string;
-}) {
+};
+
+export function CoachMedia(props: CoachMediaProps) {
+  // Each URL gets fresh loading state, including after an earlier image failed.
+  return <CoachMediaImage key={props.src} {...props} />;
+}
+
+function CoachMediaImage({
+  src,
+  name,
+  className = "",
+}: CoachMediaProps) {
   const [broken, setBroken] = useState(false);
 
   if (src && !broken) {

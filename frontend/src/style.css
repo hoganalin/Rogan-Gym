@@ -37,3 +37,34 @@ input::placeholder,
 textarea::placeholder {
   color: var(--color-faint);
 }
+
+.package-card {
+  transition: border-color 180ms ease, translate 180ms ease;
+}
+
+.package-card:focus-within {
+  border-color: var(--color-brand-500);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .package-card:hover {
+    border-color: var(--color-brand-500);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .package-card:focus-within {
+    translate: 0 -6px;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .package-card:hover {
+      translate: 0 -6px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .package-card {
+    transition: none;
+  }
+}

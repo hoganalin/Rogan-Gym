@@ -13,33 +13,33 @@ import type {
 } from "../types/api";
 
 export function getCoachSelf() {
-  return request.get<never, ApiSuccess<CoachSelf>>("admin/coaches");
+  return request.get<never, ApiSuccess<CoachSelf>>("coach");
 }
 
 export function putCoachSelf(data: CoachSelfUpdatePayload) {
-  return request.put<never, ApiSuccess<CoachSelf>>("admin/coaches", data);
+  return request.put<never, ApiSuccess<CoachSelf>>("coach", data);
 }
 
 export function getCoachCourseList() {
-  return request.get<never, ApiSuccess<CoachCourseListItem[]>>("admin/coaches/courses");
+  return request.get<never, ApiSuccess<CoachCourseListItem[]>>("coach/courses");
 }
 
 export function getCoachCourseDetail(courseId: string) {
-  return request.get<never, ApiSuccess<CoachCourseDetail>>(`admin/coaches/courses/${courseId}`);
+  return request.get<never, ApiSuccess<CoachCourseDetail>>(`coach/courses/${courseId}`);
 }
 
 export function postCoachCourse(data: CoachCoursePayload) {
-  return request.post<never, ApiSuccess<{ course: CoachCourseMutationResult }>>("admin/coaches/courses", data);
+  return request.post<never, ApiSuccess<{ course: CoachCourseMutationResult }>>("coach/courses", data);
 }
 
 export function putCoachCourse(courseId: string, data: CoachCoursePayload) {
-  return request.put<never, ApiSuccess<{ course: CoachCourseMutationResult }>>(`admin/coaches/courses/${courseId}`, data);
+  return request.put<never, ApiSuccess<{ course: CoachCourseMutationResult }>>(`coach/courses/${courseId}`, data);
 }
 
 export function getMonthlyRevenue(month: string) {
-  return request.get<never, ApiSuccess<RevenueResult>>(`admin/coaches/revenue?month=${month}`);
+  return request.get<never, ApiSuccess<RevenueResult>>(`coach/revenue?month=${month}`);
 }
 
-export function postPromoteUserToCoach(userId: string, data: PromoteCoachPayload) {
-  return request.post<never, ApiSuccess<PromoteCoachResult>>(`admin/coaches/${userId}`, data);
+export function postPromoteUserToCoach(data: PromoteCoachPayload) {
+  return request.post<never, ApiSuccess<PromoteCoachResult>>("users/me/coach", data);
 }

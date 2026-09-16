@@ -26,6 +26,7 @@ const {
   expectFailed,
   createSkill,
   createCreditPackage,
+  makeCoach,
 } = require('./helpers');
 
 /** 合法 uuid「格式」但資料庫裡不存在的假 id（格式錯誤的 id 由另一組測試涵蓋） */
@@ -38,7 +39,13 @@ describe('M0 健康檢查', () => {
   });
 });
 
-describe('M1 技能管理（POST / GET / DELETE /api/coaches/skill，public）', () => {
+describe('M1 技能管理（POST / GET / DELETE /api/coaches/skill）', () => {
+  let manager;
+
+  beforeEach(async () => {
+    manager = await makeCoach();
+  });
+
   test('新增技能成功後，技能列表查得到這筆資料（id 與 name）', async () => {
     const skill = await createSkill();
 
@@ -55,19 +62,27 @@ describe('M1 技能管理（POST / GET / DELETE /api/coaches/skill，public）',
   test('用已存在的技能名稱再新增一次，會被拒絕（失敗回應）', async () => {
     const skill = await createSkill();
 
-    const dupRes = await api().post('/api/coaches/skill').send({ name: skill.name });
+    const dupRes = await api()
+      .post('/api/coaches/skill')
+      .set('Authorization', `Bearer ${manager.token}`)
+      .send({ name: skill.name });
     expectFailed(dupRes);
   });
 
   test('新增技能沒帶 name 欄位，會被拒絕（失敗回應）', async () => {
-    const res = await api().post('/api/coaches/skill').send({});
+    const res = await api()
+      .post('/api/coaches/skill')
+      .set('Authorization', `Bearer ${manager.token}`)
+      .send({});
     expectFailed(res);
   });
 
   test('刪除技能成功後，技能列表不再出現這筆資料', async () => {
     const skill = await createSkill();
 
-    const delRes = await api().delete(`/api/coaches/skill/${skill.id}`);
+    const delRes = await api()
+      .delete(`/api/coaches/skill/${skill.id}`)
+      .set('Authorization', `Bearer ${manager.token}`);
     expectSuccess(delRes);
 
     const listRes = await api().get('/api/coaches/skill');
@@ -77,12 +92,20 @@ describe('M1 技能管理（POST / GET / DELETE /api/coaches/skill，public）',
   });
 
   test('刪除一個不存在的技能 id（uuid 格式正確但查無資料），會被拒絕（失敗回應）', async () => {
-    const res = await api().delete(`/api/coaches/skill/${FAKE_UUID}`);
+    const res = await api()
+      .delete(`/api/coaches/skill/${FAKE_UUID}`)
+      .set('Authorization', `Bearer ${manager.token}`);
     expectFailed(res);
   });
 });
 
-describe('M1 購買方案管理（POST / GET / DELETE /api/credit-package，public）', () => {
+describe('M1 購買方案管理（POST / GET / DELETE /api/credit-package）', () => {
+  let manager;
+
+  beforeEach(async () => {
+    manager = await makeCoach();
+  });
+
   test('新增方案成功後，方案列表查得到這筆資料且欄位形狀正確（id/name/credit_amount/price）', async () => {
     const pkg = await createCreditPackage({ credit_amount: 7, price: 1400 });
 
@@ -102,34 +125,35 @@ describe('M1 購買方案管理（POST / GET / DELETE /api/credit-package，publ
   test('用已存在的方案名稱再新增一次，會被拒絕（失敗回應）', async () => {
     const pkg = await createCreditPackage();
 
-    const dupRes = await api().post('/api/credit-package').send({
-      name: pkg.name,
-      credit_amount: 5,
-      price: 1000,
-    });
+    const dupRes = await api()
+      .post('/api/credit-package')
+      .set('Authorization', `Bearer ${manager.token}`)
+      .send({ name: pkg.name, credit_amount: 5, price: 1000 });
     expectFailed(dupRes);
   });
 
   test('新增方案缺少 price 欄位，會被拒絕（失敗回應）', async () => {
-    const res = await api().post('/api/credit-package').send({
-      name: randName('方案'),
-      credit_amount: 7,
-    });
+    const res = await api()
+      .post('/api/credit-package')
+      .set('Authorization', `Bearer ${manager.token}`)
+      .send({ name: randName('方案'), credit_amount: 7 });
     expectFailed(res);
   });
 
   test('新增方案缺少 name 欄位，會被拒絕（失敗回應）', async () => {
-    const res = await api().post('/api/credit-package').send({
-      credit_amount: 7,
-      price: 1400,
-    });
+    const res = await api()
+      .post('/api/credit-package')
+      .set('Authorization', `Bearer ${manager.token}`)
+      .send({ credit_amount: 7, price: 1400 });
     expectFailed(res);
   });
 
   test('刪除方案成功後，方案列表不再出現這筆資料', async () => {
     const pkg = await createCreditPackage();
 
-    const delRes = await api().delete(`/api/credit-package/${pkg.id}`);
+    const delRes = await api()
+      .delete(`/api/credit-package/${pkg.id}`)
+      .set('Authorization', `Bearer ${manager.token}`);
     expectSuccess(delRes);
 
     const listRes = await api().get('/api/credit-package');

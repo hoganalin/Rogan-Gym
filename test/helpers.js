@@ -66,34 +66,45 @@ async function signupAndLogin(overrides = {}) {
   return { token, userId: payload.id, ...user, loginRes: res };
 }
 
-/** 建一個技能（public 管理端點），回傳 { id, name } */
-async function createSkill(name = randName('技能')) {
-  const res = await api().post('/api/coaches/skill').send({ name });
+/** 建一個技能（需要教練 token），回傳 { id, name } */
+async function createSkill(name = randName('技能'), coachToken) {
+  const token = coachToken || (await makeCoach()).token;
+  const res = await api()
+    .post('/api/coaches/skill')
+    .set('Authorization', `Bearer ${token}`)
+    .send({ name });
   expectSuccess(res);
   return { id: res.body.data.id, name, res };
 }
 
-/** 建一個購買方案（public 管理端點），回傳 { id, name, credit_amount, price } */
-async function createCreditPackage(overrides = {}) {
+/** 建一個購買方案（需要教練 token），回傳 { id, name, credit_amount, price } */
+async function createCreditPackage(overrides = {}, coachToken) {
+  const token = coachToken || (await makeCoach()).token;
   const pkg = {
     name: randName('方案'),
     credit_amount: 7,
     price: 1400,
     ...overrides,
   };
-  const res = await api().post('/api/credit-package').send(pkg);
+  const res = await api()
+    .post('/api/credit-package')
+    .set('Authorization', `Bearer ${token}`)
+    .send(pkg);
   expectSuccess(res);
   return { id: res.body.data.id, ...pkg, res };
 }
 
-/** 把使用者升級成教練（public 端點） */
-async function promoteToCoach(userId, overrides = {}) {
+/** 把登入的使用者升級成教練 */
+async function promoteToCoach(token, overrides = {}) {
   const body = {
     experience_years: 3,
     description: '一位用 API 生出來的教練',
     ...overrides,
   };
-  return api().post(`/api/admin/coaches/${userId}`).send(body);
+  return api()
+    .post('/api/users/me/coach')
+    .set('Authorization', `Bearer ${token}`)
+    .send(body);
 }
 
 /**
@@ -103,7 +114,7 @@ async function promoteToCoach(userId, overrides = {}) {
  */
 async function makeCoach(overrides = {}) {
   const user = await signupAndLogin(overrides);
-  const promoteRes = await promoteToCoach(user.userId);
+  const promoteRes = await promoteToCoach(user.token);
   expectSuccess(promoteRes);
   const coachId = promoteRes.body?.data?.coach?.id ?? null;
   const { token } = await login(user.email, user.password);
@@ -129,7 +140,7 @@ async function createCourse(coachToken, skillId, overrides = {}) {
     ...overrides,
   };
   const res = await api()
-    .post('/api/admin/coaches/courses')
+    .post('/api/coach/courses')
     .set('Authorization', `Bearer ${coachToken}`)
     .send(course);
   expectSuccess(res);

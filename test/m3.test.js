@@ -4,15 +4,15 @@
  * ============================================================
  *
  * 這個檔案在測什麼：
- * 1. 升級教練（POST /api/admin/coaches/:userId）：一般會員可以被升級成教練，
+ * 1. 升級教練（POST /api/users/me/coach）：登入會員只能升級自己，
  *    同一個人不能被升級兩次
- * 2. 教練個人資料（GET / PUT /api/admin/coaches）：只有教練本人能看與改，
+ * 2. 教練個人資料（GET / PUT /api/coach）：只有教練本人能看與改，
  *    profile_image_url 必須是 https 開頭，skill_ids 要能存能讀
- * 3. 開課（POST /api/admin/coaches/courses）：欄位齊全才能開課、
+ * 3. 開課（POST /api/coach/courses）：欄位齊全才能開課、
  *    meeting_url 必須 https、一般會員不能開課
- * 4. 單一課程查詢與更新（GET / PUT /api/admin/coaches/courses/:courseId）：
+ * 4. 單一課程查詢與更新（GET / PUT /api/coach/courses/:courseId）：
  *    只有課主能查、能改自己的課（owner-scoped）
- * 5. 教練課程列表（GET /api/admin/coaches/courses）：陣列、含中文 status 與
+ * 5. 教練課程列表（GET /api/coach/courses）：陣列、含中文 status 與
  *    participants 欄位
  *
  * 紅燈時的三步自救：
@@ -38,36 +38,36 @@ const {
 } = require('./helpers');
 
 describe('M3 升級教練與教練後台', () => {
-  describe('升級教練 POST /api/admin/coaches/:userId', () => {
+  describe('升級教練 POST /api/users/me/coach', () => {
     test('把一般會員升級成教練 → 成功，且升級後重新登入就能進教練後台', async () => {
       const user = await signupAndLogin();
 
-      const res = await promoteToCoach(user.userId);
+      const res = await promoteToCoach(user.token);
       expectSuccess(res);
 
       // 行為驗證：升級真的生效 —— 重新登入拿新身分，教練後台要進得去
       const { token } = await login(user.email, user.password);
       const profileRes = await api()
-        .get('/api/admin/coaches')
+        .get('/api/coach')
         .set('Authorization', `Bearer ${token}`);
       expectSuccess(profileRes);
     });
 
     test('對同一個人再升級一次 → 失敗（已經是教練了）', async () => {
       const user = await signupAndLogin();
-      expectSuccess(await promoteToCoach(user.userId));
+      expectSuccess(await promoteToCoach(user.token));
 
-      const again = await promoteToCoach(user.userId);
+      const again = await promoteToCoach(user.token);
       expectFailed(again);
     });
   });
 
-  describe('教練個人資料 GET /api/admin/coaches', () => {
+  describe('教練個人資料 GET /api/coach', () => {
     test('教練查看自己的資料 → 回傳 experience_years / description / skill_ids', async () => {
       const coach = await makeCoach();
 
       const res = await api()
-        .get('/api/admin/coaches')
+        .get('/api/coach')
         .set('Authorization', `Bearer ${coach.token}`);
       expectSuccess(res);
       expect(res.body.data).toHaveProperty('experience_years');
@@ -79,25 +79,25 @@ describe('M3 升級教練與教練後台', () => {
       const member = await signupAndLogin();
 
       const res = await api()
-        .get('/api/admin/coaches')
+        .get('/api/coach')
         .set('Authorization', `Bearer ${member.token}`);
       expectFailed(res);
     });
 
     test('沒帶 token 查教練資料 → 失敗，訊息為「請先登入」', async () => {
-      const res = await api().get('/api/admin/coaches');
+      const res = await api().get('/api/coach');
       expectFailed(res);
       expect(res.body.message).toBe('請先登入');
     });
   });
 
-  describe('更新教練個人資料 PUT /api/admin/coaches', () => {
+  describe('更新教練個人資料 PUT /api/coach', () => {
     test('教練更新資料（含技能清單）→ 成功，回傳的 skill_ids 包含該技能', async () => {
       const coach = await makeCoach();
       const skill = await createSkill();
 
       const res = await api()
-        .put('/api/admin/coaches')
+        .put('/api/coach')
         .set('Authorization', `Bearer ${coach.token}`)
         .send({
           experience_years: 5,
@@ -115,7 +115,7 @@ describe('M3 升級教練與教練後台', () => {
       const skill = await createSkill();
 
       const res = await api()
-        .put('/api/admin/coaches')
+        .put('/api/coach')
         .set('Authorization', `Bearer ${coach.token}`)
         .send({
           experience_years: 5,
@@ -127,7 +127,7 @@ describe('M3 升級教練與教練後台', () => {
     });
   });
 
-  describe('開課 POST /api/admin/coaches/courses', () => {
+  describe('開課 POST /api/coach/courses', () => {
     test('教練開新課程 → 成功，回傳課程 id', async () => {
       const coach = await makeCoach();
       const skill = await createSkill();
@@ -142,7 +142,7 @@ describe('M3 升級教練與教練後台', () => {
       const skill = await createSkill();
 
       const res = await api()
-        .post('/api/admin/coaches/courses')
+        .post('/api/coach/courses')
         .set('Authorization', `Bearer ${coach.token}`)
         .send({
           skill_id: skill.id,
@@ -160,7 +160,7 @@ describe('M3 升級教練與教練後台', () => {
       const skill = await createSkill();
 
       const res = await api()
-        .post('/api/admin/coaches/courses')
+        .post('/api/coach/courses')
         .set('Authorization', `Bearer ${coach.token}`)
         .send({
           skill_id: skill.id,
@@ -179,7 +179,7 @@ describe('M3 升級教練與教練後台', () => {
       const skill = await createSkill();
 
       const res = await api()
-        .post('/api/admin/coaches/courses')
+        .post('/api/coach/courses')
         .set('Authorization', `Bearer ${member.token}`)
         .send({
           skill_id: skill.id,
@@ -201,7 +201,7 @@ describe('M3 升級教練與教練後台', () => {
       const course = await createCourse(coach.token, skill.id);
 
       const res = await api()
-        .get(`/api/admin/coaches/courses/${course.id}`)
+        .get(`/api/coach/courses/${course.id}`)
         .set('Authorization', `Bearer ${coach.token}`);
       expectSuccess(res);
       expect(res.body.data.name).toBe(course.name);
@@ -216,7 +216,7 @@ describe('M3 升級教練與教練後台', () => {
       const course = await createCourse(owner.token, skill.id);
 
       const res = await api()
-        .get(`/api/admin/coaches/courses/${course.id}`)
+        .get(`/api/coach/courses/${course.id}`)
         .set('Authorization', `Bearer ${stranger.token}`);
       expectFailed(res);
     });
@@ -228,7 +228,7 @@ describe('M3 升級教練與教練後台', () => {
       const newName = randName('改版課程');
 
       const res = await api()
-        .put(`/api/admin/coaches/courses/${course.id}`)
+        .put(`/api/coach/courses/${course.id}`)
         .set('Authorization', `Bearer ${coach.token}`)
         .send({
           skill_id: skill.id,
@@ -243,7 +243,7 @@ describe('M3 升級教練與教練後台', () => {
 
       // 行為驗證：改完再查一次，內容真的變了
       const check = await api()
-        .get(`/api/admin/coaches/courses/${course.id}`)
+        .get(`/api/coach/courses/${course.id}`)
         .set('Authorization', `Bearer ${coach.token}`);
       expectSuccess(check);
       expect(check.body.data.name).toBe(newName);
@@ -258,7 +258,7 @@ describe('M3 升級教練與教練後台', () => {
 
       // 外人送一份「欄位都合法」的更新，唯一該擋下來的理由只有「這不是他的課」
       const res = await api()
-        .put(`/api/admin/coaches/courses/${course.id}`)
+        .put(`/api/coach/courses/${course.id}`)
         .set('Authorization', `Bearer ${stranger.token}`)
         .send({
           skill_id: skill.id,
@@ -273,21 +273,21 @@ describe('M3 升級教練與教練後台', () => {
 
       // 行為驗證：課主再查一次，內容要維持原樣（沒有被外人蓋掉）
       const check = await api()
-        .get(`/api/admin/coaches/courses/${course.id}`)
+        .get(`/api/coach/courses/${course.id}`)
         .set('Authorization', `Bearer ${owner.token}`);
       expectSuccess(check);
       expect(check.body.data.name).toBe(course.name);
     });
   });
 
-  describe('教練課程列表 GET /api/admin/coaches/courses', () => {
+  describe('教練課程列表 GET /api/coach/courses', () => {
     test('列表是陣列、包含剛開的課，每堂課有中文 status 與 participants 欄位', async () => {
       const coach = await makeCoach();
       const skill = await createSkill();
       const course = await createCourse(coach.token, skill.id);
 
       const res = await api()
-        .get('/api/admin/coaches/courses')
+        .get('/api/coach/courses')
         .set('Authorization', `Bearer ${coach.token}`);
       expectSuccess(res);
       expect(Array.isArray(res.body.data)).toBe(true);

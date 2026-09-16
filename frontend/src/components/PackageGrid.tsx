@@ -1,10 +1,22 @@
 import type { CreditPackage } from "../types/api";
 
-const PACKAGE_PERKS = [
-  "適合想先體驗的新會員",
-  "單堂均價最省，長期訓練首選",
-  "堂數最多，排課彈性最大",
-];
+const PACKAGE_PERKS: Record<string, string[]> = {
+  體驗方案: [
+    "4 堂輕量入門，適合初次體驗",
+    "探索教練風格，找到喜歡的課程",
+    "從小目標開始，踏出運動第一步",
+  ],
+  標準方案: [
+    "16 堂循序累積，建立運動習慣",
+    "每堂 NT$ 550，比體驗方案省 50 元",
+    "適合規律排課，穩定推進訓練目標",
+  ],
+  年度方案: [
+    "48 堂充裕額度，適合長期訓練",
+    "每堂 NT$ 500，三種方案中最優惠",
+    "搭配多元課程，持續挑戰進階目標",
+  ],
+};
 
 export function PackageGrid({
   packages,
@@ -18,19 +30,22 @@ export function PackageGrid({
   const sorted = [...packages].sort((a, b) => a.price - b.price);
 
   return (
-    <div
-      {...(scrollFx ? { "data-pkg-track": "1" } : {})}
-      className="grid grid-cols-1 gap-5 sm:grid-cols-3"
-    >
-      {sorted.map((pkg, i) => {
-        const featured = sorted.length === 3 && i === 1;
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+      {sorted.map((pkg) => {
+        const featured = pkg.name === "年度方案";
         const unit = Math.round(pkg.price / pkg.credit_amount);
-        const perk = PACKAGE_PERKS[Math.min(i, PACKAGE_PERKS.length - 1)];
+        const perks = PACKAGE_PERKS[pkg.name] ?? [
+          "可報名全站所有教練課程",
+          "取消報名自動退回堂數",
+          "依照自己的步調安排訓練",
+        ];
         return (
           <div
             key={pkg.id}
-            {...(scrollFx ? { "data-rise": "1", "data-pkg": "1" } : {})}
-            className={`relative rounded-md border p-8 ${
+            {...(scrollFx ? { "data-rise": "1" } : {})}
+          >
+          <div
+            className={`package-card relative h-full rounded-md border p-8 ${
               featured ? "border-[#4a3b33] bg-[#15120f]" : "border-line bg-surface"
             }`}
           >
@@ -51,7 +66,7 @@ export function PackageGrid({
             </div>
             <div className="mt-6 h-px bg-line" />
             <div className="mt-6 flex flex-col gap-3">
-              {["可報名全站所有教練課程", "取消報名自動退回堂數", perk].map((line) => (
+              {perks.map((line) => (
                 <div key={line} className="flex gap-2.5 text-[13px] font-light text-[#cfc9c2]">
                   <span className="text-[11px] text-brand-500">◆</span>
                   {line}
@@ -61,7 +76,7 @@ export function PackageGrid({
             <button
               type="button"
               onClick={() => onBuy(pkg.id, pkg.name)}
-              className={`mt-7 w-full rounded-[4px] py-3.5 text-sm font-bold ${
+              className={`mt-7 w-full cursor-pointer rounded-[4px] py-3.5 text-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-400 motion-reduce:transition-none ${
                 featured
                   ? "bg-brand-500 text-ink hover:bg-brand-400"
                   : "border border-[#2f3238] bg-transparent text-body hover:border-brand-400"
@@ -69,6 +84,7 @@ export function PackageGrid({
             >
               購買方案
             </button>
+          </div>
           </div>
         );
       })}

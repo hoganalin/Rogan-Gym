@@ -1,6 +1,6 @@
 /**
  * M6 合約測試：教練月營收（挑戰）
- * GET /api/admin/coaches/revenue?month={英文小寫月份名}
+ * GET /api/coach/revenue?month={英文小寫月份名}
  *
  * 這個里程碑在測什麼：
  * - 教練查「自己」的當月營收統計，回傳 data.total = { revenue, participants, course_count }
@@ -40,7 +40,7 @@ const currentMonth = () => MONTH_NAMES[new Date().getMonth()];
 /** 用教練 token 查當月營收 */
 function getRevenue(coachToken) {
   return api()
-    .get('/api/admin/coaches/revenue')
+    .get('/api/coach/revenue')
     .query({ month: currentMonth() })
     .set('Authorization', `Bearer ${coachToken}`);
 }
