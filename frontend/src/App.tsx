@@ -9,6 +9,7 @@ import HomeView from "./pages/public/HomeView";
 import CoachesView from "./pages/public/CoachesView";
 import CoachDetail from "./pages/public/CoachDetail";
 import FitnessPlans from "./pages/public/FitnessPlans";
+import ScheduleView from "./pages/public/ScheduleView";
 import LoginView from "./pages/public/auth/LoginView";
 import SignupView from "./pages/public/auth/SignupView";
 import UserDashboardView from "./pages/user/DashboardView";
@@ -33,6 +34,7 @@ export default function App() {
             <Route index element={<HomeView />} />
             <Route path="coaches" element={<CoachesView />} />
             <Route path="coaches/:coachId" element={<CoachDetail />} />
+            <Route path="schedule" element={<ScheduleView />} />
             <Route path="fitness-plans" element={<FitnessPlans />} />
 
             <Route path="user" element={<ProtectedRoute requiredRole="USER" />}>
