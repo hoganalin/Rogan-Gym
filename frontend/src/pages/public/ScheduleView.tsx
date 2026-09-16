@@ -13,16 +13,31 @@ export default function ScheduleView() {
   useEffect(() => {
     let cancelled = false;
 
-    getCoachCards(100, 1)
-      .then(({ data }) => {
-        if (!cancelled) setCourses(data.flatMap((coach) => coach.upcomingCourses));
-      })
-      .catch(() => {
-        if (!cancelled) setError("載入課程時間表失敗，請稍後再試。");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    async function loadSchedule() {
+      // The public schedule fans out to several coach endpoints. A Render
+      // cold start or a brief network hiccup should not leave visitors on a
+      // permanent error state, so retry the complete request a limited time.
+      for (let attempt = 1; attempt <= 3; attempt += 1) {
+        try {
+          const { data } = await getCoachCards(100, 1);
+          if (!cancelled) {
+            setCourses(data.flatMap((coach) => coach.upcomingCourses));
+            setError(null);
+          }
+          return;
+        } catch {
+          if (attempt < 3) {
+            await new Promise((resolve) => window.setTimeout(resolve, attempt * 1000));
+          }
+        }
+      }
+
+      if (!cancelled) setError("載入課程時間表失敗，請稍後再試。");
+    }
+
+    void loadSchedule().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
 
     return () => {
       cancelled = true;
