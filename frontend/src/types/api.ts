@@ -174,8 +174,8 @@ export interface CoachCoursePayload {
   meeting_url: string;
 }
 
-// POST/PUT `admin/coaches/courses` return the raw saved course row, which
-// (unlike GET `admin/coaches/courses/:id`) has no joined `skill_name` and
+// POST/PUT `coach/courses` return the raw saved course row, which
+// (unlike GET `coach/courses/:id`) has no joined `skill_name` and
 // differs slightly between create (`user_id`) and update (`coach_id`) — only
 // the fields both responses actually share are declared here.
 export interface CoachCourseMutationResult {

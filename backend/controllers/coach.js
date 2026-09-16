@@ -9,14 +9,8 @@ const { IsNull } = require("typeorm");
 
 const coachController = {
   async assignCoach(req, res, next) {
-    //等待資料庫連線成功後，才去找資料所以要使用await
-
-    const { userid } = req.params; //取得id
+    const userId = req.user.id;
     const { experience_years, description, profile_image_url } = req.body;
-    if (!userid) {
-      next(appError(400, "使用者不存在"));
-      return;
-    }
     //欄位缺漏或格式不對（experience_years 不是 0 以上的整數、description 是空字串、profile_image_url 有值但不是 https 開頭）→「欄位未填寫正確」
     if (
       !isInteger(experience_years) ||
@@ -31,14 +25,14 @@ const coachController = {
     const userRepo = dataSource.getRepository("User");
     const coachRepo = dataSource.getRepository("Coach");
     const user = await dataSource.getRepository("User").findOneBy({
-      id: userid.trim().toLowerCase(),
+      id: userId,
     });
     if (!user) {
       next(appError(400, "使用者不存在"));
       return;
     }
     const findUser = await coachRepo.findOneBy({
-      user_id: userid.trim().toLowerCase(),
+      user_id: userId,
     });
     if (findUser) {
       next(appError(409, "使用者已經是教練"));
@@ -47,7 +41,7 @@ const coachController = {
     //存入資料庫
 
     const newCoach = await coachRepo.save({
-      user_id: userid.trim().toLowerCase(),
+      user_id: userId,
       experience_years: experience_years,
       description: description,
       profile_image_url: profile_image_url,

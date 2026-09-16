@@ -8,7 +8,7 @@ router.get("/", isAuth, isCoach, coachController.getCoach);
 router.put("/", isAuth, isCoach, coachController.putCoach);
 router.get("/courses", isAuth, isCoach, coachController.getAdminCoachCourses);
 router.post("/courses", isAuth, isCoach, coachController.addCoachCourses);
-router.get("/courses/:courseId", isAuth, coachController.getCoachCourse);
+router.get("/courses/:courseId", isAuth, isCoach, coachController.getCoachCourse);
 router.get("/revenue", isAuth, isCoach, coachController.getRevenue);
 router.put(
   "/courses/:courseId",
@@ -16,6 +16,5 @@ router.put(
   isCoach,
   coachController.putCoachCourse,
 ); //更新單一課程
-router.post("/:userid", coachController.assignCoach);
 
 module.exports = router;

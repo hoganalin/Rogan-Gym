@@ -4,13 +4,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type Options = {
-  /** 方案卡高亮色，預設 brand 橘 */
-  accent?: string;
-  /** 卡片未高亮時的邊框色 */
-  idleBorder?: string;
-};
-
 /**
  * 首頁 / 教練列表的捲動效果。
  *
@@ -20,8 +13,6 @@ type Options = {
  *   data-reveal          主視覺內的文字元素（可重複）
  *   data-count           要 count-up 的數字元素（文字內容需為數字）
  *   data-rise            捲到才浮上的卡片 / 列（可重複）
- *   data-pkg-track       方案卡的 grid 容器
- *   data-pkg             每一張方案卡
  *   data-nav             導覽列外層（內含 <nav>）
  *
  * 所有效果都包在 gsap.matchMedia 的 "(prefers-reduced-motion: no-preference)"
@@ -29,7 +20,6 @@ type Options = {
  */
 export function useScrollFx(
   root: RefObject<HTMLElement | null>,
-  { accent = "#f4501e", idleBorder = "#22242a" }: Options = {},
 ) {
   useLayoutEffect(() => {
     const el = root.current;
@@ -102,32 +92,6 @@ export function useScrollFx(
             }),
         });
 
-        // ── 方案卡逐張高亮（進度驅動，不 pin） ─────────
-        const track = el.querySelector("[data-pkg-track]");
-        const cards = q("[data-pkg]");
-        if (track && cards.length) {
-          let last = -1;
-          ScrollTrigger.create({
-            trigger: track,
-            start: "top 80%",
-            end: "bottom 45%",
-            scrub: true,
-            onUpdate: (self) => {
-              const i = Math.min(cards.length - 1, Math.floor(self.progress * cards.length));
-              if (i === last) return;
-              last = i;
-              cards.forEach((card, n) => {
-                gsap.to(card, {
-                  borderColor: n === i ? accent : idleBorder,
-                  y: n === i ? -6 : 0,
-                  duration: 0.3,
-                  ease: "power2.out",
-                });
-              });
-            },
-          });
-        }
-
         // ── 導覽列捲動收放 ───────────────────────────
         const nav = el.querySelector<HTMLElement>("[data-nav] nav");
         if (nav) {
@@ -152,5 +116,5 @@ export function useScrollFx(
     });
 
     return () => mm.revert();
-  }, [root, accent, idleBorder]);
+  }, [root]);
 }

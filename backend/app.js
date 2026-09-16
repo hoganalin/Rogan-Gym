@@ -37,7 +37,7 @@ app.get("/healthcheck", async (req, res, next) => {
 });
 app.use("/api/coaches/skill", skill);
 app.use("/api/users", users);
-app.use("/api/admin/coaches", coach);
+app.use("/api/coach", coach);
 app.use("/api/coaches", coachPublic);
 app.use("/api/courses", courses);
 // 404

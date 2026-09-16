@@ -12,7 +12,7 @@ const STEPS = [
 ];
 
 export default function BecomeCoachView() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [experienceYears, setExperienceYears] = useState("");
   const [description, setDescription] = useState("");
@@ -21,11 +21,10 @@ export default function BecomeCoachView() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!user) return;
     setSubmitting(true);
 
     try {
-      await postPromoteUserToCoach(user.id, {
+      await postPromoteUserToCoach({
         experience_years: Number(experienceYears),
         description,
         ...(profileImageUrl ? { profile_image_url: profileImageUrl } : {}),

@@ -127,9 +127,11 @@ paths:
         - "M1 種資料：技能與方案"
       summary: 新增教練技能
       description: |-
-        新增一筆技能，不需登入（簡化設計：這是管理用的「種資料」端點，正式產品會加權限控管）。
+        新增一筆技能。需要登入且登入者必須具備 COACH 角色。
         技能名稱不可重複。
         ⚠️ 成功狀態碼是 **200**（實際行為，非常見慣例的 201）。回應驗證時只檢查「成功 2xx ＋ status 欄位」，但本文件以 200 為準。
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -192,9 +194,11 @@ paths:
         - "M1 種資料：技能與方案"
       summary: 刪除教練技能
       description: |-
-        依 id 刪除一筆技能，不需登入（同樣是簡化設計的管理端點）。
+        依 id 刪除一筆技能。需要登入且登入者必須具備 COACH 角色。
         成功回應的 `data` 內容不是重點——目前的實作回一個刪除結果物件（見範例），回 `null` 也可以，實務上只需檢查 2xx ＋ `status: "success"`。
         ⚠️ skillId 必須是合法的 uuid 字串：格式正確但查無資料 → 400「ID錯誤」；**根本不是 uuid 格式**（例如隨便打 `abc`）不強制規範行為，建議回 400 failed，不要讓它變成 500。
+      security:
+        - bearerAuth: []
       parameters:
         - name: skillId
           in: path
@@ -274,9 +278,11 @@ paths:
         - "M1 種資料：技能與方案"
       summary: 新增購買方案
       description: |-
-        新增一筆堂數方案，不需登入（簡化設計的管理端點；前端頁面沒有呼叫它，但它是把「健身方案」資料種進系統的唯一入口——不先用這支種資料，方案頁會永遠空白、購買流程也無法進行）。
+        新增一筆堂數方案。需要登入且登入者必須具備 COACH 角色；前端頁面不會直接呼叫此管理端點。
         方案名稱不可重複。`credit_amount` 與 `price` 都必須是 **0 以上的整數（數字型別）**——price 請送數字，不要送字串，送字串會被擋 400。
         ⚠️ 成功狀態碼是 **200**（實際行為，非常見慣例的 201）。回應驗證時只檢查「成功 2xx ＋ status 欄位」，201 亦屬正確。
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -420,9 +426,11 @@ paths:
         - "M1 種資料：技能與方案"
       summary: 刪除購買方案
       description: |-
-        依 id 刪除一筆方案，不需登入（簡化設計的管理端點，前端頁面沒有呼叫它）。
+        依 id 刪除一筆方案。需要登入且登入者必須具備 COACH 角色；前端頁面不會直接呼叫此管理端點。
         成功回應的 `data` 內容不是重點——目前的實作回一個刪除結果物件（見範例），回 `null` 也可以，實務上只需檢查 2xx ＋ `status: "success"`。
         ⚠️ creditPackageId 必須是合法的 uuid 字串：格式正確但查無資料 → 400「ID錯誤」；**不是 uuid 格式**不強制規範行為，建議回 400 failed，不要讓它變成 500。
+      security:
+        - bearerAuth: []
       parameters:
         - name: creditPackageId
           in: path
@@ -1225,30 +1233,21 @@ paths:
                     status: failed
                     message: 無效的 token
   # ===== g3-admin-coach =====
-  /api/admin/coaches/{userId}:
+  /api/users/me/coach:
     post:
       tags:
         - M3 教練後台
-      summary: 將指定使用者升級為教練
+      summary: 將登入的使用者升級為教練
       description: |
-        把一般使用者（role 為 USER）升級成教練：建立一筆教練資料，並把該使用者的 role 改成 COACH。升級成功後，這位使用者就能登入使用教練後台的功能。
-
-        ⚠️ **安全性註記（課程簡化）**：這支 API 是 public、**不需要登入**就能呼叫。真實世界的系統絕對不會讓任何人都能把別人升級成教練——正式產品這種端點一定要做身分與權限控管。本課程為了讓大家專注在主流程，刻意簡化，請記得這不是正常設計。
+        將登入帳號（role 為 USER）升級為教練：建立一筆教練資料，並把該使用者的 role 改成 COACH。使用者 id 一律由 JWT 取得，呼叫端無法指定或升級其他帳號。升級成功後需重新登入，新的 token 才會帶有 COACH 角色。
 
         行為備註：
         - `profile_image_url` 是**選填**：可以整個不給、也可以給空字串，都會過。但只要有給非空的值，就必須以 `https` 開頭，否則回 400「欄位未填寫正確」。
-        - ⚠️ 注意：這條規則跟「更新教練資料（PUT /api/admin/coaches）」**不一樣**（那支是必填），對照表請看 PUT 那支的說明。
+        - ⚠️ 注意：這條規則跟「更新教練資料（PUT /api/coach）」**不一樣**（那支是必填）。
         - 同一個使用者只能升級一次：已經是教練再打一次會回 409「使用者已經是教練」。
         - 文件寫的狀態碼（201/400/409）是實際行為，供參考；**回應驗證只看「成功 2xx / 失敗 4xx」加上回應的 status 欄位**，不逐碼比對。
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: 要升級的使用者 id（uuid 字串）
-          schema:
-            type: string
-            format: uuid
-          example: "f3b7d2c1-8a4e-4c6f-9d2b-5e1a7c3f9b8d"
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -1296,7 +1295,6 @@ paths:
           description: |
             可預期的失敗，依情境回不同訊息：
             - 欄位缺漏或格式不對（experience_years 不是 0 以上的整數、description 是空字串、profile_image_url 有值但不是 https 開頭）→「欄位未填寫正確」
-            - userId 查不到對應的使用者 →「使用者不存在」
           content:
             application/json:
               examples:
@@ -1305,11 +1303,6 @@ paths:
                   value:
                     status: failed
                     message: "欄位未填寫正確"
-                使用者不存在:
-                  summary: userId 查無此使用者
-                  value:
-                    status: failed
-                    message: "使用者不存在"
         "409":
           description: 該使用者已經是教練（重複升級）
           content:
@@ -1317,7 +1310,7 @@ paths:
               example:
                 status: failed
                 message: "使用者已經是教練"
-  /api/admin/coaches:
+  /api/coach:
     get:
       tags:
         - M3 教練後台
@@ -1389,7 +1382,7 @@ paths:
 
         ⚠️ **profile_image_url 規則跟「升級教練」那支不一樣**，這是最容易踩的坑，對照表如下：
 
-        | 規則 | 升級教練 POST /api/admin/coaches/{userId} | 更新教練資料 PUT /api/admin/coaches |
+        | 規則 | 升級教練 POST /api/users/me/coach | 更新教練資料 PUT /api/coach |
         |---|---|---|
         | 是否必填 | 選填（可不給、可空字串） | **必填**（不給或空字串直接 400） |
         | 格式要求 | 有值時必須以 https 開頭 | 必須以 https 開頭 |
@@ -1497,7 +1490,7 @@ paths:
                     status: failed
                     message: "使用者尚未成為教練"
   # ===== g4-admin-courses =====
-  /api/admin/coaches/courses:
+  /api/coach/courses:
     get:
       tags:
         - M3 教練後台
@@ -1794,7 +1787,7 @@ paths:
                   value:
                     status: failed
                     message: 使用者尚未成為教練
-  /api/admin/coaches/courses/{courseId}:
+  /api/coach/courses/{courseId}:
     get:
       tags:
         - M3 教練後台
@@ -2111,7 +2104,7 @@ paths:
                   value:
                     status: failed
                     message: 無效的 token
-  /api/admin/coaches/revenue:
+  /api/coach/revenue:
     get:
       tags:
         - M6 月營收（挑戰）
