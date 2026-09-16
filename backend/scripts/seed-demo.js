@@ -76,8 +76,8 @@ async function main() {
         for (let batch = 0; batch < Math.ceil(coaches.length * 2 / annual.credit_amount); batch++) {
           await ensure("CreditPurchase", { id: id(`purchase:${year}:${m}:${user.id}:${batch}`) }, {
             user_id: user.id, credit_package_id: annual.id,
-            purchased_credits: annual.credit_amount, price_paid: annual.price, purchase_at: dateAt(m, 1, 0),
-          });
+            purchased_credits: annual.credit_amount, price_paid: annual.price, purchase_at: dateAt(m, 1, 8),
+          }, { updateExisting: true });
         }
       }
     }
@@ -87,7 +87,8 @@ async function main() {
       if (!link) await ensure("CoachLinkSkill", { coach_id: coach.id, skill_id: skill.id }, {});
       for (let m = 0; m <= month; m++) {
         for (let slot = 0; slot < 2; slot++) {
-          const first = dateAt(m, 1, 0).getTime();
+          // Keep timestamps within the intended Taipei calendar month when stored as UTC.
+          const first = dateAt(m, 1, 8).getTime();
           const span = Math.min(12 * 86400000, (now.getTime() - first) / 2);
           const start = new Date(first + span * (slot + 1) / 3);
           const course = await ensure("Course", { id: id(`history:${year}:${m}:${coach.id}:${slot}`) }, {
@@ -100,7 +101,7 @@ async function main() {
           for (let n = 0; n < count; n++) {
             await ensure("CourseBooking", { id: id(`booking:${course.id}:${members[n].id}`) }, {
               course_id: course.id, user_id: members[n].id, created_at: new Date(first + span / 10), cancelled_at: null,
-            });
+            }, { updateExisting: true });
           }
         }
       }
