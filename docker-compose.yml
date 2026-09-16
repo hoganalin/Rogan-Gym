@@ -26,15 +26,15 @@ services:
   postgres:
     image: postgres:16.4-alpine3.20
     environment:
-      - POSTGRES_USER=rfitness_demo
-      - POSTGRES_PASSWORD=rfitness_demo_password
+      - POSTGRES_USER=rfitness_app
+      - POSTGRES_PASSWORD=rfitness_local_password
       - POSTGRES_DB=fitness
     volumes:
       - pgData:/var/lib/postgresql/data
     ports:
       - "5433:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U rfitness_demo -d fitness"]
+      test: ["CMD-SHELL", "pg_isready -U rfitness_app -d fitness"]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -59,8 +59,8 @@ services:
       # 啟動的方式使用容器了,所以DB-HOST改成postgres
       - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_USERNAME=rfitness_demo
-      - DB_PASSWORD=rfitness_demo_password
+      - DB_USERNAME=rfitness_app
+      - DB_PASSWORD=rfitness_local_password
       - DB_DATABASE=fitness
       - JWT_SECRET=node2026
       - JWT_EXPIRES_DAY=30d
