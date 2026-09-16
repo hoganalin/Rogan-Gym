@@ -19,6 +19,13 @@ const COACHES = [
   ["李宗翰", "li.zonghan@rfitness.tw", "動作矯正"],
   ["吳佩蓉", "wu.peirong@rfitness.tw", "有氧體能"],
 ];
+const MEMBERS = [
+  ["許志豪", "demo.member1@example.com"],
+  ...Array.from({ length: 11 }, (_, index) => [
+    `示範會員${String(index + 2).padStart(2, "0")}`,
+    `demo.member${index + 2}@example.com`,
+  ]),
+];
 const password = process.env.DEMO_PASSWORD || "Demo12345";
 const now = new Date();
 const taipei = new Date(now.getTime() + 8 * 3600000);
@@ -56,10 +63,10 @@ async function main() {
       await ensure("CoachLinkSkill", { coach_id: coach.id, skill_id: skills[skill].id }, {});
     }
     const members = [];
-    for (let i = 0; i < 12; i++) {
-      members.push(await ensure("User", { email: `demo.member${i + 1}@example.com` }, {
-        name: `示範會員${String(i + 1).padStart(2, "0")}`, password: hash, role: "USER",
-      }));
+    for (const [name, email] of MEMBERS) {
+      members.push(await ensure("User", { email }, {
+        name, password: hash, role: "USER",
+      }, { updateExisting: true }));
     }
     const coaches = await db.getRepository("Coach").find({ order: { id: "ASC" } });
     // Fund every month's bookings before they occur, using real purchase records.
