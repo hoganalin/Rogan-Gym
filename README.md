@@ -114,5 +114,3 @@ GitHub Actions 在推送至 `main` 時會啟動 PostgreSQL、建置前後端，�
 
 - [領域詞彙與關係](CONTEXT.md)：User、Coach、CourseBooking 等名詞與資料關係。
 - [OpenAPI 規格](docs/openapi.yaml)：請求／回應格式與驗證規則。
-
-
