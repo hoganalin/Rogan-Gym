@@ -3,6 +3,7 @@ const appError = require("../utils/appError");
 const { isValidString } = require("../utils/validUtils");
 const { isInteger } = require("../utils/validUtils");
 const { LessThanOrEqual, MoreThan } = require("typeorm");
+const { DEMO_COURSE_DESCRIPTION, getCourseDescription } = require("../constants/courseDescriptions");
 
 const uuidRegex =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -97,10 +98,14 @@ const coachPublicController = {
     const data = await Promise.all(
       courses.map(async (course) => {
         const skill = await skillRepo.findOneBy({ id: course.skill_id });
+        const series = course.name.split("・")[1];
+        const description = course.description === DEMO_COURSE_DESCRIPTION
+          ? getCourseDescription(skill?.name, series) || course.description
+          : course.description;
         return {
           id: course.id,
           name: course.name,
-          description: course.description,
+          description,
           start_at: course.start_at,
           end_at: course.end_at,
           max_participants: course.max_participants,

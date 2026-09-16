@@ -9,8 +9,8 @@ env:
   PORT: 8080
   DB_HOST: localhost
   DB_PORT: 5432
-  DB_USERNAME: rfitness_demo
-  DB_PASSWORD: rfitness_demo_password
+  DB_USERNAME: rfitness_ci
+  DB_PASSWORD: rfitness_ci_password
   DB_DATABASE: fitness
   DB_SYNCHRONIZE: "true"
   DB_ENABLE_SSL: "false"
@@ -30,13 +30,13 @@ jobs:
       postgres:
         image: postgres:16.4-alpine3.20
         env:
-          POSTGRES_USER: rfitness_demo
-          POSTGRES_PASSWORD: rfitness_demo_password
+          POSTGRES_USER: rfitness_ci
+          POSTGRES_PASSWORD: rfitness_ci_password
           POSTGRES_DB: fitness
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U rfitness_demo -d fitness"
+          --health-cmd "pg_isready -U rfitness_ci -d fitness"
           --health-interval 5s
           --health-timeout 3s
           --health-retries 10
