@@ -26,6 +26,45 @@ const MEMBERS = [
     `demo.member${index + 2}@example.com`,
   ]),
 ];
+const COURSE_SERIES = ["入門體驗", "動作精修", "循環挑戰", "週末專項"];
+const COURSE_DESCRIPTIONS = {
+  "肌力訓練": [
+    "從深蹲、髖鉸鏈與推拉動作開始，建立安全的基礎力量與訓練節奏。",
+    "聚焦動作軌跡、發力順序與呼吸控制，細修推、拉與下肢訓練品質。",
+    "以複合動作循環提升全身力量與肌耐力，適合想突破訓練停滯的學員。",
+    "整合深蹲、推拉與核心穩定，完成一堂兼顧力量與實用性的週末訓練。",
+  ],
+  "核心訓練": [
+    "從腹式呼吸與腹壓控制開始，建立軀幹穩定與正確的核心發力感。",
+    "針對骨盆位置、抗旋轉與抗伸展動作，強化核心控制與姿勢穩定。",
+    "以多方向核心循環挑戰軀幹耐力，提升跑跳、深蹲與日常動作的支撐力。",
+    "結合活動度與核心穩定練習，為週末運動安排打下更穩固的身體基礎。",
+  ],
+  "有氧體能": [
+    "從心肺暖身、步頻與強度控制開始，建立可持續的有氧運動習慣。",
+    "透過節奏、姿勢與呼吸調整，提升動作效率與心肺耐力表現。",
+    "結合間歇訓練與全身動作，挑戰心肺續航、爆發力與恢復能力。",
+    "以全身有氧循環開啟週末，兼顧燃脂、耐力與活動度，找回運動節奏。",
+  ],
+  "動作矯正": [
+    "從常見站姿、肩頸與髖部代償開始評估，練習更舒適的基本動作模式。",
+    "針對關節活動度與肌肉控制進行細修，改善深蹲、推拉時的代償習慣。",
+    "透過全身整合動作與穩定練習，建立可帶回日常生活的身體控制能力。",
+    "用溫和且循序漸進的矯正練習整理身體狀態，為下一週的訓練做好準備。",
+  ],
+  "壺鈴": [
+    "認識壺鈴握法、硬舉與髖鉸鏈，安全建立下肢發力與全身協調基礎。",
+    "細修擺盪與架鈴動作，提升髖部爆發力、肩部穩定與節奏控制。",
+    "以壺鈴循環結合力量與心肺訓練，挑戰爆發力、抓握力與動作耐力。",
+    "整合壺鈴擺盪、深蹲與推舉，完成兼具趣味與強度的週末全身訓練。",
+  ],
+  "臀腿專項": [
+    "從臀橋、深蹲與髖部控制開始，建立臀腿肌群的正確發力感與穩定度。",
+    "針對髖、膝與腳踝排列進行動作精修，提升下肢訓練品質與關節控制。",
+    "以單腳穩定、蹲舉與髖伸展循環挑戰臀腿肌耐力，打造扎實下肢力量。",
+    "整合臀腿力量與活動度訓練，為登山、跑步與日常行走建立更穩定的基礎。",
+  ],
+};
 const password = process.env.DEMO_PASSWORD || "Demo12345";
 const now = new Date();
 const taipei = new Date(now.getTime() + 8 * 3600000);
@@ -108,9 +147,12 @@ async function main() {
       // Future dates stay available whenever the demo seed is rerun later.
       for (let slot = 0; slot < 4; slot++) {
         const start = dateAt(month, taipei.getUTCDate() + 2 + slot * 3, 10 + index % 8);
+        const series = COURSE_SERIES[slot];
+        const description = COURSE_DESCRIPTIONS[skill.name]?.[slot]
+          || "依目前體能安排暖身、主題訓練與收操，循序建立安全且可持續的運動習慣。";
         await ensure("Course", { id: id(`upcoming:${coach.id}:${start.toISOString()}`) }, {
-          coach_id: coach.id, skill_id: skill.id, name: `${skill.name}・${["入門體驗", "動作精修", "循環挑戰", "週末專項"][slot]}`,
-          description: "作品展示課程。包含暖身、主題訓練與伸展收操，可依個人體能調整強度；請備妥飲水與毛巾。",
+          coach_id: coach.id, skill_id: skill.id, name: `${skill.name}・${series}`,
+          description,
           start_at: start, end_at: new Date(start.getTime() + 3600000), max_participants: 12,
           meeting_url: "https://example.com/demo-class",
         }, { updateExisting: true });
