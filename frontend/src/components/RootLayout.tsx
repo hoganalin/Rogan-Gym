@@ -6,7 +6,7 @@ const FOOTER_COLS: { title: string; items: { label: string; to: string }[] }[] =
     title: "PLATFORM",
     items: [
       { label: "教練列表", to: "/coaches" },
-      { label: "課程時間表", to: "/" },
+      { label: "課程時間表", to: "/schedule" },
       { label: "健身方案", to: "/fitness-plans" },
       { label: "成為教練", to: "/user/become-coach" },
     ],
@@ -41,7 +41,7 @@ export function RootLayout() {
             <Link to="/coaches" className="hidden text-body hover:text-brand-400 sm:inline">
               教練列表
             </Link>
-            <Link to="/" className="hidden text-body hover:text-brand-400 sm:inline">
+            <Link to="/schedule" className="hidden text-body hover:text-brand-400 sm:inline">
               課程時間表
             </Link>
             <Link to="/fitness-plans" className="hidden text-body hover:text-brand-400 sm:inline">

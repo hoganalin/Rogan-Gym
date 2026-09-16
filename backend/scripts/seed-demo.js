@@ -36,9 +36,11 @@ async function main() {
   const result = await dataSource.transaction(async (db) => {
     // Serialise concurrent seed runs; rollback the entire seed on failure.
     await db.query("SELECT pg_advisory_xact_lock(20260915)");
-    async function ensure(entity, key, values) {
+    async function ensure(entity, key, values, { updateExisting = false } = {}) {
       const repo = db.getRepository(entity);
-      return await repo.findOneBy(key) || await repo.save(repo.create({ ...values, ...key }));
+      const existing = await repo.findOneBy(key);
+      if (!existing) return await repo.save(repo.create({ ...values, ...key }));
+      return updateExisting ? await repo.save({ ...existing, ...values, ...key }) : existing;
     }
     const skills = {};
     for (const name of SKILLS) skills[name] = await ensure("Skill", { name }, {});
@@ -82,11 +84,11 @@ async function main() {
           const span = Math.min(12 * 86400000, (now.getTime() - first) / 2);
           const start = new Date(first + span * (slot + 1) / 3);
           const course = await ensure("Course", { id: id(`history:${year}:${m}:${coach.id}:${slot}`) }, {
-            coach_id: coach.id, skill_id: skill.id, name: `${skill}・${m + 1}月${slot ? "進階" : "基礎"}班`,
+            coach_id: coach.id, skill_id: skill.id, name: `${skill.name}・${m + 1}月${slot ? "進階" : "基礎"}班`,
             description: "示範歷史課程：暖身、動作練習與收操，搭配不同程度的訓練安排。",
             start_at: start, end_at: new Date(start.getTime() + Math.min(3600000, span / 6)),
             max_participants: 12, meeting_url: "https://example.com/demo-class",
-          });
+          }, { updateExisting: true });
           const count = 4 + ((m * 3 + index * 2 + slot) % 8);
           for (let n = 0; n < count; n++) {
             await ensure("CourseBooking", { id: id(`booking:${course.id}:${members[n].id}`) }, {
@@ -99,11 +101,11 @@ async function main() {
       for (let slot = 0; slot < 4; slot++) {
         const start = dateAt(month, taipei.getUTCDate() + 2 + slot * 3, 10 + index % 8);
         await ensure("Course", { id: id(`upcoming:${coach.id}:${start.toISOString()}`) }, {
-          coach_id: coach.id, skill_id: skill.id, name: `${skill}・${["入門體驗", "動作精修", "循環挑戰", "週末專項"][slot]}`,
+          coach_id: coach.id, skill_id: skill.id, name: `${skill.name}・${["入門體驗", "動作精修", "循環挑戰", "週末專項"][slot]}`,
           description: "作品展示課程。包含暖身、主題訓練與伸展收操，可依個人體能調整強度；請備妥飲水與毛巾。",
           start_at: start, end_at: new Date(start.getTime() + 3600000), max_participants: 12,
           meeting_url: "https://example.com/demo-class",
-        });
+        }, { updateExisting: true });
       }
     }
     return { year, months: month + 1, coaches: coaches.length, members: members.length };
