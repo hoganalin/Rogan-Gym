@@ -290,7 +290,7 @@ function HomeContent({
       <div className="mx-auto max-w-6xl px-6 pt-24">
         <div className="flex items-end justify-between">
           <h2 className="font-display text-[34px] font-extrabold tracking-tight">本週課程</h2>
-          <Link to="/coaches" className="text-[13px] font-medium text-brand-500 hover:text-brand-400">
+          <Link to="/schedule" className="text-[13px] font-medium text-brand-500 hover:text-brand-400">
             完整時間表 →
           </Link>
         </div>
