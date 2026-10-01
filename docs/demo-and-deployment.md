@@ -1,5 +1,26 @@
 # 展示資料與公開部署
 
+## 線上展示
+
+- 網站：https://r-fitness-web.onrender.com/
+- API：https://r-fitness-api.onrender.com/api/
+- 健康檢查：https://r-fitness-api.onrender.com/healthcheck
+- Render 前端 `r-fitness-web`、後端 `r-fitness-api` 與獨立的 `r-fitness-db` 已建立，連接 GitHub `main`。
+- 雲端資料庫為 PostgreSQL 18，與本機 Docker PostgreSQL 16 分離。展示資料由 seed 腳本建立，不需上傳本機會員資料。
+- 目前為免費方案，雲端資料庫將於 **2026-10-16** 到期；API 閒置 15 分鐘會休眠，首次請求可能需要約一分鐘。
+- 示範帳號見下表。所有購買均為模擬交易，不涉及付款。此環境資料供多人共用，請勿填入敏感資料。
+
+### 2026-10-01 上線驗收
+
+- GitHub 提交 `71fa427` 的後端 Contract Tests、前端建置與 E2E 均通過。
+- Render 前端與 API 已部署該提交；API `/healthcheck` 回傳 200，資料庫連線正常。
+- 更新雲端示範資料後，公開課表有 7 位教練、28 堂未來課程；瀏覽器確認每頁 6 堂及第二頁導覽正常。
+- 示範會員登入、報名扣 1 堂、取消退回 1 堂通過；教練 10 月營收與報名筆數計算相符；未登入存取教練營收回傳 401。
+- 一次性 seed 後已還原 API Start Command 為 `npm start`，設定 `DB_SYNCHRONIZE=false`，Health Check Path 為 `/healthcheck`。
+- 修正 `verify-demo.js` 的舊營收口徑；在獨立空白 PostgreSQL 16 建立 seed 後，6 位教練 × 10 個月份的 API／SQL 比對、未來課程與剩餘堂數皆通過。本機既有資料未補 10 月歷史資料，直接執行本機 `verify:demo` 會指出該月份缺漏；本次未為了驗證覆寫本機資料。
+
+![正式網站首頁](screenshots/deployed-home.jpg)
+
 ## 本機重建示範資料
 
 需要 Node.js 20+、Docker Desktop。從專案根目錄執行：
@@ -31,7 +52,7 @@ npm --prefix frontend run dev
 - 每位教練另外有未來 2、5、8、11 天的課程，供前台瀏覽與報名。
 - 歷史資料從執行當年 1 月到執行當月，以台北時間決定月份；2026 年 9 月執行即涵蓋 1–9 月。
 - 示範會員有真正的方案購買紀錄，堂數足以支應歷史報名。報表從這些報名查詢計算，沒有在前端寫死數字。
-- 固定識別碼與交易保證同日重跑不重複新增；之後重跑會補上新月份及新的未來課程。已存在的個人資料、密碼、課程與報名不會重設。
+- 固定識別碼與交易保證同日重跑不重複新增；之後重跑會補上新月份及新的未來課程。腳本會更新其管理的示範會員、課程、購買及歷史報名；示範會員密碼會重設為 `DEMO_PASSWORD`（預設 `Demo12345`）。其他帳號不應用此腳本管理。
 - 請只對示範資料庫執行。資料與 `example.com` 上課連結皆為作品展示用途。
 
 ### 示範登入
@@ -41,11 +62,11 @@ npm --prefix frontend run dev
 | 教練 | chen.jianhong@rfitness.tw | Demo12345 |
 | 會員 | demo.member1@example.com | Demo12345 |
 
-可用 `DEMO_PASSWORD` 環境變數設定新建帳號密碼；既有帳號密碼不變。教練登入後到「營收報表」查看每月資料，會員可瀏覽課程、報名並查看課表。
+可用 `DEMO_PASSWORD` 環境變數設定新建帳號與示範會員密碼；既有教練密碼不變。教練登入後到「營收報表」查看每月資料，會員可瀏覽課程、報名並查看課表。
 
 ### 營收口徑
 
-目前 API 按報名建立月份，取未取消報名的**不重複會員數 × 全部方案總價 / 全部方案總堂數**，最後向下取整；`course_count` 實際是未取消報名筆數。它不是金流實收，也不是已完成課程收入。`CONTEXT.md` 的報名筆數描述與目前程式不同；本次資料腳本依現行 API 驗證，未改動營收商業邏輯。面試時可將這項口徑差異作為後續改善議題。
+API 按報名建立月份，取未取消的**報名筆數 × 全部方案總價 / 全部方案總堂數**，最後向下取整；`course_count` 是未取消報名筆數，`participants` 是不重複會員數。這是模擬營收統計，不是金流實收，也不是已完成課程收入。
 
 ## 公開部署：Render
 
@@ -93,6 +114,6 @@ npm --prefix frontend run dev
 4. 重新整理深層路由仍能顯示，登出後不能讀取教練個人 API。
 5. 將公開網站、示範帳號與本文件連結放到 README／履歷。
 
-這份設定說明尚未建立雲端服務或產生公開網址。Render 免費 Web Service 有閒置休眠，免費 Postgres 有使用期限；面試展示若需長期穩定存取，請先確認所選方案條件與費用。
+既有雲端服務網址見本文件開頭。以下操作可重新建立另一組展示環境；請使用獨立的展示資料庫。Render 免費 Web Service 有閒置休眠，免費 Postgres 有使用期限；長期展示需另行選擇方案。
 
 官方文件：[Express 部署](https://render.com/docs/deploy-node-express-app)、[Static Sites](https://render.com/docs/static-sites)、[Postgres](https://render.com/docs/postgresql)、[免費方案限制](https://render.com/docs/free)。
