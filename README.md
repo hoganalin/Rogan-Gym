@@ -4,6 +4,33 @@
 
 **技術亮點：** 以 Node.js／Express／PostgreSQL 實作 RESTful API 與 JWT 授權；以 React／TypeScript 建構雙角色介面；以 Docker Compose、OpenAPI、Jest + Supertest contract tests 與 Playwright E2E 驗證交付品質。
 
+## 線上體驗
+
+**[開啟 R Fitness 展示網站](https://r-fitness-web.onrender.com/)** · [3 分鐘專案介紹](docs/project-presentation.md) · [API 健康檢查](https://r-fitness-api.onrender.com/healthcheck)
+
+不需安裝即可操作。建議先以會員帳號體驗預約，再切換教練帳號查看課程管理與營收報表。
+
+| 身分 | 示範帳號 | 密碼 |
+| --- | --- | --- |
+| 會員 | demo.member1@example.com | Demo12345 |
+| 教練 | chen.jianhong@rfitness.tw | Demo12345 |
+
+### 找教練 → 選課 → 預約
+
+1. **登入會員**：點選「登入」，使用上方會員帳號；可先開啟「我的課表」記下剩餘堂數。
+2. **找教練**：進入「找教練」，查看專長與教練介紹，開啟教練頁面瀏覽課程。
+3. **選課**：也可到「選課與預約」，使用課程／教練搜尋、開課日期或訓練專項篩選。每頁顯示 6 堂課，可用頁碼繼續瀏覽。
+4. **完成預約**：選一堂尚未報名的未來課程，點「報名」並確認。成功後扣除 1 堂額度，點「查看我的課表」確認紀錄。
+5. **體驗取消**：在「我的課表」找到剛才的課程，選「取消報名」並確認，剩餘額度會增加 1 堂。取消紀錄會保留；同一帳號不能重新報名曾取消的同一堂課，再次體驗請選另一堂。
+
+若額度不足，進入「堂數方案」點「購買方案」並確認，再返回選課。**付款為模擬流程：只建立購買紀錄與堂數額度，未串接金流，不需信用卡，也不會真實扣款。**
+
+教練體驗：登出會員後，使用教練帳號登入，查看課程管理與「營收報表」。報表依有效報名筆數與方案平均單堂價格計算，屬於展示用估算，並非金流實收。
+
+公開帳號與資料供多人共用；若出現「已經報名過此課程」，請換一堂課，或自行註冊展示帳號。請勿輸入個人敏感資料。
+
+目前使用 Render 免費方案；API 閒置後首次載入可能需要約一分鐘。現有雲端資料庫將於 **2026-10-16** 到期，長期展示前需升級或搬移資料庫。詳細設定見 [部署指南](docs/demo-and-deployment.md)。
+
 ## 畫面預覽
 
 以下為本機網站於 2026-10-01 的實際截圖，使用展示資料。品牌圖片為生成素材，來源見 [圖片說明](frontend/public/assets/editorial/PROVENANCE.md)。
@@ -20,12 +47,6 @@
 <img src="docs/screenshots/schedule-mobile.png" alt="手機版課表分頁" width="390" />
 
 </details>
-
-**線上展示：[開啟 R Fitness](https://r-fitness-web.onrender.com/)** · [API 健康檢查](https://r-fitness-api.onrender.com/healthcheck) · [部署與示範帳號](docs/demo-and-deployment.md)
-
-堂數購買為模擬交易，會建立購買紀錄與額度，不涉及真實扣款。公開展示帳號與資料供多人共用，請勿輸入個人敏感資料。
-
-目前使用 Render 免費方案；API 閒置後首次載入可能需要約一分鐘。現有雲端資料庫將於 **2026-10-16** 到期，長期展示前需升級或搬移資料庫。
 
 ## 功能一覽
 
@@ -48,7 +69,7 @@
 React 19 + TypeScript + Vite
         │ Axios / JWT
         ▼
-Node.js + Express 5 ── TypeORM ── PostgreSQL 16
+Node.js + Express 5 ── TypeORM ── PostgreSQL
         │
         ├── OpenAPI / Swagger UI
         ├── Jest + Supertest API contract tests
@@ -59,16 +80,16 @@ Node.js + Express 5 ── TypeORM ── PostgreSQL 16
 | --- | --- |
 | 前端 | TypeScript、React 19、Vite、React Router、Tailwind CSS 4、Axios、Recharts、GSAP、SweetAlert2、Day.js、jwt-decode |
 | 後端 | JavaScript、Node.js 20、Express 5、TypeORM、pg、bcrypt、jsonwebtoken、CORS、dotenv |
-| 資料庫／基礎設施 | PostgreSQL 16、Docker、Docker Compose、Swagger UI |
+| 資料庫／基礎設施 | PostgreSQL（本機／CI：16；Render 展示：18）、Docker、Docker Compose、Swagger UI |
 | 品質保證 | Jest、Supertest、Playwright、GitHub Actions、TypeScript 型別檢查 |
 
 ## 本機啟動
 
 ### 展示資料與部署
 
-啟動資料庫並安裝後端依賴後，執行 `npm run seed:demo`，即可建立示範教練、會員、未來課程，以及今年 1 月至本月的歷史報名與營收資料。既有資料保留，同日重跑不會重複新增。
+啟動獨立展示資料庫並安裝後端依賴後，執行 `npm run seed:demo`，即可建立示範教練、會員、未來課程，以及今年 1 月至本月的歷史報名與營收資料。同日重跑不會重複新增，但會更新腳本管理的示範紀錄，請勿對正式會員資料庫執行。
 
-API 啟動後執行 `npm run verify:demo` 驗證每位教練的逐月報表。新建示範教練：`chen.jianhong@rfitness.tw`，示範會員：`demo.member1@example.com`，預設密碼皆為 `Demo12345`（既有帳號密碼不變）。
+API 啟動後執行 `npm run verify:demo` 驗證每位教練的逐月報表。示範帳號見頁首；seed 會將示範會員密碼設為 `DEMO_PASSWORD`（預設 `Demo12345`），既有教練密碼不變。
 
 完整操作、資料口徑與 Render 前後端／PostgreSQL 部署設定：[展示資料與部署指南](docs/demo-and-deployment.md)。
 
@@ -167,6 +188,8 @@ GitHub Actions 在推送至 `main` 時會啟動 PostgreSQL、建置前後端，�
 
 ## 專案文件
 
+- [3 分鐘專案介紹與展示順序](docs/project-presentation.md)
+- [線上展示、示範帳號與部署指南](docs/demo-and-deployment.md)
 - [完整回歸與載入效能紀錄](docs/verification-2026-10-01.md)
 - [領域詞彙與關係](CONTEXT.md)：User、Coach、CourseBooking 等名詞與資料關係。
 - [OpenAPI 規格](docs/openapi.yaml)：請求／回應格式與驗證規則。
