@@ -26,7 +26,7 @@ async function main() {
         WHERE c.coach_id=$1 AND b.cancelled_at IS NULL
         AND EXTRACT(YEAR FROM b.created_at)=$2 AND EXTRACT(MONTH FROM b.created_at)=$3`, [coach.id, year, month + 1]);
       assert(row.participants > 0, `${user.name}: month ${month + 1} missing`);
-      const expected = { revenue: Math.floor(row.participants * average), participants: row.participants, course_count: row.bookings };
+      const expected = { revenue: Math.floor(row.bookings * average), participants: row.participants, course_count: row.bookings };
       if (process.env.VERIFY_API !== "false") {
         const res = await fetch(`${process.env.API_BASE_URL || "http://127.0.0.1:8080/api"}/coach/revenue?month=${months[month]}`, { headers: { Authorization: `Bearer ${token}` } });
         assert.equal(res.status, 200);

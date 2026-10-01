@@ -21,7 +21,11 @@
 
 </details>
 
-目前提供本機啟動方式，尚未部署公開網站。堂數購買為模擬交易，會建立購買紀錄與額度，不涉及真實扣款。
+**線上展示：[開啟 R Fitness](https://r-fitness-web.onrender.com/)** · [API 健康檢查](https://r-fitness-api.onrender.com/healthcheck) · [部署與示範帳號](docs/demo-and-deployment.md)
+
+堂數購買為模擬交易，會建立購買紀錄與額度，不涉及真實扣款。公開展示帳號與資料供多人共用，請勿輸入個人敏感資料。
+
+目前使用 Render 免費方案；API 閒置後首次載入可能需要約一分鐘。現有雲端資料庫將於 **2026-10-16** 到期，長期展示前需升級或搬移資料庫。
 
 ## 功能一覽
 
