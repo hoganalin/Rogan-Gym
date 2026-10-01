@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:8080/api";
+const API_BASE = (process.env.VITE_API_BASE_URL || "http://127.0.0.1:8080/api").replace(/\/$/, "");
 
 interface JsonResponse {
   status: string;
@@ -37,12 +37,12 @@ export async function login(email: string, password: string): Promise<string> {
   return data.token;
 }
 
-export async function promoteToCoach(userId: string): Promise<string> {
-  const json = await postJson(`/admin/coaches/${userId}`, {
+export async function promoteToCoach(token: string): Promise<string> {
+  const json = await postJson("/users/me/coach", {
     experience_years: 5,
     description: "E2E fixture coach",
-    profile_image_url: "https://example.com/coach.jpg",
-  });
+    profile_image_url: "",
+  }, token);
   const data = json.data as { coach: { id: string } };
   return data.coach.id;
 }
@@ -57,7 +57,7 @@ export async function createCourse(token: string, skillId: string, name: string)
   const start = new Date(Date.now() + 24 * 60 * 60 * 1000);
   const end = new Date(start.getTime() + 60 * 60 * 1000);
   await postJson(
-    "/admin/coaches/courses",
+    "/coach/courses",
     {
       skill_id: skillId,
       name,
@@ -71,6 +71,6 @@ export async function createCourse(token: string, skillId: string, name: string)
   );
 }
 
-export async function createCreditPackage(name: string, price: number, creditAmount: number): Promise<void> {
-  await postJson("/credit-package", { name, price, credit_amount: creditAmount });
+export async function createCreditPackage(name: string, price: number, creditAmount: number, token: string): Promise<void> {
+  await postJson("/credit-package", { name, price, credit_amount: creditAmount }, token);
 }

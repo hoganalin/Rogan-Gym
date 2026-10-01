@@ -9,7 +9,7 @@ function fail(message) {
 }
 
 if (!fs.existsSync(backendPackagePath)) {
-  fail('⛔ 找不到 backend/package.json：請確認已在專案根目錄建立 backend/，並已 commit、push。')
+  fail('⛔ 找不到 backend/package.json：請確認專案檔案完整，且目前位於專案根目錄。')
 }
 
 let backendPackage

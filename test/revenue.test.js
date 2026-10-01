@@ -1,20 +1,7 @@
 /**
- * M6 合約測試：教練月營收（挑戰）
- * GET /api/coach/revenue?month={英文小寫月份名}
- *
- * 這個里程碑在測什麼：
- * - 教練查「自己」的當月營收統計，回傳 data.total = { revenue, participants, course_count }
- * - 三條隱形語意（文件「教練後台 — 月營收」一節有明文，容易誤解）：
- *   ① 報名以「報名建立時間」計入該月 —— 不是課程上課時間
- *   ② 年份固定為伺服器當年；?month= 收英文小寫月份名（january ~ december），不是數字
- *   ③ 單堂均價 = 「全部」方案的 Σprice ÷ Σcredit_amount；
- *      營收 = Math.floor(該月未取消報名數 × 均價)，floor 必須在乘完之後才做
- * - 取消是軟刪除：取消掉的報名不算人數、也不算營收（「未取消」口徑）
- *
- * 紅燈時的三步自救：
- * 1. 看測試名稱 —— 名稱描述的是「行為」，先搞清楚是哪個行為跟預期不符
- * 2. 對照 API 文件「教練後台 — 月營收」一節，逐條核對公式、month 參數格式、未取消口徑
- * 3. 本機用 curl / Postman 重打一次同樣的請求（自己種一筆報名再查），看實際回了什麼
+ * 營收 API 合約測試。依當年報名建立月份統計，排除取消紀錄。
+ * 營收按報名筆數乘以所有方案平均單堂價格後取整數；參與人數另計不重複會員。
+ * 測試透過 HTTP 建立獨立資料，不依賴預先建立的帳號或課程。
  */
 const {
   api,
@@ -63,7 +50,7 @@ async function fetchPerCreditPrice() {
   return totalPrice / totalCredits;
 }
 
-describe('M6 教練月營收', () => {
+describe('教練月營收', () => {
   describe('還沒開課的新教練', () => {
     test('教練還沒開任何課：查當月營收，revenue / participants / course_count 都是 0', async () => {
       const coach = await makeCoach();
@@ -118,7 +105,7 @@ describe('M6 教練月營收', () => {
       expect(Number(total.revenue)).toBe(expectedRevenue);
       expect(Number(total.participants)).toBe(2);
       // ⚠️ course_count 的欄位名有誤導性：語意是「該月未取消的報名筆數」
-      //（兩位會員各報一次 = 2），不是課程數 — 詳見 API 文件 M6 一節
+      //（兩位會員各報一次 = 2），不是課程數 — 詳見 API 文件月營收章節
       expect(Number(total.course_count)).toBe(2);
     });
 
@@ -135,6 +122,18 @@ describe('M6 教練月營收', () => {
       expect(Number(total.revenue)).toBe(expectedRevenue);
       expect(Number(total.participants)).toBe(1);
       expect(Number(total.course_count)).toBe(1);
+    });
+
+    test('同一會員報名兩堂課：人數維持 1，營收仍按 2 筆報名計算', async () => {
+      const skill = await createSkill(undefined, coach.token);
+      const secondCourse = await createCourse(coach.token, skill.id);
+      expectSuccess(await bookCourse(memberA.token, secondCourse.id));
+      const perCreditPrice = await fetchPerCreditPrice();
+      const res = await getRevenue(coach.token);
+      expectSuccess(res);
+      expect(Number(res.body.data.total.revenue)).toBe(Math.floor(2 * perCreditPrice));
+      expect(Number(res.body.data.total.participants)).toBe(1);
+      expect(Number(res.body.data.total.course_count)).toBe(2);
     });
   });
 });

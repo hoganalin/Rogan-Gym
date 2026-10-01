@@ -65,7 +65,7 @@ export default function SkillTagsView() {
   }
 
   if (loading) return <p className="text-muted">載入中…</p>;
-  if (error) return <p className="text-rose-400">{error}</p>;
+  if (error) return <p className="text-rose-700">{error}</p>;
 
   return (
     <div>
@@ -81,10 +81,10 @@ export default function SkillTagsView() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="技能名稱"
-          className="flex-1 rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
+          className="flex-1 rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
           required
         />
-        <button type="submit" className="shrink-0 rounded-[4px] bg-brand-500 px-[22px] py-3 text-sm font-bold text-ink hover:bg-brand-400">
+        <button type="submit" className="shrink-0 rounded-[4px] bg-brand-500 px-[22px] py-3 text-sm font-bold text-on-brand hover:bg-brand-400">
           新增
         </button>
       </form>
@@ -101,7 +101,7 @@ export default function SkillTagsView() {
             <button
               type="button"
               onClick={() => handleDelete(skill)}
-              className="text-sm text-[#e8735c] hover:text-[#ff8a70]"
+              className="min-h-11 text-sm text-rose-700 hover:text-rose-800"
             >
               刪除
             </button>

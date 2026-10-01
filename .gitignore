@@ -1,8 +1,22 @@
 node_modules/
-.env
+.env*
+!.env.example
+!.env.sample
+.vercel/
 .DS_Store
 coverage/
 *.log
 dist/
 jest-result.json
 .worktrees/
+
+# Local design and verification workspace
+.impeccable/
+PRODUCT.md
+backend/scripts/refresh-demo-schedule.js
+frontend/public/assets/editorial/*.png
+
+# Database exports and private signing material
+*.dump
+*.pem
+*.key

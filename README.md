@@ -1,16 +1,27 @@
 # R Fitness
 
-## 面試示範資料與部署
-
-啟動資料庫並安裝後端依賴後，執行 `npm run seed:demo`，即可建立示範教練、會員、未來課程，以及今年 1 月至本月的歷史報名與營收資料。既有資料保留，同日重跑不會重複新增。
-
-API 啟動後執行 `npm run verify:demo` 驗證每位教練的逐月報表。新建示範教練：`chen.jianhong@rfitness.tw`，示範會員：`demo.member1@example.com`，預設密碼皆為 `Demo12345`（既有帳號密碼不變）。
-
-完整操作、資料口徑與 Render 前後端／PostgreSQL 部署設定：[面試示範與部署指南](docs/demo-and-deployment.md)。
-
 一個讓會員購買堂數、預約課程，並讓教練管理課程與檢視月營收的全端健身課程平台。
 
 **技術亮點：** 以 Node.js／Express／PostgreSQL 實作 RESTful API 與 JWT 授權；以 React／TypeScript 建構雙角色介面；以 Docker Compose、OpenAPI、Jest + Supertest contract tests 與 Playwright E2E 驗證交付品質。
+
+## 畫面預覽
+
+以下為本機網站於 2026-10-01 的實際截圖，使用展示資料。品牌圖片為生成素材，來源見 [圖片說明](frontend/public/assets/editorial/PROVENANCE.md)。
+
+![R Fitness 首頁](docs/screenshots/home-desktop.png)
+
+<details>
+<summary>找教練與分頁課表</summary>
+
+![教練探索與篩選](docs/screenshots/coaches-desktop.png)
+
+![課表每頁六堂課與頁碼導覽](docs/screenshots/schedule-desktop.png)
+
+<img src="docs/screenshots/schedule-mobile.png" alt="手機版課表分頁" width="390" />
+
+</details>
+
+目前提供本機啟動方式，尚未部署公開網站。堂數購買為模擬交易，會建立購買紀錄與額度，不涉及真實扣款。
 
 ## 功能一覽
 
@@ -49,9 +60,31 @@ Node.js + Express 5 ── TypeORM ── PostgreSQL 16
 
 ## 本機啟動
 
+### 展示資料與部署
+
+啟動資料庫並安裝後端依賴後，執行 `npm run seed:demo`，即可建立示範教練、會員、未來課程，以及今年 1 月至本月的歷史報名與營收資料。既有資料保留，同日重跑不會重複新增。
+
+API 啟動後執行 `npm run verify:demo` 驗證每位教練的逐月報表。新建示範教練：`chen.jianhong@rfitness.tw`，示範會員：`demo.member1@example.com`，預設密碼皆為 `Demo12345`（既有帳號密碼不變）。
+
+完整操作、資料口徑與 Render 前後端／PostgreSQL 部署設定：[展示資料與部署指南](docs/demo-and-deployment.md)。
+
+### 目前展示環境：一個指令啟動
+
+本機既有 `fitness` 資料庫、Docker Desktop 與前後端依賴已安裝時，在專案根目錄執行：
+
+```bash
+npm run dev:local
+```
+
+此指令啟動既有 `node-js-final-2026-postgres-1` 容器，確認資料庫可用後啟動 API（8080）與前端（5174）。服務在背景執行，已運行的服務會沿用。它不會重置資料、加入測試資料或自動同步資料表結構；失敗時會列出本機紀錄檔位置。Docker Desktop 必須先開啟。
+
+展示網址：http://127.0.0.1:5174/ 。需要寫入資料的端對端測試請使用獨立測試資料庫，避免將 `E2E` 資料重新加入展示環境。
+
 ### 方式 A：完整 Docker 環境
 
 需求：Docker Desktop。
+
+先將 `.env.example` 複製為根目錄 `.env`，並將 `JWT_SECRET` 設為隨機字串（可用 `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` 產生）。已有 `.env` 時直接更新設定，避免覆蓋。Compose 會在未提供簽章密鑰時停止啟動；根目錄 `.env` 不納入版本控制。
 
 ```bash
 docker compose up --build
@@ -89,6 +122,22 @@ npm --prefix frontend run dev
 
 ## 測試與驗證
 
+### 完整回歸與乾淨安裝
+
+Docker Desktop 開啟後，在專案根目錄執行：
+
+```bash
+npm run verify:clean
+```
+
+指令會把目前原始碼（含尚未提交的修改）複製到新的系統暫存資料夾，不帶入 `.env`、`node_modules` 或既有建置檔。接著依三份 lockfile 分別執行 `npm ci`，使用獨立、空白的 PostgreSQL 16 測試容器與自動配置的本機埠，完成後端合約測試、重啟保存檢查、型別檢查、建置、開發版與正式建置版瀏覽器測試。
+
+測試自行建立帳號、方案與課程，不需要先執行 seed，也不會連線到展示用的 5433／8080。結束後會停止並移除本次測試容器；原始碼快照、安裝記錄、測試結果與 `report.json` 保留在輸出顯示的暫存資料夾，方便追查失敗。需要網路下載依賴、Docker 映像與 Playwright Chromium。
+
+前端以頁面分割 JavaScript；首頁不預先下載教練營收圖表。正式建置測試另外涵蓋延遲下載時的載入提示、導覽列、直接開啟分頁與重新整理，以及 320／768／1024／1440px 的水平溢出檢查。腳本會檢查每個 JavaScript 區塊不超過 500 kB。憑證攔截器的來源模組測試只在開發版執行，其餘使用者流程也會在正式建置版執行。
+
+### 分開執行（請指向獨立測試資料庫）
+
 ```bash
 # 後端 API contract tests（需先啟動後端與 PostgreSQL）
 npm test
@@ -110,7 +159,10 @@ GitHub Actions 在推送至 `main` 時會啟動 PostgreSQL、建置前後端，�
 - 教練後台、技能與方案管理需要 JWT 與 Coach 角色；教練只能讀寫自己的課程與資料。
 - 升級教練使用 `POST /api/users/me/coach`，由登入 token 取得本人身分，不能指定或升級其他帳號。
 
+後端連線會將 PostgreSQL session 時區設為 Node 執行環境的時區，使無時區 timestamp 欄位的預設建立時間與報表月份一致。部署時應固定 Node 的 `TZ`（本機回歸環境使用 `Asia/Taipei`）；此設定不會自動轉換既有歷史資料。
+
 ## 專案文件
 
+- [完整回歸與載入效能紀錄](docs/verification-2026-10-01.md)
 - [領域詞彙與關係](CONTEXT.md)：User、Coach、CourseBooking 等名詞與資料關係。
 - [OpenAPI 規格](docs/openapi.yaml)：請求／回應格式與驗證規則。

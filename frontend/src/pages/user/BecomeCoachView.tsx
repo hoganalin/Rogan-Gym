@@ -45,8 +45,8 @@ export default function BecomeCoachView() {
 
   return (
     <div>
-      <div className="font-mono text-[11px] tracking-widest text-brand-500">BECOME A COACH</div>
-      <h1 className="mt-4 font-display text-4xl font-extrabold tracking-tight">成為教練</h1>
+
+      <h1 className="font-display text-4xl font-extrabold tracking-tight">成為教練</h1>
       <p className="mt-3 text-sm font-light text-muted">
         填寫經歷與自我介紹，升級為 R Fitness 教練。送出後需重新登入以啟用教練權限。
       </p>
@@ -57,56 +57,56 @@ export default function BecomeCoachView() {
             <div className="flex items-center gap-2.5">
               <span
                 className={`flex h-[26px] w-[26px] items-center justify-center rounded-full border font-mono text-xs font-bold ${
-                  i === 0 ? "border-brand-500 bg-brand-500 text-ink" : "border-[#2a2d33] text-faint"
+                  i === 0 ? "border-brand-500 bg-brand-500 text-on-brand" : "border-line text-faint"
                 }`}
               >
                 {step.n}
               </span>
               <span className={`text-[13px] ${i === 0 ? "text-body" : "text-faint"}`}>{step.label}</span>
             </div>
-            {i < STEPS.length - 1 && <span className="h-px w-7 bg-[#2a2d33]" />}
+            {i < STEPS.length - 1 && <span className="h-px w-7 bg-line" />}
           </div>
         ))}
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 flex max-w-[520px] flex-col gap-4.5">
         <label className="block">
-          <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">教學經驗（年）</span>
+          <span className="font-mono text-[11px] tracking-wider text-muted">教學經驗（年）</span>
           <input
             type="number"
             min={0}
             value={experienceYears}
             onChange={(e) => setExperienceYears(e.target.value)}
             placeholder="6"
-            className="mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
+            className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
             required
           />
         </label>
         <label className="block">
-          <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">自我介紹</span>
+          <span className="font-mono text-[11px] tracking-wider text-muted">自我介紹</span>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="專注肌力訓練與體態調整…"
             rows={4}
-            className="mt-2.5 w-full resize-y rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] leading-relaxed text-body outline-none focus:border-brand-500"
+            className="mt-2.5 w-full resize-y rounded-[4px] border border-line bg-surface px-4 py-[14px] leading-relaxed text-body outline-none focus:border-brand-500"
             required
           />
         </label>
         <label className="block">
-          <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">個人照片網址（選填，需 https）</span>
+          <span className="font-mono text-[11px] tracking-wider text-muted">個人照片網址（選填，需 https）</span>
           <input
             type="url"
             value={profileImageUrl}
             onChange={(e) => setProfileImageUrl(e.target.value)}
             placeholder="https://"
-            className="mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] font-mono text-sm text-body outline-none focus:border-brand-500"
+            className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] font-mono text-sm text-body outline-none focus:border-brand-500"
           />
         </label>
         <button
           type="submit"
           disabled={submitting}
-          className="mt-2 w-fit rounded-[4px] bg-brand-500 px-[34px] py-[15px] text-[15px] font-bold text-ink hover:bg-brand-400 disabled:opacity-50"
+          className="mt-2 w-fit rounded-[4px] bg-brand-500 px-[34px] py-[15px] text-[15px] font-bold text-on-brand hover:bg-brand-400 disabled:opacity-50"
         >
           送出申請
         </button>

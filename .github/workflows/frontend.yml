@@ -82,6 +82,11 @@ jobs:
       - name: 執行 E2E 測試
         run: npm --prefix frontend run test:e2e
 
+      - name: 正式建置版 E2E 與分頁載入檢查
+        env:
+          E2E_PREVIEW: "true"
+        run: npm --prefix frontend run test:e2e
+
       - name: 失敗時上傳 Playwright report
         if: failure()
         uses: actions/upload-artifact@v4

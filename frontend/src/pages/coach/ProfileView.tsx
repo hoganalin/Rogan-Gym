@@ -67,7 +67,7 @@ export default function ProfileView() {
   }
 
   if (loading) return <p className="text-muted">載入中…</p>;
-  if (error) return <p className="text-rose-400">{error}</p>;
+  if (error) return <p className="text-rose-700">{error}</p>;
 
   const selectedSkillNames = skills.filter((s) => skillIds.includes(s.id)).map((s) => s.name);
 
@@ -81,41 +81,41 @@ export default function ProfileView() {
 
         <form onSubmit={handleSubmit} className="mt-8 flex max-w-[560px] flex-col gap-5">
           <label className="block">
-            <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">教學經驗（年）</span>
+            <span className="font-mono text-[11px] tracking-wider text-muted">教學經驗（年）</span>
             <input
               type="number"
               min={0}
               value={experienceYears}
               onChange={(e) => setExperienceYears(e.target.value)}
-              className="mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
+              className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
               required
             />
           </label>
           <label className="block">
-            <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">自我介紹</span>
+            <span className="font-mono text-[11px] tracking-wider text-muted">自我介紹</span>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={5}
-              className="mt-2.5 w-full resize-y rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] leading-relaxed text-body outline-none focus:border-brand-500"
+              className="mt-2.5 w-full resize-y rounded-[4px] border border-line bg-surface px-4 py-[14px] leading-relaxed text-body outline-none focus:border-brand-500"
               required
             />
           </label>
           <label className="block">
-            <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">個人照片網址（需 https）</span>
+            <span className="font-mono text-[11px] tracking-wider text-muted">個人照片網址（需 https）</span>
             <input
               type="url"
               value={profileImageUrl}
               onChange={(e) => setProfileImageUrl(e.target.value)}
               placeholder="https://"
               pattern="https://.*"
-              className="mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] font-mono text-sm text-body outline-none focus:border-brand-500"
+              className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] font-mono text-sm text-body outline-none focus:border-brand-500"
               required
             />
           </label>
 
           <div>
-            <span className="font-mono text-[11px] tracking-wider text-[#8a857f]">技能標籤</span>
+            <span className="font-mono text-[11px] tracking-wider text-muted">技能標籤</span>
             {skills.length === 0 && (
               <p className="mt-2 text-sm font-light text-faint">尚無技能標籤，請先在「技能標籤」頁新增。</p>
             )}
@@ -126,7 +126,7 @@ export default function ProfileView() {
                   <label
                     key={skill.id}
                     className={`relative flex items-center gap-2 rounded-[4px] px-[15px] py-[11px] text-sm font-medium ${
-                      on ? "border border-brand-500 bg-brand-500/10 text-[#ffb494]" : "border border-[#2a2d33] text-muted"
+                      on ? "border border-brand-500 bg-brand-500/10 text-brand-500" : "border border-line text-muted"
                     }`}
                   >
                     <input
@@ -148,7 +148,7 @@ export default function ProfileView() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-[4px] bg-brand-500 px-[34px] py-[15px] text-[15px] font-bold text-ink hover:bg-brand-400 disabled:opacity-50"
+              className="rounded-[4px] bg-brand-500 px-[34px] py-[15px] text-[15px] font-bold text-on-brand hover:bg-brand-400 disabled:opacity-50"
             >
               儲存變更
             </button>
@@ -156,21 +156,21 @@ export default function ProfileView() {
         </form>
       </div>
 
-      <div className="rounded-md border border-line bg-[#0a0b0c] p-[22px] lg:sticky lg:top-10 lg:self-start">
-        <div className="font-mono text-[11px] tracking-wider text-[#57524c]">LIVE PREVIEW — 教練列表卡片</div>
+      <div className="rounded-md border border-line bg-ink p-[22px] lg:sticky lg:top-10 lg:self-start">
+        <div className="font-mono text-[11px] tracking-wider text-muted">LIVE PREVIEW — 教練列表卡片</div>
         <div className="mt-[18px] overflow-hidden rounded-md border border-line bg-surface">
-          <div className="relative h-[240px] bg-[#16181b]">
+          <div className="relative h-[240px] bg-soft">
             <CoachMedia src={profileImageUrl || null} name={user?.name ?? "教"} className="h-full w-full" />
-            <span className="absolute top-3.5 right-3.5 rounded-[3px] border border-[#2f3238] bg-ink/70 px-2.5 py-1.5 font-mono text-[11px] text-brand-500">
+            <span className="absolute top-3.5 right-3.5 rounded-[3px] border border-line bg-ink/70 px-2.5 py-1.5 font-mono text-[11px] text-brand-500">
               {experienceYears || 0}Y
             </span>
           </div>
           <div className="p-5">
             <div className="text-xl font-bold">{user?.name}</div>
-            <p className="mt-2.5 text-[13px] leading-relaxed font-light text-[#8a857f]">{description}</p>
+            <p className="mt-2.5 text-[13px] leading-relaxed font-light text-muted">{description}</p>
             <div className="mt-3.5 flex flex-wrap gap-1.5">
               {selectedSkillNames.map((sk) => (
-                <span key={sk} className="rounded-[3px] border border-[#2a2d33] px-2.5 py-1 text-[11px] text-[#cfc9c2]">
+                <span key={sk} className="rounded-[3px] border border-line px-2.5 py-1 text-[11px] text-body">
                   {sk}
                 </span>
               ))}

@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const config = require("./config");
 const { dataSource } = require("./db/data-source");
 const appError = require("./utils/appError");
 const skill = require("./routes/skill"); //註冊路由
@@ -12,24 +11,14 @@ const courses = require("./routes/courses"); //註冊公開課程路由
 const creditPackage = require("./routes/credit_page"); //註冊路由
 const app = express();
 
-app.use(cors()); // 前端在 3000、後端在 8080，沒它前端全被擋
+app.use(cors());
 app.use(express.json());
 
-//啟動後端時，先連線資料庫,全部移動到www.js
-// dataSource.initialize().then(() => {
-// app.listen(config.get("web.port"), () => {
-//   console.log(`server 跑起來了：http://localhost:${config.get("web.port")}`);
-// }).catch((err) => {
-//   console.error("資料庫連線失敗", err);
-//   process.exit(1); // 沒有資料庫就不營業
-// });
-
-// 健康檢查——回純文字 OK，不是 JSON；路徑不在 /api 底下
 app.use("/api/credit-package", creditPackage);
 
 app.get("/healthcheck", async (req, res, next) => {
   try {
-    await dataSource.query("SELECT 1"); // 下SQL指令,確認資料庫連線正常
+    await dataSource.query("SELECT 1");
     res.status(200).send("OK");
   } catch (err) {
     res.status(503).send("Service Unavailable");
@@ -42,10 +31,10 @@ app.use("/api/coaches", coachPublic);
 app.use("/api/courses", courses);
 // 404
 app.use((req, res, next) => {
-  next(appError(404, "無此路由")); // 交給錯誤處理守門員
+  next(appError(404, "無此路由"));
 });
 
-// 錯誤處理守門員（Express 慣例：四個參數）
+// 統一錯誤回應格式。
 app.use((err, req, res, next) => {
   const statusCode = err.status || 500;
   console.error(err);

@@ -9,11 +9,11 @@ async function start() {
 
     const port = get("web.port");
     app.listen(port, () => {
-      console.log(`server 跑起來了：http://localhost:${port}`);
+      console.log(`API 已啟動：http://localhost:${port}`);
     });
   } catch (err) {
     console.error("資料庫連線失敗", err);
-    process.exit(1); // 沒有資料庫就不營業
+    process.exit(1);
   }
 }
 

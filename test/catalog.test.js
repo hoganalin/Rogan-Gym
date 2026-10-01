@@ -1,23 +1,6 @@
 /**
- * ============================================================================
- * 里程碑 M1 合約測試：種資料 API（技能與方案 CRUD，全 public）+ M0 healthcheck
- * ============================================================================
- *
- * 這個檔案在測什麼：
- * - GET /healthcheck 活著（docker-compose 靠它判斷後端健康，沒做這支前端容器起不來）
- * - 技能（skill）：新增 → 列表查得到 → 刪除 → 列表消失，以及重複/缺欄位/假 id 的失敗行為
- * - 購買方案（credit package）：新增 → 列表查得到且欄位形狀正確 → 刪除，
- *   以及重複/缺欄位的失敗行為
- *
- * 紅燈了怎麼自救（三步）：
- * 1. 看測試名稱 — 每個測試名描述的就是「一個行為」，先搞懂它期待什麼
- * 2. 對照 API 文件 —「技能管理」「購買方案管理」「健康檢查」那幾節的規格
- * 3. 本機重打一次 — 用 curl 或 Postman 對你的 server 打同一支 API，
- *    看狀態碼是不是 2xx/4xx、body 是不是 { status: "success"/"failed", ... }
- *
- * 注意：測試全程黑箱打 HTTP（API_BASE_URL，預設 http://localhost:8080），
- * 不碰你的資料庫；所有名稱都帶亂數，跑幾次都不會互相干擾。
- * ============================================================================
+ * 技能與堂數方案 API 合約測試。涵蓋健康檢查、CRUD、欄位驗證與重複資料處理。
+ * 測試透過 HTTP 建立獨立資料，不依賴預先建立的帳號或課程。
  */
 const {
   api,
@@ -32,14 +15,14 @@ const {
 /** 合法 uuid「格式」但資料庫裡不存在的假 id（格式錯誤的 id 由另一組測試涵蓋） */
 const FAKE_UUID = '00000000-0000-4000-8000-000000000000';
 
-describe('M0 健康檢查', () => {
+describe('健康檢查', () => {
   test('GET /healthcheck 回 200（純文字回應，不是 JSON）', async () => {
     const res = await api().get('/healthcheck');
     expect(res.status).toBe(200);
   });
 });
 
-describe('M1 技能管理（POST / GET / DELETE /api/coaches/skill）', () => {
+describe('技能管理（POST / GET / DELETE /api/coaches/skill）', () => {
   let manager;
 
   beforeEach(async () => {
@@ -99,7 +82,7 @@ describe('M1 技能管理（POST / GET / DELETE /api/coaches/skill）', () => {
   });
 });
 
-describe('M1 購買方案管理（POST / GET / DELETE /api/credit-package）', () => {
+describe('購買方案管理（POST / GET / DELETE /api/credit-package）', () => {
   let manager;
 
   beforeEach(async () => {

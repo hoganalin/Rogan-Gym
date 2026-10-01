@@ -7,7 +7,6 @@ module.exports = new EntitySchema({
       type: "uuid",
       primary: true,
       generated: "uuid",
-      //id 這個欄位的值不用你手動塞，資料庫/ORM 自動幫你產生一個 UUID。
     },
     name: {
       type: "varchar",

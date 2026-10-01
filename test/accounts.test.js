@@ -1,22 +1,6 @@
 /**
- * ============================================================
- * M2 會員系統 — 合約測試（黑箱）
- * ============================================================
- *
- * 這個里程碑在測什麼：
- * - 註冊（POST /api/users/signup）：能建立會員、擋重複 Email、擋不合規密碼、擋缺欄位
- * - 登入（POST /api/users/login）：發出 JWT（payload 含 id / role / exp），錯帳密要擋
- * - 個人資料（GET / PUT /api/users/profile）：帶 token 才能看、改名後查得到新名字
- * - 修改密碼（PUT /api/users/password）：改完舊密碼失效、新密碼生效、不合規新密碼要擋
- *
- * 紅燈時的三步自救：
- * 1. 看測試名稱 — 名稱就是「預期行為」的白話描述，先搞清楚哪個行為沒做到
- * 2. 對照 API 文件「會員系統」一節 — 確認該端點的 request body、回應形狀、失敗條件
- * 3. 本機重打一次 — 用 Postman / curl 對自己的 server 打同一個請求，看實際回了什麼
- *
- * 注意：測試全程只透過 HTTP 打你的 API（API_BASE_URL），不碰你的資料庫；
- * 所有測試資料都帶亂數，重複跑、在髒資料庫上跑都應該穩定通過。
- * ============================================================
+ * 會員 API 合約測試。涵蓋註冊、登入、JWT、個人資料與密碼變更。
+ * 測試透過 HTTP 建立獨立資料，不依賴預先建立的帳號或課程。
  */
 const jwt = require('jsonwebtoken');
 const {
@@ -31,7 +15,7 @@ const {
   signupAndLogin,
 } = require('./helpers');
 
-describe('M2 會員系統', () => {
+describe('會員系統', () => {
   describe('POST /api/users/signup 註冊', () => {
     test('用合法的名稱、Email、密碼註冊成功，回傳的 user 要有 id 與 name', async () => {
       const name = randName('會員');

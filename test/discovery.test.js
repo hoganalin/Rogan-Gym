@@ -1,18 +1,6 @@
 /**
- * ============================================================
- * M4 公開瀏覽 — 合約測試（訪客不用登入就能看的資料）
- *
- * 這個里程碑在測什麼：
- *   1. 教練列表  GET /api/coaches?per=&page=（per/page 必填）
- *   2. 教練詳情  GET /api/coaches/{coachId}
- *   3. 教練的課程 GET /api/coaches/{coachId}/courses（口徑：end_at > now 的「未結束」課程）
- *   4. 進行中課程 GET /api/courses（口徑：start_at <= now < end_at，跟上面不一樣！）
- *
- * 紅燈時的三步自救：
- *   1. 看測試名稱 — 名稱就是行為描述，先搞懂測試期望的行為是什麼
- *   2. 對照 API 文件「M4 公開瀏覽」對應端點的章節，確認回傳形狀與時間過濾口徑
- *   3. 用 Postman 或 curl 對你本機 server 重打一次同樣的請求，看實際回了什麼
- * ============================================================
+ * 公開探索 API 合約測試。涵蓋教練分頁、詳情與課程時間篩選。
+ * 測試透過 HTTP 建立獨立資料，不依賴預先建立的帳號或課程。
  */
 const crypto = require('crypto');
 const {
@@ -25,7 +13,7 @@ const {
   createCourse,
 } = require('./helpers');
 
-describe('M4 公開瀏覽', () => {
+describe('公開瀏覽', () => {
   // 共用種子資料：一位教練 + 一個技能 + 一堂未來的課程（全部在這個檔案內現造）
   let coach;
   let skill;
@@ -123,7 +111,7 @@ describe('M4 公開瀏覽', () => {
 
     test('已開始且還沒結束的課程「會」出現在進行中列表，且帶 coach_name 與 skill_name', async () => {
       // 文件口徑：開課端點不會擋 start_at 在過去，所以直接造一堂「昨天開始、明天結束」的進行中課程。
-      // 如果這裡建立課程就失敗，先檢查你的開課端點是不是多擋了「開始時間不能在過去」— 文件沒有這條規則。
+      // 開課 API 接受已開始的課程，用於驗證進行中課程查詢。
       const ongoing = await createCourse(coach.token, skill.id, {
         start_at: futureUtc(-1), // 昨天開始
         end_at: futureUtc(1), // 明天結束
