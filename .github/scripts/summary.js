@@ -16,8 +16,8 @@ if (!fs.existsSync(file)) {
   md = [
     `## 🛑 ${title}：測試沒有執行`,
     '',
-    '通常是 server 沒起來。往上看「啟動後端」步驟印出的 server log，',
-    '最常見原因：`npm start` 沒換成自己的啟動指令、沒聽 `PORT` 環境變數、資料表沒建出來。',
+    '請檢查「啟動後端」步驟的記錄，確認服務與資料庫連線狀態。',
+    '檢查項目：啟動指令、PORT 設定，以及資料表初始化。',
     '',
   ].join('\n');
 } else {
@@ -43,7 +43,7 @@ if (!fs.existsSync(file)) {
   ].join('\n');
 
   if (fails.length) {
-    md += `\n### 沒過的 ${fails.length} 條，失敗原因在這\n`;
+    md += `\n### 失敗案例（${fails.length}）\n`;
     for (const t of fails) {
       const msg = stripAnsi((t.failureMessages || []).join('\n'))
         .split('\n')
@@ -51,7 +51,7 @@ if (!fs.existsSync(file)) {
         .join('\n');
       md += `\n<details><summary>❌ ${t.fullName || t.title}</summary>\n\n\`\`\`\n${msg}\n\`\`\`\n\n</details>\n`;
     }
-    md += '\n> 三步自救：讀上面的行為描述 → 開 Swagger 文件（localhost:8081）對照該 API 規格 → 本機 `npm run test:m{N}` 重現。\n';
+    md += '\n> 可使用失敗案例名稱搭配 `npm test -- -t "案例名稱"` 重現，並參考 OpenAPI 規格確認預期回應。\n';
   }
 }
 

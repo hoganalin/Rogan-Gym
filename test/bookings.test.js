@@ -1,23 +1,6 @@
 /**
- * ============================================================================
- * M5 購買與報名 — 合約測試（黑箱）
- * ============================================================================
- *
- * 這個里程碑在測什麼：
- * 1. 會員購買堂數方案（POST /api/credit-package/:creditPackageId）
- *    與購買紀錄查詢（GET /api/users/credit-package）
- * 2. 會員報名課程（POST /api/courses/:courseId）的完整檢查順序：
- *    課程存在 → 是否已報名過（含已取消）→ 剩餘堂數 → 課程名額
- * 3. 四句「一字不差」的 UI 合約訊息（前端靠逐字比對開 modal，錯一個字就壞）：
- *    「請先登入」「已經報名過此課程」「已無可使用堂數」「已達最大參加人數，無法參加」
- * 4. 取消報名是「軟刪除」：紀錄還在（cancelled_at 標時間）、堂數加回來、
- *    而且取消過的課「不能」再報名一次
- * 5. 本人課表（GET /api/users/courses）的 credit_remain 與 course_booking 形狀
- *
- * 紅燈時的三步自救：
- * 1. 看測試名稱 — 名稱描述的就是「預期行為」，先搞懂預期是什麼
- * 2. 對照 API 文件「課程報名」與「購買方案」章節 — 確認你的檢查順序與訊息文字
- * 3. 用 Postman / curl 本機重打一次同樣的請求，看你的 server 實際回了什麼
+ * 購買與預約 API 合約測試。涵蓋額度計算、名額檢查、取消與錯誤訊息。
+ * 測試透過 HTTP 建立獨立資料，不依賴預先建立的帳號或課程。
  */
 const { randomUUID } = require('crypto');
 const {
@@ -34,7 +17,7 @@ const {
   cancelBooking,
 } = require('./helpers');
 
-describe('M5-1 購買堂數方案', () => {
+describe('購買堂數方案', () => {
   test('會員可以成功購買方案', async () => {
     const member = await signupAndLogin();
     const pkg = await createCreditPackage();
@@ -70,7 +53,7 @@ describe('M5-1 購買堂數方案', () => {
   });
 });
 
-describe('M5-2 報名課程成功路徑', () => {
+describe('報名課程成功路徑', () => {
   test('買方案後報名課程成功，課表的 credit_remain 會少 1、course_booking 看得到該課', async () => {
     // 自建教練 + 課程（名額 10，絕對夠）
     const coach = await makeCoach();
@@ -101,7 +84,7 @@ describe('M5-2 報名課程成功路徑', () => {
   });
 });
 
-describe('M5-3 四句逐字 UI 合約（前端 modal 靠這些字串，一字不能差）', () => {
+describe('預約錯誤訊息合約', () => {
   test('沒帶 token 報名 → 失敗且 message 逐字等於「請先登入」', async () => {
     // 課程真實存在，唯一的錯誤條件只有「沒登入」
     const coach = await makeCoach();
@@ -174,7 +157,7 @@ describe('M5-3 四句逐字 UI 合約（前端 modal 靠這些字串，一字不
   });
 });
 
-describe('M5-4 取消報名（軟刪除語意）', () => {
+describe('取消報名（軟刪除語意）', () => {
   test('取消報名成功：紀錄留著（cancelled_at 標時間）、堂數加回來', async () => {
     const coach = await makeCoach();
     const skill = await createSkill();

@@ -1,10 +1,5 @@
 /**
- * 合約測試共用工具（不需要修改、也不需要看懂這個檔案 — 但看懂了會學到東西）
- *
- * 設計原則：
- * 1. 全程黑箱：只透過 HTTP 打你的 API，不碰你的資料庫、不管你的程式怎麼寫
- * 2. 自帶資料：每個測試需要的資料（會員/教練/技能/方案/課程）都用 API 自己造
- * 3. 隨機命名：名稱/Email 都帶亂數，跑幾次都不會撞 unique 限制
+ * API 合約測試資料工廠。透過 HTTP 建立獨立帳號與資料，名稱使用隨機識別碼避免衝突。
  */
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
@@ -54,7 +49,7 @@ async function login(email, password) {
 }
 
 /**
- * 註冊 + 登入一條龍，回傳 { token, userId, name, email, password }
+ * 註冊 + 登入流程，回傳 { token, userId, name, email, password }
  * userId 從 JWT payload 解出來（合約：payload 必含 id 與 role）
  */
 async function signupAndLogin(overrides = {}) {
@@ -98,7 +93,7 @@ async function createCreditPackage(overrides = {}, coachToken) {
 async function promoteToCoach(token, overrides = {}) {
   const body = {
     experience_years: 3,
-    description: '一位用 API 生出來的教練',
+    description: 'API 測試教練',
     ...overrides,
   };
   return api()
@@ -108,7 +103,7 @@ async function promoteToCoach(token, overrides = {}) {
 }
 
 /**
- * 造一個教練一條龍：註冊 → 升級教練 → 重新登入拿新 token
+ * 造一個教練流程：註冊 → 升級教練 → 重新登入拿新 token
  * （升級後角色變了，照前端的行為重新登入一次最保險）
  * 回傳 { token, userId, coachId, name, email, password }
  */
@@ -132,7 +127,7 @@ async function createCourse(coachToken, skillId, overrides = {}) {
   const course = {
     skill_id: skillId,
     name: randName('課程'),
-    description: '一堂用 API 生出來的課',
+    description: 'API 測試課程',
     start_at: futureUtc(7),
     end_at: futureUtc(7, 2),
     max_participants: 10,

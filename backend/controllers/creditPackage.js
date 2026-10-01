@@ -35,7 +35,6 @@ const creditPackageController = {
       next(appError(409, "資料重複"));
       return;
     }
-    //存到資料庫裏面使用語法save()，參數是物件格式
     const creditPackage = await creditPackageRepository.save({
       name: name.trim(),
       price: price,

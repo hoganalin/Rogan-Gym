@@ -8,7 +8,7 @@ import type { UserCourseBooking } from "../../types/api";
 
 type ViewMode = "week" | "month" | "list";
 
-const DOW = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+const DOW = ["週一", "週二", "週三", "週四", "週五", "週六", "週日"];
 const VIEW_TABS: { key: ViewMode; label: string }[] = [
   { key: "week", label: "週曆" },
   { key: "month", label: "月曆" },
@@ -88,17 +88,17 @@ export default function DashboardView() {
   );
 
   if (loading) return <p className="text-muted">載入中…</p>;
-  if (!dashboard) return <p className="text-rose-400">載入課表失敗，請稍後再試。</p>;
+  if (!dashboard) return <p className="text-rose-700">載入課表失敗，請稍後再試。</p>;
 
   function bookingCell(b: UserCourseBooking) {
     const cancelled = !!b.cancelled_at;
     return (
       <div
-        className={`h-full rounded-[3px] px-2.5 py-2 ${cancelled ? "bg-[#16181b]" : "bg-brand-500/15"}`}
-        style={{ borderLeft: `3px solid ${cancelled ? "#2a2d33" : "#f4501e"}` }}
+        className={`h-full rounded-[3px] px-2.5 py-2 ${cancelled ? "bg-soft" : "bg-brand-500/15"}`}
+        style={{ borderLeft: `1px solid ${cancelled ? "var(--color-line)" : "var(--color-brand-500)"}` }}
       >
-        <div className={`text-xs leading-tight font-bold ${cancelled ? "text-faint" : "text-[#ffb494]"}`}>{b.name}</div>
-        <div className={`mt-1 font-mono text-[10px] ${cancelled ? "text-[#4f4a45]" : "text-muted"}`}>
+        <div className={`text-xs leading-tight font-bold ${cancelled ? "text-faint" : "text-brand-500"}`}>{b.name}</div>
+        <div className={`mt-1 font-mono text-[10px] ${cancelled ? "text-muted" : "text-muted"}`}>
           {b.coach_name}
           {cancelled && "（已取消）"}
         </div>
@@ -115,14 +115,14 @@ export default function DashboardView() {
             剩餘 {dashboard.credit_remain} 堂 · 已使用 {dashboard.credit_usage} 堂 · 本週 {thisWeekActiveCount} 堂已報名
           </p>
         </div>
-        <div className="flex shrink-0 gap-0.5 rounded-[4px] border border-[#2a2d33] p-[3px]">
+        <div className="flex shrink-0 gap-0.5 rounded-[4px] border border-line p-[3px]">
           {VIEW_TABS.map((tab) => (
             <button
               key={tab.key}
               type="button"
               onClick={() => setView(tab.key)}
               className={`rounded-[3px] px-4.5 py-2.5 text-[13px] font-medium ${
-                view === tab.key ? "bg-brand-500 text-ink" : "text-muted"
+                view === tab.key ? "bg-brand-500 text-on-brand" : "text-muted"
               }`}
             >
               {tab.label}
@@ -137,7 +137,7 @@ export default function DashboardView() {
             <button
               type="button"
               onClick={() => (view === "week" ? setWeekOffset((o) => o - 1) : setMonthOffset((o) => o - 1))}
-              className="h-[34px] w-[34px] rounded-[4px] border border-[#2a2d33] text-[#cfc9c2] hover:border-brand-400"
+              className="h-[34px] w-[34px] rounded-[4px] border border-line text-body hover:border-brand-400"
             >
               ←
             </button>
@@ -149,18 +149,18 @@ export default function DashboardView() {
             <button
               type="button"
               onClick={() => (view === "week" ? setWeekOffset((o) => o + 1) : setMonthOffset((o) => o + 1))}
-              className="h-[34px] w-[34px] rounded-[4px] border border-[#2a2d33] text-[#cfc9c2] hover:border-brand-400"
+              className="h-[34px] w-[34px] rounded-[4px] border border-line text-body hover:border-brand-400"
             >
               →
             </button>
           </div>
-          <div className="flex items-center gap-4.5 text-xs text-[#8a857f]">
+          <div className="flex items-center gap-4.5 text-xs text-muted">
             <span className="flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-[2px] bg-brand-500" />
               已報名
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-[2px] bg-[#2a2d33]" />
+              <span className="h-2.5 w-2.5 rounded-[2px] bg-line" />
               已取消
             </span>
           </div>
@@ -168,11 +168,11 @@ export default function DashboardView() {
       )}
 
       {view === "week" && (
-        <div className="mt-5 overflow-x-auto rounded-md border border-line bg-[#0f1012]">
+        <div className="mt-5 overflow-x-auto rounded-md border border-line bg-surface">
           <div className="grid min-w-[720px] grid-cols-[64px_repeat(7,1fr)]">
-            <div className="border-r border-b border-[#1d1f24]" />
+            <div className="border-r border-b border-line" />
             {weekDays.map((d) => (
-              <div key={d.toString()} className="border-r border-b border-[#1d1f24] py-4 text-center">
+              <div key={d.toString()} className="border-r border-b border-line py-4 text-center">
                 <div className="font-mono text-[11px] text-faint">{DOW[d.day() === 0 ? 6 : d.day() - 1]}</div>
                 <div
                   className={`mt-2 font-display text-xl font-bold ${d.isSame(dayjs(), "day") ? "text-brand-500" : "text-body"}`}
@@ -184,7 +184,7 @@ export default function DashboardView() {
 
             {weekHours.map((hour) => (
               <div key={hour} className="contents">
-                <div className="border-r border-b border-[#16181b] py-2.5 text-center font-mono text-[11px] text-[#57524c]">
+                <div className="border-r border-b border-soft py-2.5 text-center font-mono text-[11px] text-muted">
                   {hour}
                 </div>
                 {weekDays.map((d) => {
@@ -192,7 +192,7 @@ export default function DashboardView() {
                     (b) => dayjs(b.start_at).format("HH:00") === hour && dayjs(b.start_at).isSame(d, "day"),
                   );
                   return (
-                    <div key={d.toString()} className="min-h-[76px] border-r border-b border-[#16181b] p-1.5">
+                    <div key={d.toString()} className="min-h-[76px] border-r border-b border-soft p-1.5">
                       {match && bookingCell(match)}
                     </div>
                   );
@@ -208,21 +208,21 @@ export default function DashboardView() {
       )}
 
       {view === "month" && (
-        <div className="mt-5 overflow-x-auto rounded-md border border-line bg-[#0f1012]">
+        <div className="mt-5 overflow-x-auto rounded-md border border-line bg-surface">
           <div className="grid min-w-[720px] grid-cols-7">
             {DOW.map((d) => (
-              <div key={d} className="border-r border-b border-[#1d1f24] py-3.5 text-center font-mono text-[11px] text-faint">
+              <div key={d} className="border-r border-b border-line py-3.5 text-center font-mono text-[11px] text-faint">
                 {d}
               </div>
             ))}
             {monthCells.map((cell) => (
               <div
                 key={cell.date.toString()}
-                className="box-border min-h-[104px] border-r border-b border-[#16181b] p-2.5"
+                className="box-border min-h-[104px] border-r border-b border-soft p-2.5"
               >
                 <div
                   className={`font-mono text-xs ${
-                    !cell.inMonth ? "text-[#2a2d33]" : cell.date.isSame(dayjs(), "day") ? "text-brand-500" : "text-[#8a857f]"
+                    !cell.inMonth ? "text-line" : cell.date.isSame(dayjs(), "day") ? "text-brand-500" : "text-muted"
                   }`}
                 >
                   {cell.date.date()}
@@ -232,13 +232,13 @@ export default function DashboardView() {
                   return (
                     <div
                       key={b.course_id}
-                      className={`mt-2 rounded-[3px] px-2 py-1.5 ${cancelled ? "bg-[#16181b]" : "bg-brand-500/15"}`}
-                      style={{ borderLeft: `3px solid ${cancelled ? "#2a2d33" : "#f4501e"}` }}
+                      className={`mt-2 rounded-[3px] px-2 py-1.5 ${cancelled ? "bg-soft" : "bg-brand-500/15"}`}
+                      style={{ borderLeft: `1px solid ${cancelled ? "var(--color-line)" : "var(--color-brand-500)"}` }}
                     >
-                      <div className={`text-[11px] leading-tight font-bold ${cancelled ? "text-faint" : "text-[#ffb494]"}`}>
+                      <div className={`text-[11px] leading-tight font-bold ${cancelled ? "text-faint" : "text-brand-500"}`}>
                         {b.name}
                       </div>
-                      <div className="mt-1 font-mono text-[10px] text-[#8a857f]">{dayjs(b.start_at).format("HH:mm")}</div>
+                      <div className="mt-1 font-mono text-[10px] text-muted">{dayjs(b.start_at).format("HH:mm")}</div>
                     </div>
                   );
                 })}
@@ -255,11 +255,11 @@ export default function DashboardView() {
             return (
               <div
                 key={b.course_id}
-                className="flex items-center gap-6 rounded-md border border-line bg-surface px-6 py-5"
+                className="booking-summary rounded-xl border border-line bg-surface"
               >
                 <div className="w-[82px] shrink-0 border-r border-line pr-5 text-center">
                   <div className="font-mono text-[11px] text-faint">{dayjs(b.start_at).format("MMM").toUpperCase()}</div>
-                  <div className={`mt-1.5 font-display text-3xl font-black ${cancelled ? "text-[#4f4a45]" : "text-brand-500"}`}>
+                  <div className={`mt-1.5 font-display text-3xl font-black ${cancelled ? "text-muted" : "text-brand-500"}`}>
                     {dayjs(b.start_at).date()}
                   </div>
                 </div>
@@ -267,12 +267,12 @@ export default function DashboardView() {
                   <div className="flex items-center gap-3">
                     <h3 className={`text-[17px] font-bold ${cancelled ? "text-faint" : "text-body"}`}>{b.name}</h3>
                     {cancelled && (
-                      <span className="rounded-[3px] border border-[#2a2d33] px-2.5 py-1 text-[11px] text-[#8a857f]">
+                      <span className="rounded-[3px] border border-line px-2.5 py-1 text-[11px] text-muted">
                         已取消
                       </span>
                     )}
                   </div>
-                  <div className="mt-2 flex gap-5 font-mono text-xs text-[#8a857f]">
+                  <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted">
                     <span>{formatCourseTime(b.start_at, b.end_at)}</span>
                     <span>{b.coach_name}</span>
                   </div>
@@ -284,7 +284,7 @@ export default function DashboardView() {
                         href={b.meeting_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="rounded-[4px] border border-[#2a2d33] px-4.5 py-2.5 text-[13px] font-medium hover:border-brand-400"
+                        className="rounded-[4px] border border-line px-4.5 py-2.5 text-[13px] font-medium hover:border-brand-400"
                       >
                         會議連結
                       </a>
@@ -292,7 +292,7 @@ export default function DashboardView() {
                     <button
                       type="button"
                       onClick={() => handleCancel(b.course_id, b.name)}
-                      className="rounded-[4px] border border-[#4a2626] px-4.5 py-2.5 text-[13px] font-medium text-[#e8735c] hover:bg-[#4a2626]/20"
+                      className="rounded-[4px] border border-[#4a2626] px-4.5 py-2.5 text-[13px] font-medium text-rose-700 hover:bg-[#4a2626]/20"
                     >
                       取消報名
                     </button>

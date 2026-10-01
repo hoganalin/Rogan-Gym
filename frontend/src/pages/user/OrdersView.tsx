@@ -30,7 +30,7 @@ export default function OrdersView() {
       <h1 className="font-display text-[34px] font-extrabold tracking-tight">購買紀錄</h1>
 
       {loading && <p className="mt-8 text-muted">載入中…</p>}
-      {error && <p className="mt-8 text-rose-400">{error}</p>}
+      {error && <p className="mt-8 text-rose-700">{error}</p>}
 
       {!loading && !error && (
         <div className="mt-8 flex flex-col gap-3">
@@ -41,7 +41,7 @@ export default function OrdersView() {
             >
               <div>
                 <h3 className="font-bold">{purchase.name ?? "已下架方案"}</h3>
-                <p className="mt-1.5 font-mono text-xs text-[#8a857f]">
+                <p className="mt-1.5 font-mono text-xs text-muted">
                   {dayjs(purchase.purchase_at).format("YYYY/M/D HH:mm")} · {purchase.purchased_credits} 堂
                 </p>
               </div>

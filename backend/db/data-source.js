@@ -18,6 +18,11 @@ const dataSource = new DataSource({
   database: config.get("db.database"),
   synchronize: config.get("db.synchronize"),
   ssl: config.get("db.ssl"),
+  // Timestamp columns have no timezone. Their database defaults must use the
+  // same wall clock as Node/pg, including at month and year boundaries.
+  extra: {
+    options: `-c timezone=${Intl.DateTimeFormat().resolvedOptions().timeZone}`,
+  },
   entities: [
     User,
     Skill,

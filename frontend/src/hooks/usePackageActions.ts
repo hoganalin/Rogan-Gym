@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { postCreditPackage } from "../api/creditPackage";
 import { extractErrorMessage } from "../lib/errors";
@@ -7,6 +7,7 @@ import { extractErrorMessage } from "../lib/errors";
 export function usePackageActions() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   async function buyPackage(packageId: string, packageName: string) {
     // AuthContext is still restoring the session from the cookie on mount —
@@ -16,7 +17,7 @@ export function usePackageActions() {
     if (loading) return;
 
     if (!user) {
-      navigate("/login");
+      navigate(`/login?next=${encodeURIComponent(location.pathname + location.search)}`);
       return;
     }
 
@@ -26,7 +27,7 @@ export function usePackageActions() {
       showCancelButton: true,
       confirmButtonText: "購買",
       cancelButtonText: "取消",
-      confirmButtonColor: "#d93c10",
+      confirmButtonColor: "var(--color-brand-600)",
     });
     if (!result.isConfirmed) return;
 

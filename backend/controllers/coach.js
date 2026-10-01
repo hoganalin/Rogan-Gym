@@ -79,9 +79,7 @@ const coachController = {
     const coachSkills = await coachSkillRepo.find({
       where: { coach_id: coaches.id },
     });
-    //.find(options)：options 是一個設定物件，可以放 where（篩選條件）、select（只挑哪些欄位）、order（排序）、relations（要不要一起帶出關聯資料）等等。
-    // where: { coach_id: coaches.id }：篩選條件，意思是「只找 coach_id 欄位等於 coaches.id 的那些列」——也就是「這位教練綁定過的所有技能關聯紀錄」。
-    // 回傳值是一個陣列（可能是 0 筆、1 筆、或多筆）
+    // 取得目前教練的技能關聯。
 
     res.json({
       status: "success",
@@ -96,7 +94,6 @@ const coachController = {
     return;
   },
   async putCoach(req, res, next) {
-    //等待資料庫連線成功後，才去找資料所以要使用await
 
     const { skill_ids, experience_years, description, profile_image_url } =
       req.body;
@@ -383,12 +380,6 @@ const coachController = {
          AND EXTRACT(MONTH FROM cb.created_at) = $3`,
       [req.user.id, year, monthIndex],
     );
-    // 把 course_booking 這張表格取一個別名叫 cb
-    // 篩選條件一:教練資料裡的 user_id(對應到登入使用者的帳號 id)要等於 $1(第一個參數，也就是後面陣列的 req.user.id)
-    // 篩選條件二:預約沒有被取消(cancelled_at 是空的)，排除已取消的預約。
-    //EXTRACT(欲取出的單位 FROM 日期欄位)
-    // 篩選條件三:預約建立時間的「年」要等於 $2(對應陣列第二個參數 year)。
-    // 篩選條件四:預約建立時間的「月份」要等於 $3(對應陣列第三個參數 monthIndex)。
 
     // 查詢所有方案
     const packages = await dataSource.getRepository("CreditPackage").find();
@@ -406,10 +397,8 @@ const coachController = {
 
     const participants = new Set(bookings.map((booking) => booking.user_id))
       .size;
-    // bookins.map會把 [{user_id:5}, {user_id:5}, {user_id:8}] 轉成 [5, 5, 8](單純的數字陣列)。
-    // [5, 5, 8] 丟進 new Set()，重複的 5 只會留一個，結果變成 Set {5, 8}
-    //Set 物件有個屬性叫 .size，代表這個集合裡有幾個不重複的元素(對比陣列是用 .length)。Set {5, 8}.size 會是 2。
-    const revenue = Math.floor(participants * averagePrice);
+    // 人數以會員去重；營收以有效報名筆數計算。
+    const revenue = Math.floor(bookings.length * averagePrice);
 
     res.status(200).json({
       status: "success",

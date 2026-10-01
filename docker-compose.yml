@@ -2,7 +2,7 @@ volumes:
   pgData:
 
 services:
-  # 健身房前端（成品）
+  # 前端靜態網站
   frontend:
     build:
       context: ./frontend
@@ -12,7 +12,7 @@ services:
     ports:
       - "3000:80"
 
-  # API 文件（Swagger UI，瀏覽 + Try it out 試打你的後端）
+  # API 文件與互動式請求介面
   swagger:
     image: swaggerapi/swagger-ui:v5.17.14
     environment:
@@ -22,7 +22,7 @@ services:
     ports:
       - "8081:8080"
 
-  # PostgreSQL（空的資料庫，等你的後端來建表）
+  # PostgreSQL 與持久化儲存空間
   postgres:
     image: postgres:16.4-alpine3.20
     environment:
@@ -39,42 +39,30 @@ services:
       timeout: 3s
       retries: 3
 
-  # ============================================================
-  # 後端容器化：backend/ 內既有的 Express 應用
-  #   - 服務名稱 backend，對外開放 8080
-  #   - 容器裡連資料庫走 postgres（不是 localhost）
-  #   - healthcheck 打 GET /healthcheck，並等待 postgres healthy 後才啟動
-  # ============================================================
+  # Express API，等待資料庫就緒後啟動。
   backend:
     build:
       context: ./backend
 
       dockerfile: Dockerfile
     ports:
-      # 左: 外部使用者要連線時，就是打這個 port
-      # 右: 容器內的 port（Docker 裡面監聽的 port）
       - "8080:8080"
-    environment: # 需要哪些變數？可根據 .env.example 對照補齊
+    environment:
       - PORT=8080
-      # 啟動的方式使用容器了,所以DB-HOST改成postgres
+      # 容器網路透過服務名稱連線資料庫。
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_USERNAME=rfitness_app
       - DB_PASSWORD=rfitness_local_password
       - DB_DATABASE=fitness
-      - JWT_SECRET=***REMOVED***
+      - JWT_SECRET=${JWT_SECRET:?Set JWT_SECRET in the shell or root .env before starting Docker Compose}
       - JWT_EXPIRES_DAY=30d
       - DB_SYNCHRONIZE=true
       - DB_ENABLE_SSL=false
     depends_on:
-      # postgres 這個名稱來自方定義的資料庫名稱
       postgres:
         condition: service_healthy
-        # service_started → 確保啟動順序，但不保證健康。
-        # service_healthy → 確保依賴服務真的 ready（最常用在 DB、API）。
-        # service_completed_successfully → 確保初始化任務跑完（migration、seed）。
     healthcheck:
-      # 把網址補成自己的 PORT 與 /healthcheck 路徑
       test:
         [
           "CMD-SHELL",

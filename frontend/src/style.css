@@ -1,70 +1,1525 @@
 @import "tailwindcss";
-
 @theme {
-  --color-brand-50: #fff3ed;
-  --color-brand-100: #ffe4d6;
-  --color-brand-200: #ffc7ad;
-  --color-brand-300: #ffa378;
-  --color-brand-400: #ff7a47;
-  --color-brand-500: #f4501e;
-  --color-brand-600: #d93c10;
-  --color-brand-700: #b32e0c;
-  --color-brand-800: #8c240d;
-  --color-brand-900: #71200e;
-  --color-brand-950: #3d0e05;
-
-  /* 深色重訓風 surfaces */
-  --color-ink: #08090a;
-  --color-surface: #121316;
-  --color-line: #22242a;
-
-  /* 文字階層 */
-  --color-body: #f6f4f1;
-  --color-muted: #a29d97;
-  --color-faint: #6f6a64;
-
+  --color-brand-50: #f0f3ff;
+  --color-brand-100: #e5ebff;
+  --color-brand-200: #ccd6ff;
+  --color-brand-300: #a9baff;
+  --color-brand-400: #3159ef;
+  --color-brand-500: #123de7;
+  --color-brand-600: #1536b9;
+  --color-brand-700: #132a8e;
+  --color-brand-800: #132570;
+  --color-brand-900: #10182c;
+  --color-brand-950: #090d19;
+  --color-ink: #f3f3ed;
+  --color-surface: #ffffff;
+  --color-soft: #e9eaf0;
+  --color-line: #c7c9cd;
+  --color-body: #121212;
+  --color-muted: #54565e;
+  --color-faint: #62646c;
+  --color-on-brand: #ffffff;
   --font-display: "Archivo", "Noto Sans TC", sans-serif;
   --font-sans: "Noto Sans TC", "Archivo", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 }
-
-body {
-  @apply bg-ink text-body antialiased;
-  font-family: var(--font-sans);
+:root {
+  color-scheme: light;
+  font-synthesis: none;
+  --radius-control: 2px;
+  --radius-panel: 2px;
 }
-
+body {
+  margin: 0;
+  background: var(--color-ink);
+  color: var(--color-body);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+* {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: #898d9a var(--color-ink);
+}
+::selection {
+  background: var(--color-brand-200);
+  color: var(--color-brand-900);
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+a {
+  text-underline-offset: 5px;
+}
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 4px;
+}
+input,
+textarea,
+select {
+  caret-color: var(--color-brand-500);
+  max-width: 100%;
+}
 input::placeholder,
 textarea::placeholder {
   color: var(--color-faint);
+  opacity: 1;
 }
-
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline-offset: 2px;
+}
+input[type="checkbox"] {
+  accent-color: var(--color-brand-500);
+  width: 18px;
+  height: 18px;
+}
+svg {
+  flex-shrink: 0;
+}
+.club-container {
+  width: min(1248px, calc(100% - 96px));
+  margin-inline: auto;
+}
+.site-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.site-shell main {
+  flex: 1;
+  min-width: 0;
+  outline: none;
+}
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--color-ink);
+  border-bottom: 1px solid var(--color-line);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 96px;
+  gap: 32px;
+}
+.club-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+.club-mark {
+  width: 43px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  color: var(--color-on-brand);
+  background: var(--color-brand-500);
+  font-size: 33px;
+  font-style: italic;
+  border-radius: 8px 8px 18px 8px;
+}
+.brand-caption {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  font-weight: 500;
+}
+.desktop-nav,
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  font-size: 14px;
+}
+.desktop-nav a {
+  padding-block: 14px;
+  border-bottom: 2px solid transparent;
+}
+.desktop-nav a.active {
+  border-color: var(--color-brand-500);
+  font-weight: 700;
+}
+.desktop-nav a:hover,
+.text-link:hover,
+.login-link:hover {
+  color: var(--color-brand-400);
+}
+.header-actions {
+  gap: 20px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 48px;
+  padding: 12px 22px;
+  border-radius: var(--radius-control);
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+}
+.btn-primary {
+  background: var(--color-brand-500);
+  color: var(--color-on-brand);
+  border: 1px solid transparent;
+}
+.btn-primary:hover {
+  background: var(--color-brand-700);
+}
+.btn-secondary {
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  color: var(--color-body);
+}
+.btn-secondary:hover {
+  background: var(--color-soft);
+  border-color: var(--color-brand-400);
+}
+.quiet-button {
+  padding: 12px 0;
+  color: var(--color-muted);
+}
+.menu-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+}
+.mobile-nav {
+  display: none;
+}
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 16px;
+  padding: 14px;
+  z-index: 100;
+  background: white;
+}
+.skip-link:focus {
+  top: 12px;
+}
+.hero-section {
+  display: grid;
+  grid-template-columns: 1.08fr 1fr;
+  gap: 64px;
+  padding-block: 56px 64px;
+  align-items: center;
+}
+.hero-copy h1 {
+  font-size: clamp(38px, 4.1vw, 62px);
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+.hero-copy h1 span {
+  display: block;
+  color: var(--color-brand-500);
+}
+.hero-copy > p {
+  margin-block: 24px 32px;
+  color: var(--color-muted);
+  font-size: 16px;
+  line-height: 1.9;
+}
+.hero-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 8px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+}
+.hero-search input {
+  min-width: 0;
+  flex: 1;
+  width: 100%;
+  padding-block: 12px;
+  font-size: 14px;
+}
+.hero-search .btn {
+  gap: 8px;
+  padding-inline: 16px;
+}
+.hero-schedule-link {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  gap: 10px;
+  font-size: 13px;
+  margin-top: 20px;
+}
+.hero-photo {
+  height: 536px;
+  min-width: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  background: var(--color-brand-900);
+}
+.hero-photo img {
+  width: 100%;
+  height: calc(100% - 56px);
+  object-fit: cover;
+  object-position: 72% center;
+}
+.hero-photo-caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 18px 24px;
+  color: var(--color-on-brand);
+  font-size: 12px;
+}
+.hero-photo-caption span:last-child {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+.journey-strip {
+  border-block: 1px solid var(--color-line);
+  background: var(--color-soft);
+}
+.journey-strip ol {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding-block: 28px;
+  list-style: none;
+}
+.journey-strip li {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-inline: 28px;
+  border-right: 1px solid var(--color-line);
+}
+.journey-strip li:first-child {
+  padding-left: 0;
+}
+.journey-strip li:last-child {
+  border: 0;
+}
+.journey-strip li > span {
+  font: 500 24px var(--font-display);
+  color: var(--color-brand-500);
+}
+.journey-strip strong {
+  font-size: 14px;
+}
+.journey-strip p {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+.section-space {
+  padding-block: 80px;
+}
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+.section-heading h2 {
+  font-size: clamp(25px, 2.4vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.4;
+}
+.section-heading p {
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--color-muted);
+}
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-brand-500);
+  flex-shrink: 0;
+  min-height: 44px;
+}
+.coach-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+}
+.coach-tile {
+  min-width: 0;
+  display: block;
+}
+.coach-photo {
+  position: relative;
+  height: 304px;
+  background: var(--color-soft);
+  overflow: hidden;
+  border-radius: 14px;
+}
+.coach-photo img {
+  transition: transform 0.35s ease-out;
+}
+.coach-tile:hover img {
+  transform: scale(1.025);
+}
+.experience-label {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-body);
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.coach-info {
+  padding-block: 20px;
+}
+.coach-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.coach-name h3 {
+  font-size: 22px;
+  font-weight: 700;
+}
+.coach-name > svg {
+  width: 24px;
+  height: 24px;
+}
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block: 12px;
+}
+.tag-list span {
+  font-size: 12px;
+  color: var(--color-brand-600);
+  background: var(--color-soft);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+.coach-info > p {
+  font-size: 14px;
+  color: var(--color-muted);
+  line-height: 1.85;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  min-height: 52px;
+}
+.coach-availability {
+  display: block;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-line);
+  font-size: 12px;
+  color: var(--color-brand-500);
+}
+.schedule-section {
+  padding-block: 72px;
+  background: var(--color-soft);
+}
+.course-list {
+  border-top: 1px solid var(--color-line);
+}
+.course-row {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr) 150px 112px;
+  gap: 24px;
+  align-items: center;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.course-date {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.course-date strong {
+  font: 600 24px var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+.course-date span {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+.course-time {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-brand-500);
+}
+.course-description h3 {
+  margin-top: 4px;
+  font-size: 18px;
+  font-weight: 600;
+}
+.course-description p {
+  margin-top: 6px;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.course-person {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+.course-person span {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+.course-row .btn {
+  padding-inline: 16px;
+  gap: 12px;
+}
+.closing-note {
+  padding: 40px 48px;
+  border-radius: 16px;
+  background: var(--color-brand-100);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 80px;
+}
+.closing-note h2 {
+  font-size: 30px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+.site-footer {
+  background: var(--color-brand-900);
+  color: #f4f7ee;
+}
+.footer-main {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.1fr;
+  gap: 40px;
+  padding-block: 56px;
+}
+.site-footer .club-mark {
+  background: #e4ff43;
+  color: var(--color-brand-900);
+}
+.footer-main > div > p {
+  color: #d1d5e0;
+  line-height: 1.8;
+  font-size: 13px;
+  margin-top: 24px;
+}
+.footer-main nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 13px;
+  color: #d1d5e0;
+}
+.footer-main h2 {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 8px;
+}
+.footer-statement {
+  font: 500 27px/1.35 var(--font-display);
+  letter-spacing: -0.03em;
+  color: #e4ff43;
+}
+.footer-bottom {
+  border-top: 1px solid #494d59;
+  padding-block: 24px;
+  display: flex;
+  justify-content: space-between;
+  color: #d1d5e0;
+  font-size: 11px;
+}
+.page-space {
+  padding-block: 56px 80px;
+  min-height: 60vh;
+}
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+.page-heading h1 {
+  font-size: clamp(30px, 3.5vw, 46px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.4;
+}
+.page-heading p {
+  color: var(--color-muted);
+  font-size: 15px;
+  margin-top: 16px;
+  line-height: 1.85;
+}
+.filter-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-panel);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--color-ink);
+  border: 1px solid var(--color-line);
+  padding: 0 16px;
+  border-radius: var(--radius-control);
+  flex: 1;
+  min-width: 220px;
+}
+.search-field input {
+  min-width: 0;
+  width: 100%;
+  padding-block: 15px;
+  font-size: 14px;
+}
+.check-filter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  min-height: 44px;
+}
+.filter-chips {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.filter-chips button {
+  padding: 10px 16px;
+  border: 1px solid var(--color-line);
+  border-radius: 24px;
+  font-size: 13px;
+  min-height: 44px;
+}
+.filter-chips button.selected {
+  background: var(--color-brand-500);
+  color: white;
+  border-color: var(--color-brand-500);
+}
+.select-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+}
+.select-field input,
+.select-field select {
+  min-height: 50px;
+  padding: 10px;
+  border: 1px solid var(--color-line);
+  background: var(--color-ink);
+  border-radius: 8px;
+  font-size: 14px;
+}
+.results-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-block: 24px;
+  font-size: 13px;
+  min-height: 44px;
+  color: var(--color-muted);
+}
+.results-line strong {
+  color: var(--color-body);
+}
+.data-state {
+  min-height: 180px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--color-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.data-state.is-loading {
+  background: var(--color-soft);
+  border-radius: 12px;
+}
+.schedule-results { scroll-margin-top: 100px; }
+.pagination.schedule-pagination { flex-wrap: wrap; gap: 8px; }
+.schedule-pagination .page-control { min-width: 44px; min-height: 44px; border: 1px solid var(--color-line); background: var(--color-surface); font-weight: 700; }
+.schedule-pagination .page-control[aria-current="page"] { background: var(--color-brand-500); border-color: var(--color-brand-500); color: var(--color-on-brand); }
+.schedule-pagination .page-control:disabled { opacity: .35; cursor: not-allowed; }
+.schedule-pagination .page-control:not(:disabled):hover { border-color: var(--color-brand-500); }
+.schedule-pagination .page-ellipsis { min-width: 16px; text-align: center; }
+.schedule-pagination .page-summary { color: var(--color-muted); font-size: 13px; margin-inline-start: 12px; }
+@media (max-width: 480px) {
+  .schedule-sort-label { display: block; margin-top: 4px; }
+  .schedule-pagination .page-summary { flex-basis: 100%; margin: 4px 0 0; text-align: center; }
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-top: 32px;
+}
+.booking-help {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 32px;
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.9;
+}
+.booking-help a {
+  text-decoration: underline;
+  color: var(--color-brand-500);
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 24px;
+  font-size: 13px;
+  text-decoration: underline;
+}
+.coach-profile {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr;
+  background: var(--color-soft);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.profile-photo {
+  height: 430px;
+}
+.profile-copy {
+  padding: 48px;
+  align-self: center;
+}
+.profile-copy h1 {
+  font-size: 42px;
+  font-weight: 700;
+}
+.profile-experience {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+.profile-copy p {
+  font-size: 15px;
+  line-height: 1.9;
+  margin-block: 20px 28px;
+  white-space: pre-line;
+}
+#coach-courses {
+  scroll-margin-top: 112px;
+}
+.package-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
 .package-card {
-  transition: border-color 180ms ease, translate 180ms ease;
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  padding: 32px;
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  transition:
+    border-color 0.2s,
+    translate 0.2s;
 }
-
+.package-card:hover,
 .package-card:focus-within {
   border-color: var(--color-brand-500);
 }
-
-@media (hover: hover) and (pointer: fine) {
-  .package-card:hover {
-    border-color: var(--color-brand-500);
-  }
+.package-card.featured {
+  background: var(--color-brand-100);
 }
-
+.package-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+}
+.package-credits {
+  font-size: 14px;
+  color: var(--color-muted);
+  margin-top: 12px;
+}
+.package-price {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 3vw, 46px);
+  font-weight: 600;
+  margin-top: 24px;
+  letter-spacing: -0.03em;
+}
+.package-price small {
+  font-size: 14px;
+  letter-spacing: 0;
+  margin-right: 8px;
+}
+.package-unit {
+  font-size: 13px;
+  color: var(--color-brand-500);
+  margin-top: 8px;
+}
+.package-perks {
+  margin-block: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-line);
+  display: grid;
+  gap: 14px;
+  font-size: 13px;
+}
+.package-perks li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.package-card .btn {
+  margin-top: auto;
+  width: 100%;
+}
+.workspace {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 40px;
+  padding-block: 40px 72px;
+}
+.workspace > aside {
+  position: sticky;
+  top: 128px;
+  align-self: start;
+}
+.workspace > section {
+  min-width: 0;
+}
+.workspace aside > a,
+.workspace aside > div > a {
+  border-radius: 8px;
+  min-height: 44px;
+}
+.workspace table {
+  font-variant-numeric: tabular-nums;
+}
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.auth-panel {
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+}
+.auth-form-wrap {
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+  padding-block: 64px;
+}
+.auth-form-wrap h1 {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.auth-form-wrap > p {
+  margin-top: 12px;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+.auth-form-wrap a {
+  color: var(--color-brand-500);
+  text-decoration: underline;
+}
+.auth-form {
+  margin-top: 32px;
+  display: grid;
+  gap: 22px;
+}
+.auth-form label {
+  display: grid;
+  gap: 10px;
+  font-size: 14px;
+}
+.auth-form input {
+  min-height: 52px;
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: var(--color-surface);
+  width: 100%;
+}
+.auth-form small {
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.auth-photo {
+  background: var(--color-brand-900);
+  position: relative;
+  overflow: hidden;
+}
+.auth-photo img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.65;
+}
+.auth-photo-copy {
+  position: absolute;
+  bottom: 64px;
+  left: 48px;
+  right: 48px;
+  color: white;
+  background: var(--color-brand-900);
+  padding: 24px;
+  border-radius: 12px;
+}
+.auth-photo-copy h2 {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.auth-photo-copy p {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #d1d5e0;
+}
+.auth-bottom {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+.form-error {
+  color: #a53434;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.swal2-popup {
+  font-family: var(--font-sans);
+  border-radius: 16px;
+  color: var(--color-body);
+}
+.swal2-confirm {
+  background: var(--color-brand-500);
+}
 @media (prefers-reduced-motion: no-preference) {
-  .package-card:focus-within {
-    translate: 0 -6px;
+  .hero-photo {
+    animation: photo-arrive 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
-  @media (hover: hover) and (pointer: fine) {
-    .package-card:hover {
-      translate: 0 -6px;
+  @keyframes photo-arrive {
+    from {
+      clip-path: inset(0 0 3% 0 round 16px);
+    }
+    to {
+      clip-path: inset(0 round 16px);
     }
   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .package-card {
-    transition: none;
+  .package-card:hover {
+    translate: 0 -4px;
   }
 }
+@media (max-width: 1050px) {
+  .club-container {
+    width: calc(100% - 64px);
+  }
+  .desktop-nav {
+    gap: 20px;
+  }
+  .header-inner {
+    gap: 20px;
+  }
+  .hero-section {
+    gap: 32px;
+  }
+  .hero-photo {
+    height: 500px;
+  }
+  .hero-search {
+    flex-wrap: wrap;
+  }
+  .hero-search input {
+    width: calc(100% - 48px);
+  }
+  .hero-search .btn {
+    width: 100%;
+  }
+  .coach-photo {
+    height: 260px;
+  }
+  .footer-main {
+    grid-template-columns: 1.4fr 1fr 1fr;
+  }
+  .footer-statement {
+    display: none;
+  }
+  .workspace {
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 24px;
+  }
+  .package-card {
+    padding: 24px;
+  }
+}
+@media (max-width: 760px) {
+  .club-container {
+    width: calc(100% - 40px);
+  }
+  .header-inner {
+    min-height: 76px;
+    gap: 12px;
+  }
+  .club-brand {
+    font-size: 18px;
+    gap: 8px;
+  }
+  .club-mark {
+    width: 34px;
+    height: 38px;
+    font-size: 27px;
+  }
+  .brand-caption {
+    font-size: 8px;
+  }
+  .desktop-nav,
+  .join-link {
+    display: none;
+  }
+  .header-actions {
+    gap: 14px;
+    font-size: 13px;
+  }
+  .menu-toggle {
+    display: flex;
+  }
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 20px 20px;
+    border-top: 1px solid var(--color-line);
+  }
+  .mobile-nav a {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 8px;
+    font-size: 15px;
+  }
+  .mobile-nav a.active {
+    background: var(--color-soft);
+    border-radius: 8px;
+  }
+  .hero-section {
+    grid-template-columns: 1fr;
+    padding-block: 36px;
+    gap: 28px;
+  }
+  .hero-copy h1 {
+    font-size: clamp(36px, 8vw, 48px);
+    line-height: 1.35;
+  }
+  .hero-copy > p {
+    font-size: 14px;
+    margin-block: 20px 24px;
+  }
+  .hero-search {
+    flex-wrap: nowrap;
+    padding-left: 12px;
+    gap: 8px;
+  }
+  .hero-search .btn {
+    width: auto;
+    padding-inline: 12px;
+  }
+  .hero-search .btn svg {
+    display: none;
+  }
+  .hero-search input {
+    font-size: 12px;
+  }
+  .hero-schedule-link {
+    font-size: 12px;
+    gap: 8px;
+  }
+  .hero-photo {
+    height: 310px;
+  }
+  .hero-photo img {
+    object-position: 70% 42%;
+  }
+  .hero-photo-caption {
+    padding-inline: 16px;
+  }
+  .journey-strip ol {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .journey-strip li,
+  .journey-strip li:first-child {
+    border: 0;
+    padding: 0;
+    gap: 20px;
+  }
+  .journey-strip p {
+    margin-top: 4px;
+  }
+  .section-space,
+  .schedule-section {
+    padding-block: 48px;
+  }
+  .section-heading,
+  .page-heading {
+    align-items: start;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .section-heading p {
+    font-size: 13px;
+  }
+  .coach-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .coach-photo {
+    height: 230px;
+  }
+  .coach-name h3 {
+    font-size: 20px;
+  }
+  .coach-info > p {
+    font-size: 13px;
+  }
+  .course-row {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 14px;
+    padding: 22px 0;
+  }
+  .course-person {
+    grid-column: 2;
+    grid-row: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .course-row .btn {
+    grid-column: 2;
+    justify-self: start;
+    grid-row: 3;
+  }
+  .course-date {
+    align-self: start;
+    padding-top: 4px;
+  }
+  .course-date strong {
+    font-size: 22px;
+  }
+  .course-description h3 {
+    font-size: 17px;
+  }
+  .closing-note {
+    padding: 28px;
+    margin-bottom: 48px;
+    flex-direction: column;
+    align-items: start;
+  }
+  .closing-note h2 {
+    font-size: 26px;
+  }
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 20px;
+    padding-block: 40px;
+  }
+  .footer-main > div {
+    grid-column: 1 / -1;
+  }
+  .footer-bottom {
+    font-size: 10px;
+    gap: 20px;
+  }
+  .page-space {
+    padding-block: 36px 56px;
+  }
+  .filter-panel {
+    padding: 16px;
+    gap: 16px;
+  }
+  .search-field {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+  .select-field {
+    flex: 1 1 100%;
+    justify-content: space-between;
+  }
+  .select-field input,
+  .select-field select {
+    width: 70%;
+    min-width: 0;
+  }
+  .coach-profile {
+    grid-template-columns: 1fr;
+  }
+  .profile-photo {
+    height: 340px;
+  }
+  .profile-copy {
+    padding: 28px;
+  }
+  .profile-copy h1 {
+    font-size: 34px;
+  }
+  .package-grid {
+    grid-template-columns: 1fr;
+  }
+  .package-card {
+    padding: 28px;
+  }
+  .package-price {
+    font-size: 42px;
+  }
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    padding-block: 28px 48px;
+  }
+  .workspace > aside {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .workspace > aside > div {
+    grid-column: 1 / -1;
+  }
+  .workspace > aside > .workspace-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+  .auth-photo {
+    display: none;
+  }
+  .auth-panel {
+    padding: 28px 24px;
+  }
+  .auth-form-wrap {
+    padding-block: 56px;
+  }
+}
+@media (max-width: 480px) {
+  .coach-grid {
+    grid-template-columns: 1fr;
+  }
+  .coach-photo {
+    height: 340px;
+  }
+  .account-link {
+    font-size: 12px;
+  }
+  .header-actions {
+    gap: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.booking-summary {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+}
+.booking-summary > .flex-1 {
+  min-width: 0;
+}
+@media (max-width: 760px) {
+  .booking-summary {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 16px;
+    padding: 20px;
+  }
+  .booking-summary > div:first-child {
+    width: 56px;
+    padding-right: 12px;
+  }
+  .booking-summary > div:last-child:not(.flex-1) {
+    grid-column: 2;
+    flex-wrap: wrap;
+  }
+  .booking-summary h3 {
+    overflow-wrap: anywhere;
+  }
+  .booking-summary a,
+  .booking-summary button {
+    min-height: 44px;
+  }
+}
+
+/* Approved sports editorial identity, shared by every route. */
+:root { --color-yellow: #e4ff43; --font-poster: "Archivo Black", "Archivo", "Noto Sans TC", sans-serif; }
+.club-container { width: min(1392px, calc(100% - 80px)); }
+.header-inner { min-height: 76px; }
+.club-brand { font-family: var(--font-poster); font-size: 32px; font-style: italic; letter-spacing: -.04em; gap: 0; line-height: 1; }
+.brand-period { color: var(--color-brand-500); margin-left: 6px; }
+.desktop-nav { font-size: 15px; font-weight: 700; }
+.site-header { border-bottom: 1px solid var(--color-body); }
+.btn { border-radius: 0; font-weight: 700; min-height: 50px; padding: 14px 24px; }
+.btn-yellow { background: var(--color-yellow); color: #121212; }
+.btn-yellow:hover { background: #d3ed24; }
+.btn-outline-white { border: 1px solid white; color: white; background: transparent; }
+.btn-outline-white:hover { background: white; color: var(--color-brand-500); }
+.editorial-hero { position: relative; min-height: 540px; height: min(590px,42vw); overflow: hidden; background: var(--color-brand-500); }
+.editorial-hero-image { position: absolute; inset: 0 0 0 auto; width: 58%; height: 100%; object-fit: cover; object-position: 64% center; }
+.editorial-hero-panel { position: relative; width: 55%; height: 100%; background: var(--color-brand-500); color: white; clip-path: polygon(0 0,100% 0,86% 100%,0 100%); }
+.editorial-hero-copy { padding: 42px 12% 36px 5.2vw; height: 100%; display: flex; flex-direction: column; align-items: flex-start; }
+.hero-display { font-family: var(--font-poster); font-style: italic; font-size: clamp(48px,6.4vw,96px); font-weight: 900; letter-spacing: -.04em; line-height: .98; white-space: nowrap; }
+.editorial-hero h1 { font-size: clamp(30px,3.4vw,52px); font-weight: 900; line-height: 1.3; margin-top: 16px; letter-spacing: -.03em; }
+.hero-description { margin-top: 14px; font-size: clamp(14px,1.45vw,21px); color: white; line-height: 1.8; }
+.hero-actions { display: flex; gap: 16px; margin-top: 28px; }
+.hero-actions .btn { min-width: 170px; font-size: 16px; }
+.hero-signoff { margin-top: auto; padding-top: 24px; font-size: 10px; font-weight: 600; letter-spacing: .18em; }
+.booking-strip { display: grid; grid-template-columns: 1.1fr 1fr .9fr; gap: 24px; padding: 16px 40px; border-bottom: 1px solid var(--color-body); background: var(--color-ink); align-items: center; }
+.booking-strip > label { display: flex; align-items: center; gap: 24px; border-right: 1px solid var(--color-body); padding-right: 24px; min-width: 0; }
+.booking-strip > label > svg { width: 30px; height: 30px; }
+.booking-strip > label > span { font-size: 12px; font-weight: 700; flex: 1; min-width: 0; }
+.booking-strip input { display: block; width: 100%; min-width: 0; padding-block: 6px; font-weight: 400; font-size: 16px; }
+.booking-strip > .btn { min-height: 64px; font-size: 18px; }
+.training-editorial { padding-block: 32px 24px; }
+.section-heading h2 { font-weight: 900; font-size: clamp(27px,3vw,44px); letter-spacing: -.035em; }
+.training-editorial .section-heading { margin-bottom: 24px; }
+.training-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.training-type, .training-photo { display: flex; flex-direction: column; min-height: 290px; min-width: 0; overflow: hidden; }
+.training-type { background: var(--color-yellow); padding: 28px; justify-content: space-between; }
+.training-type > strong { font-family: var(--font-poster); font-style: italic; font-size: clamp(30px,3.5vw,54px); line-height: 1.12; letter-spacing: -.04em; }
+.training-type > span { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; }
+.training-photo { position: relative; background: var(--color-body); }
+.training-photo img { width: 100%; height: 100%; position: absolute; object-fit: cover; transition: transform .4s; }
+.training-photo:hover img { transform: scale(1.035); }
+.training-photo > span { position: relative; margin-top: auto; padding: 18px 22px; color: white; background: #121212; }
+.training-photo strong { display: block; font-size: 28px; font-weight: 800; }
+.training-photo > span > span { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; }
+.section-space { padding-block: 64px; }
+.coach-grid { gap: 24px; }
+.coach-photo { border-radius: 0; height: 350px; }
+.experience-label { border-radius: 0; left: 0; bottom: 0; background: var(--color-yellow); color: #121212; font-weight: 700; }
+.coach-info { border-bottom: 1px solid var(--color-body); }
+.coach-name h3 { font-size: 26px; font-weight: 800; }
+.coach-name svg { color: var(--color-brand-500); }
+.tag-list span { background: transparent; border: 1px solid var(--color-line); border-radius: 0; color: var(--color-body); }
+.coach-availability { color: var(--color-brand-500); }
+.schedule-section { background: var(--color-brand-500); color: white; padding-block: 64px; }
+.schedule-section .section-heading p, .schedule-section .text-link, .schedule-section .data-state, .schedule-section .course-date span, .schedule-section .course-time, .schedule-section .course-description p, .schedule-section .course-person span { color: white; }
+.schedule-section .course-list, .schedule-section .course-row { border-color: #6b85f2; }
+.schedule-section .course-row .btn { background: var(--color-yellow); color: #121212; }
+.schedule-section .btn-secondary { color: #121212; }
+.course-row { padding-block: 28px; }
+.course-date strong { font-size: 30px; }
+.course-description h3 { font-size: 20px; font-weight: 700; }
+.course-list { border-top: 1px solid var(--color-body); }
+.page-heading { padding-bottom: 32px; border-bottom: 1px solid var(--color-body); margin-bottom: 28px; }
+.page-heading h1 { font-size: clamp(34px,4vw,58px); font-weight: 900; letter-spacing: -.04em; }
+.filter-panel { border: none; border-radius: 0; border-bottom: 1px solid var(--color-body); padding: 0 0 24px; background: transparent; }
+.search-field { background: white; border-color: var(--color-body); border-radius: 0; }
+.search-field:focus-within {
+  border-color: var(--color-brand-500);
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: -2px;
+}
+.search-field input:focus-visible { outline: none; }
+.select-field input, .select-field select { border-color: var(--color-body); border-radius: 0; background: white; }
+.filter-chips button { border-radius: 0; background: white; }
+.filter-chips button.selected { background: var(--color-yellow); color: #121212; border-color: #121212; }
+.package-grid { gap: 0; border: 1px solid var(--color-body); }
+.package-card { border: none; border-right: 1px solid var(--color-body); border-radius: 0; background: transparent; padding: 40px 32px; }
+.package-card:last-child { border-right: none; }
+.package-card.featured { background: var(--color-yellow); }
+.package-card h3 { font-size: 24px; font-weight: 800; }
+.package-price { font-size: clamp(36px,4vw,60px); font-weight: 800; }
+.package-perks { border-color: var(--color-body); }
+.package-card:hover { translate: none; background: var(--color-surface); }
+.package-card.featured:hover { background: #daef59; }
+.package-card:focus-within { outline: 2px solid var(--color-brand-500); outline-offset: -2px; }
+.closing-note { margin-top: 16px; padding: 48px; border-radius: 0; background: var(--color-yellow); border-block: 1px solid #121212; }
+.closing-note h2 { font-size: 36px; font-weight: 900; }
+.site-footer { background: #121212; color: white; }
+.site-footer .brand-period { color: var(--color-yellow); }
+.site-footer .club-brand { font-size: 32px; }
+.footer-statement { font-family: var(--font-poster); font-style: italic; color: var(--color-yellow); font-size: 34px; }
+.coach-profile { grid-template-columns: .9fr 1.1fr; border-radius: 0; background: var(--color-yellow); }
+.profile-copy h1 { font-size: 52px; font-weight: 900; }
+.profile-photo { height: 480px; }
+.auth-page { background: var(--color-ink); grid-template-columns: .95fr 1.05fr; }
+.auth-panel { padding: 40px; }
+.auth-form-wrap h1 { font-weight: 900; font-size: 46px; }
+.auth-form input { border-radius: 0; border-color: var(--color-body); }
+.auth-photo { background: var(--color-brand-500); }
+.auth-photo img { opacity: 1; object-position: 64% center; }
+.auth-photo-copy { left: 0; right: 0; bottom: 0; border-radius: 0; background: var(--color-brand-500); padding: 32px 40px; }
+.auth-photo-copy h2 { font-size: 40px; font-weight: 900; }
+.auth-photo-copy p { color: white; }
+.workspace-banner { background: var(--color-brand-500); color: white; padding-block: 36px; }
+.workspace-banner-inner { display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+.workspace-title { font-family: var(--font-poster); font-style: italic; font-size: clamp(30px,4vw,58px); line-height: 1.1; letter-spacing: -.04em; }
+.workspace-title + p { font-size: 14px; margin-top: 14px; }
+.coach-banner { background: #121212; }
+.workspace-overview { display: grid; grid-template-columns: 1.2fr 1fr 1fr; border-bottom: 1px solid var(--color-body); padding-block: 28px; }
+.workspace-overview > div { display: flex; flex-direction: column; gap: 12px; padding-inline: 32px; border-right: 1px solid var(--color-line); }
+.workspace-overview > div:first-child { padding-left: 0; }
+.workspace-overview > div:last-child { border: none; }
+.workspace-overview span { color: var(--color-muted); font-size: 13px; }
+.workspace-overview strong { font-family: var(--font-display); font-size: 38px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.workspace-overview small { font: 400 13px var(--font-sans); margin-inline: 8px; }
+.workspace-overview a { color: var(--color-brand-500); display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.workspace-tabs { display: flex; gap: 8px; padding-block: 20px; border-bottom: 1px solid var(--color-line); }
+.workspace-tabs a { padding: 14px 24px; font-size: 14px; font-weight: 600; }
+.workspace-tabs a.active { background: var(--color-yellow); color: #121212; }
+.workspace-body { padding-block: 40px 72px; min-height: 450px; min-width: 0; }
+.workspace-body h1 { font-size: 34px; font-weight: 800; }
+.workspace-body form { background: white; padding: 28px; border-top: 2px solid var(--color-body); }
+.workspace-body input, .workspace-body textarea, .workspace-body select { border-radius: 0; background: var(--color-ink); }
+.workspace-body button { border-radius: 0; }
+.booking-summary { border-radius: 0; border: 0; border-bottom: 1px solid var(--color-body); padding: 28px 0; background: transparent; }
+@media (prefers-reduced-motion: no-preference) { .editorial-hero-image { animation: editorial-arrive .6s cubic-bezier(.16,1,.3,1); } @keyframes editorial-arrive { from { clip-path: inset(0 0 3%); } to { clip-path: inset(0); } } }
+@media (max-width: 1100px) {
+ .club-brand { font-size: 26px; }
+ .editorial-hero { min-height: 490px; }
+ .editorial-hero-panel { width: 59%; }
+ .editorial-hero-copy { padding-left: 32px; }
+ .hero-display { font-size: 6.3vw; }
+ .hero-actions .btn { min-width: 135px; padding-inline: 18px; }
+ .training-type { padding: 22px; }
+ .training-type > strong { font-size: 3.5vw; }
+ .booking-strip { padding-inline: 32px; gap: 20px; }
+}
+@media (max-width: 760px) {
+ .club-container { width: calc(100% - 40px); }
+ .header-inner { min-height: 68px; }
+ .club-brand { font-size: 24px; }
+ .brand-period { margin-left: 2px; }
+ .editorial-hero { height: auto; min-height: 0; display: flex; flex-direction: column; }
+ .editorial-hero-image { position: static; width: 100%; height: 310px; order: 2; object-position: 67% center; }
+ .editorial-hero-panel { width: 100%; clip-path: none; }
+ .editorial-hero-copy { padding: 30px 20px; }
+ .hero-display { font-size: clamp(42px,10.5vw,76px); }
+ .editorial-hero h1 { font-size: 32px; margin-top: 16px; }
+ .hero-description { font-size: 14px; }
+ .hero-actions { margin-top: 24px; width: 100%; gap: 12px; }
+ .hero-actions .btn { min-width: 0; flex: 1; font-size: 14px; padding-inline: 16px; }
+ .hero-signoff { font-size: 9px; padding-top: 22px; }
+ .booking-strip { grid-template-columns: 1fr 1fr; padding: 20px; gap: 16px; }
+ .booking-strip label { padding-right: 0; border: 0; gap: 10px; }
+ .booking-strip label svg { width: 20px; height: 20px; }
+ .booking-strip input { font-size: 13px; }
+ .booking-strip .btn { grid-column: 1 / -1; min-height: 52px; font-size: 16px; }
+ .training-editorial { padding-top: 28px; }
+ .training-grid { grid-template-columns: 1fr 1fr; }
+ .training-type { grid-column: 1 / -1; min-height: 170px; padding: 24px; }
+ .training-type > strong { font-size: 34px; }
+ .training-type > span { font-size: 14px; margin-top: 16px; }
+ .training-photo { min-height: 255px; }
+ .training-photo > span { padding: 14px; }
+ .training-photo strong { font-size: 22px; }
+ .training-photo > span > span { font-size: 11px; gap: 6px; }
+ .training-photo img { object-position: center; }
+ .section-space, .schedule-section { padding-block: 40px; }
+ .section-heading h2 { font-size: 28px; }
+ .coach-photo { height: 330px; }
+ .package-grid { border: 0; gap: 16px; }
+ .package-card { border: 1px solid var(--color-body); padding: 28px; }
+ .package-card:last-child { border-right: 1px solid var(--color-body); }
+ .closing-note { padding: 28px; }
+ .closing-note h2 { font-size: 28px; }
+ .coach-profile { grid-template-columns: 1fr; }
+ .profile-photo { height: 340px; }
+ .profile-copy h1 { font-size: 36px; }
+ .auth-page { grid-template-columns: 1fr; }
+ .auth-panel { padding: 28px 24px; }
+ .auth-form-wrap h1 { font-size: 36px; }
+ .workspace-banner { padding-block: 28px; }
+ .workspace-banner-inner { align-items: flex-start; flex-direction: column; gap: 20px; }
+ .workspace-overview { gap: 0; padding-block: 24px; }
+ .workspace-overview > div { padding-inline: 12px; gap: 10px; }
+ .workspace-overview strong { font-size: 26px; }
+ .workspace-overview small { display: block; margin-inline: 0; margin-top: 4px; }
+ .workspace-overview span { font-size: 11px; }
+ .workspace-overview a { font-size: 11px; gap: 4px; }
+ .workspace-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+ .workspace-tabs a { padding: 12px 14px; }
+ .workspace-body { padding-block: 28px 48px; }
+ .workspace-body form { padding: 20px 16px; }
+ .workspace-body h1 { font-size: 30px; }
+ .site-footer .club-brand { font-size: 30px; }
+}
+
+@media (max-width: 760px) { .course-date strong { font-size: 22px; } }

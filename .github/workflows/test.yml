@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        milestone: [m1, m2, m3, m4, m5, m6]
+        suite: [catalog, accounts, coach-management, discovery, bookings, revenue]
     services:
       postgres:
         image: postgres:16.4-alpine3.20
@@ -47,16 +47,16 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: package.json
+          cache-dependency-path: package-lock.json
 
       - name: 安裝依賴
-        run: npm install
+        run: npm ci
 
       - name: 檢查 backend/ 結構
         run: node .github/scripts/check-backend.js
 
       - name: 安裝後端依賴
-        run: npm --prefix backend install
+        run: npm --prefix backend ci
 
       - name: 啟動後端（根目錄 npm start 會代理到 backend/start）
         run: |
@@ -73,14 +73,14 @@ jobs:
           cat server.log
           exit 1
 
-      - name: 跑 ${{ matrix.milestone }} 合約測試
-        run: npx jest test/${{ matrix.milestone }}.test.js --runInBand --json --outputFile=jest-result.json
+      - name: 執行 ${{ matrix.suite }} 合約測試
+        run: npx jest test/${{ matrix.suite }}.test.js --runInBand --json --outputFile=jest-result.json
 
-      - name: 📊 測試結果總表（看這裡就知道哪些對哪些沒對）
+      - name: 測試結果摘要
         if: always()
-        run: node .github/scripts/summary.js "合約測試 (${{ matrix.milestone }})" jest-result.json
+        run: node .github/scripts/summary.js "合約測試 (${{ matrix.suite }})" jest-result.json
 
-      - name: 測試失敗 → 印出 server log 幫你 debug
+      - name: 測試失敗時輸出後端記錄
         if: failure()
         run: |
           echo "========== server.log =========="
@@ -111,10 +111,10 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: package.json
+          cache-dependency-path: package-lock.json
 
       - name: 安裝依賴
-        run: npm install
+        run: npm ci
 
       - name: smoke 測試（容器裡的後端要跟本機開發時行為一致）
         run: npx jest test/smoke.test.js --runInBand --json --outputFile=jest-result.json
@@ -126,10 +126,10 @@ jobs:
       - name: 持久化檢查（資料要存在 PostgreSQL，重啟不能消失）
         run: |
           MARK="persist_check_$(date +%s)_$RANDOM"
-          echo "種一筆技能：$MARK"
-          curl -sf -X POST "http://localhost:8080/api/coaches/skill" \
+          echo "建立持久化測試會員：$MARK"
+          curl -sf -X POST "http://localhost:8080/api/users/signup" \
             -H "Content-Type: application/json" \
-            -d "{\"name\":\"$MARK\"}" > /dev/null
+            -d "{\"name\":\"持久化驗證\",\"email\":\"$MARK@example.com\",\"password\":\"Persist1234\"}" > /dev/null
           echo "重啟 backend 容器…"
           docker compose restart backend
           for i in $(seq 1 30); do
@@ -137,9 +137,12 @@ jobs:
             sleep 2
           done
           echo "重啟後資料還在嗎？"
-          if curl -sf "http://localhost:8080/api/coaches/skill" | grep -q "$MARK"; then
-            echo "✅ 資料活過了重啟 — 資料確實存進資料庫"
-            echo "| ✅ | 持久化檢查：重啟容器後資料還在（資料真的存進 PostgreSQL） |" >> "$GITHUB_STEP_SUMMARY"
+          if curl -sf -X POST "http://localhost:8080/api/users/login" \
+            -H "Content-Type: application/json" \
+            -d "{\"email\":\"$MARK@example.com\",\"password\":\"Persist1234\"}" | \
+            node -e "let s='';process.stdin.on('data',d=>s+=d);process.stdin.on('end',()=>{const j=JSON.parse(s);process.exit(j.status==='success'&&j.data?.token?0:1)})"; then
+            echo "✅ 重啟後資料仍可存取 — 資料確實存進資料庫"
+            echo "| ✅ | 持久化檢查：重啟容器後資料還在（資料保存在 PostgreSQL） |" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "❌ 重啟後資料不見了 — 資料必須存進 PostgreSQL，不能放在程式記憶體裡"
             echo "| ❌ | 持久化檢查：重啟容器後資料不見了 — 資料必須存進 PostgreSQL，不能放在程式記憶體裡 |" >> "$GITHUB_STEP_SUMMARY"

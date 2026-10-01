@@ -1,135 +1,131 @@
-import { Link, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
-const FOOTER_COLS: { title: string; items: { label: string; to: string }[] }[] = [
-  {
-    title: "PLATFORM",
-    items: [
-      { label: "教練列表", to: "/coaches" },
-      { label: "課程時間表", to: "/schedule" },
-      { label: "健身方案", to: "/fitness-plans" },
-      { label: "成為教練", to: "/user/become-coach" },
-    ],
-  },
-  {
-    title: "會員",
-    items: [
-      { label: "登入", to: "/login" },
-      { label: "註冊", to: "/signup" },
-      { label: "我的課表", to: "/user/dashboard" },
-      { label: "購買紀錄", to: "/user/orders" },
-    ],
-  },
+import { Brand, Icon } from "./ClubUI";
+const links = [
+  { to: "/coaches", label: "找教練" },
+  { to: "/schedule", label: "選課與預約" },
+  { to: "/fitness-plans", label: "堂數方案" },
 ];
-
-const CONTACT_LINES = ["service@rfitness.tw", "02-2700-0000", "台北市信義區", "營業時間 06:00–23:00"];
-
 export function RootLayout() {
   const { user, logout } = useAuth();
-
+  const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+  useEffect(() => {
+    setOpen(false);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [pathname]);
   return (
-    <div className="flex min-h-screen flex-col bg-ink text-body">
-      <header data-nav="1" className="sticky top-0 z-20 border-b border-[#1d1f24] bg-[#0c0d0e]/90 backdrop-blur-md">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link to="/" className="flex items-center gap-3">
-            <img src="/assets/logo-mark.png" alt="" className="h-8 w-8 shrink-0 rounded-md object-cover" />
-            <span className="font-display text-xl font-black tracking-tight">
-              R<span className="mx-px" />FITNESS
-            </span>
-          </Link>
-          <div className="flex items-center gap-8 text-sm font-medium">
-            <Link to="/coaches" className="hidden text-body hover:text-brand-400 sm:inline">
-              教練列表
-            </Link>
-            <Link to="/schedule" className="hidden text-body hover:text-brand-400 sm:inline">
-              課程時間表
-            </Link>
-            <Link to="/fitness-plans" className="hidden text-body hover:text-brand-400 sm:inline">
-              健身方案
-            </Link>
-            <span className="hidden h-[18px] w-px bg-[#2a2d33] sm:inline" />
+    <div className="site-shell">
+      <a href="#main-content" className="skip-link">
+        跳至主要內容
+      </a>
+      <header className="site-header">
+        <div className="club-container header-inner">
+          <Brand />
+          <nav className="desktop-nav" aria-label="主要導覽">
+            {links.map((l) => (
+              <NavLink key={l.to} to={l.to}>
+                {l.label}
+              </NavLink>
+            ))}
+          </nav>
+          <div className="header-actions">
             {user ? (
               <>
-                {user.role === "USER" && (
-                  <Link to="/user/dashboard" className="flex items-center gap-2.5">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-500 font-display text-xs font-bold text-ink">
-                      {user.name.charAt(0)}
-                    </span>
-                    <span className="hidden md:inline">{user.name}</span>
-                  </Link>
-                )}
-                {user.role === "COACH" && (
-                  <Link to="/coach/profile" className="flex items-center gap-2.5">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-500 font-display text-xs font-bold text-ink">
-                      {user.name.charAt(0)}
-                    </span>
-                    <span>教練後台</span>
-                  </Link>
-                )}
-                <button type="button" onClick={logout} className="text-muted hover:text-brand-400">
+                <Link
+                  className="account-link"
+                  to={
+                    user.role === "COACH" ? "/coach/courses" : "/user/dashboard"
+                  }
+                >
+                  {user.role === "COACH" ? "教練工作區" : "我的課表"}
+                </Link>
+                <button className="quiet-button" onClick={logout}>
                   登出
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="text-muted hover:text-brand-400">
+                <Link className="login-link" to="/login">
                   登入
                 </Link>
-                <Link
-                  to="/signup"
-                  className="rounded-[4px] bg-brand-500 px-[18px] py-2.5 font-bold text-ink hover:bg-brand-400"
-                >
-                  加入會員
+                <Link className="btn btn-primary join-link" to="/signup">
+                  加入會員 <Icon size={16} />
                 </Link>
               </>
             )}
-          </div>
-        </nav>
-      </header>
-
-      <main className="flex-1">
-        <Outlet />
-      </main>
-
-      <footer className="mt-24 border-t border-[#1d1f24] bg-[#0a0b0c]">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-6 py-16 sm:grid-cols-2 md:grid-cols-4">
-          <div>
-            <div className="flex items-center gap-3">
-              <img src="/assets/logo-mark.png" alt="" className="h-[46px] w-[46px] rounded-lg object-cover" />
-              <div className="font-display text-2xl font-black tracking-tight">
-                R<span className="mx-px" />FITNESS
-              </div>
-            </div>
-            <p className="mt-4 max-w-[260px] text-sm leading-relaxed font-light text-faint">
-              健身房課程預約平台。瀏覽教練、購買堂數、報名課程。
-            </p>
-          </div>
-          {FOOTER_COLS.map((col) => (
-            <div key={col.title}>
-              <div className="font-mono text-[11px] tracking-widest text-[#57524c]">{col.title}</div>
-              <div className="mt-4 flex flex-col gap-2.5">
-                {col.items.map((item) => (
-                  <Link key={item.label} to={item.to} className="text-sm text-muted hover:text-brand-400">
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-          <div>
-            <div className="font-mono text-[11px] tracking-widest text-[#57524c]">CONTACT</div>
-            <div className="mt-4 flex flex-col gap-2.5">
-              {CONTACT_LINES.map((line) => (
-                <span key={line} className="text-sm text-muted">
-                  {line}
-                </span>
-              ))}
-            </div>
+            <button
+              className="menu-toggle"
+              aria-label={open ? "關閉導覽" : "開啟導覽"}
+              aria-expanded={open}
+              aria-controls="mobile-navigation"
+              onClick={() => setOpen(!open)}
+            >
+              <Icon name={open ? "close" : "menu"} />
+            </button>
           </div>
         </div>
-        <div className="mx-auto flex max-w-6xl justify-between border-t border-[#1d1f24] px-6 py-6 font-mono text-[11px] text-[#4f4a45]">
-          <span>© {new Date().getFullYear()} R FITNESS</span>
-          <span>NODE.JS · EXPRESS · POSTGRESQL</span>
+        {open && (
+          <nav
+            id="mobile-navigation"
+            className="mobile-nav"
+            aria-label="手機導覽"
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setOpen(false);
+            }}
+          >
+            {links.map((l) => (
+              <NavLink to={l.to} key={l.to}>
+                {l.label}
+                <Icon />
+              </NavLink>
+            ))}
+            {!user && (
+              <Link to="/signup">
+                加入會員
+                <Icon />
+              </Link>
+            )}
+          </nav>
+        )}
+      </header>
+      <main id="main-content" tabIndex={-1}>
+        <Outlet />
+      </main>
+      <footer className="site-footer">
+        <div className="club-container footer-main">
+          <div>
+            <Brand />
+            <p>
+              找到適合的教練，
+              <br />
+              讓每一次訓練都有方向。
+            </p>
+          </div>
+          <nav aria-label="探索訓練">
+            <h2>開始你的訓練</h2>
+            {links.map((l) => (
+              <Link key={l.to} to={l.to}>
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+          <nav aria-label="會員服務">
+            <h2>你的 R Fitness</h2>
+            <Link to="/user/dashboard">我的課表</Link>
+            <Link to="/user/orders">購買紀錄</Link>
+            <Link to="/user/become-coach">成為教練</Link>
+          </nav>
+          <p className="footer-statement">
+            Make room
+            <br />
+            for movement.
+          </p>
+        </div>
+        <div className="club-container footer-bottom">
+          <span>© {new Date().getFullYear()} R Fitness</span>
+          <span>依你的步調，持續向前。</span>
         </div>
       </footer>
     </div>

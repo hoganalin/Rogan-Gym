@@ -1,27 +1,6 @@
 /**
- * ============================================================
- * 里程碑 M3：升級教練 + 教練後台
- * ============================================================
- *
- * 這個檔案在測什麼：
- * 1. 升級教練（POST /api/users/me/coach）：登入會員只能升級自己，
- *    同一個人不能被升級兩次
- * 2. 教練個人資料（GET / PUT /api/coach）：只有教練本人能看與改，
- *    profile_image_url 必須是 https 開頭，skill_ids 要能存能讀
- * 3. 開課（POST /api/coach/courses）：欄位齊全才能開課、
- *    meeting_url 必須 https、一般會員不能開課
- * 4. 單一課程查詢與更新（GET / PUT /api/coach/courses/:courseId）：
- *    只有課主能查、能改自己的課（owner-scoped）
- * 5. 教練課程列表（GET /api/coach/courses）：陣列、含中文 status 與
- *    participants 欄位
- *
- * 紅燈時的三步自救：
- * 1. 看測試名稱 —— 測試名就是行為描述，先搞清楚是哪個「行為」沒過
- * 2. 對照 API 文件「教練後台（admin）」那一節 —— 確認路徑、必填欄位、回傳形狀
- * 3. 用 Postman / curl 本機重打一次同樣的請求 —— 看你的 server 實際回了什麼
- *
- * 提醒：這些測試全程只透過 HTTP 打你的 API（黑箱），需要的會員 / 教練 /
- * 技能 / 課程都是測試自己當場建立的，不依賴資料庫裡的舊資料。
+ * 教練 API 合約測試。涵蓋角色升級、檔案維護、課程管理與資料所有權。
+ * 測試透過 HTTP 建立獨立資料，不依賴預先建立的帳號或課程。
  */
 const {
   api,
@@ -37,7 +16,7 @@ const {
   createCourse,
 } = require('./helpers');
 
-describe('M3 升級教練與教練後台', () => {
+describe('升級教練與教練後台', () => {
   describe('升級教練 POST /api/users/me/coach', () => {
     test('把一般會員升級成教練 → 成功，且升級後重新登入就能進教練後台', async () => {
       const user = await signupAndLogin();

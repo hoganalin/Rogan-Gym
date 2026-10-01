@@ -15,17 +15,17 @@ for (const url of ["/", "/fitness-plans"]) {
     const annual = page.getByRole("heading", { name: "年度方案", exact: true }).locator("..");
     await trial.scrollIntoViewIfNeeded();
     await trial.hover();
-    await expect(trial).toHaveCSS("border-top-color", "rgb(244, 80, 30)");
-    await expect(trial).toHaveCSS("translate", "0px -6px");
+    await expect(trial).toHaveCSS("background-color", "rgb(255, 255, 255)");
+    await expect(trial).toHaveCSS("translate", "none");
     await annual.hover();
-    await expect(trial).toHaveCSS("border-top-color", "rgb(34, 36, 42)");
-    await expect(annual).toHaveCSS("border-top-color", "rgb(244, 80, 30)");
+    await expect(trial).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(annual).toHaveCSS("background-color", "rgb(218, 239, 89)");
     await page.mouse.move(0, 0);
-    await expect(annual).toHaveCSS("border-top-color", "rgb(74, 59, 51)");
+    await expect(annual).toHaveCSS("background-color", "rgb(228, 255, 67)");
     await trial.getByRole("button").focus();
-    await expect(trial).toHaveCSS("border-top-color", "rgb(244, 80, 30)");
+    await expect(trial).toHaveCSS("outline-color", "rgb(18, 61, 231)");
     await page.emulateMedia({ reducedMotion: "reduce" });
     await expect(trial).toHaveCSS("translate", "none");
-    await expect(trial).toHaveCSS("border-top-color", "rgb(244, 80, 30)");
+    await expect(trial).toHaveCSS("outline-color", "rgb(18, 61, 231)");
   });
 }

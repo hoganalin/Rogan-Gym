@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { signup, promoteToCoach, uniqueEmail } from "./api-helpers";
+import { signup, login, promoteToCoach, uniqueEmail } from "./api-helpers";
 
 const FIXTURE_PASSWORD = "Password1234";
 
@@ -8,16 +8,16 @@ test.describe("coach journey: skills, profile, course create/edit, earnings", ()
 
   test.beforeAll(async () => {
     coachEmail = uniqueEmail("e2e-coach-ui");
-    const userId = await signup("E2E Coach UI", coachEmail, FIXTURE_PASSWORD);
-    await promoteToCoach(userId);
+    await signup("E2E Coach UI", coachEmail, FIXTURE_PASSWORD);
+    await promoteToCoach(await login(coachEmail, FIXTURE_PASSWORD));
   });
 
   test("manage skills and profile, create and edit a course, view earnings", async ({ page }) => {
     await page.goto("/login");
-    await page.getByLabel("Email").fill(coachEmail);
+    await page.getByLabel("電子郵件").fill(coachEmail);
     await page.getByLabel("密碼").fill(FIXTURE_PASSWORD);
     await page.getByRole("button", { name: "登入" }).click();
-    await expect(page.getByRole("link", { name: "教練後台" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "教練工作區" })).toBeVisible();
 
     // Add a skill tag
     await page.goto("/coach/skills");

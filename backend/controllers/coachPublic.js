@@ -10,10 +10,7 @@ const uuidRegex =
 
 const coachPublicController = {
   async getCoachPublic(req, res, next) {
-    // 回傳教練列表，支援分頁。per 是每頁筆數、page 是第幾頁（從 1 開始）。分頁要真的有作用：回第 page 頁、每頁最多 per 筆；該頁沒資料就回空陣列（仍是成功），不算錯誤。
-    // per 和 page 都是必填：少帶任何一個、或帶了不能轉成非負整數的值（例如 per=test），都回 4xx + status: failed，message 為「欄位未填寫正確」。
-    // 注意：回傳的 id 是「教練 id」，不是使用者 id。前端會拿這個 id 去打 GET /api/coaches/{coachId}，
-    // user_id 才是這位教練對應的使用者 id，兩個欄位都要給、不要搞混。
+    // per 與 page 為必要分頁參數；id 和 user_id 分別為教練與會員識別碼。
     const { per, page } = req.query;
     const perNumber = Number(per);
     const pageNumber = Number(page);
@@ -55,9 +52,7 @@ const coachPublicController = {
     }
     const coachSkills = await dataSource.getRepository("CoachLinkSkill").find({
       where: { coach_id: coach.id },
-      //單靠 coach_link_skill 表本身，我們只拿得到 skill_id（一串 uuid），
-      // 拿不到技能的名稱。relations: { skill: true } 是告訴 TypeORM：
-      // 「查詢的時候，順便用 skill_id 去 JOIN 對應的 Skill 表，把完整的 skill 物件（包含 name）一起帶出來」。
+      // 載入技能關聯以回傳技能名稱。
       relations: { skill: true },
       order: { skill: { created_at: "ASC" } },
     });

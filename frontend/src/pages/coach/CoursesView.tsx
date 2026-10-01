@@ -30,8 +30,8 @@ const emptyForm: CourseFormState = {
 };
 
 const inputClass =
-  "mt-2.5 w-full rounded-[4px] border border-[#2a2d33] bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500";
-const labelClass = "font-mono text-[11px] tracking-wider text-[#8a857f]";
+  "mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500";
+const labelClass = "font-mono text-[11px] tracking-wider text-muted";
 
 export default function CoursesView() {
   const { refreshSummary } = useOutletContext<CoachLayoutContext>();
@@ -125,7 +125,7 @@ export default function CoursesView() {
   }
 
   if (loading) return <p className="text-muted">載入中…</p>;
-  if (error) return <p className="text-rose-400">{error}</p>;
+  if (error) return <p className="text-rose-700">{error}</p>;
 
   if (mode === "create" || mode === "edit") {
     return (
@@ -220,14 +220,14 @@ export default function CoursesView() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-[4px] bg-brand-500 px-[26px] py-3 text-sm font-bold text-ink hover:bg-brand-400 disabled:opacity-50"
+              className="rounded-[4px] bg-brand-500 px-[26px] py-3 text-sm font-bold text-on-brand hover:bg-brand-400 disabled:opacity-50"
             >
               儲存
             </button>
             <button
               type="button"
               onClick={cancelForm}
-              className="rounded-[4px] border border-[#2a2d33] px-[26px] py-3 text-sm font-medium text-muted hover:text-body"
+              className="rounded-[4px] border border-line px-[26px] py-3 text-sm font-medium text-muted hover:text-body"
             >
               取消
             </button>
@@ -244,7 +244,7 @@ export default function CoursesView() {
         <button
           type="button"
           onClick={startCreate}
-          className="rounded-[4px] bg-brand-500 px-[22px] py-3 text-sm font-bold text-ink hover:bg-brand-400"
+          className="rounded-[4px] bg-brand-500 px-[22px] py-3 text-sm font-bold text-on-brand hover:bg-brand-400"
         >
           新增課程
         </button>
@@ -259,7 +259,7 @@ export default function CoursesView() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="font-bold">{course.name}</h3>
-                <p className="mt-1.5 font-mono text-xs text-[#8a857f]">
+                <p className="mt-1.5 font-mono text-xs text-muted">
                   {formatCourseTime(course.start_at, course.end_at)}
                 </p>
                 <p className="mt-1 text-sm text-muted">
@@ -269,7 +269,7 @@ export default function CoursesView() {
               <button
                 type="button"
                 onClick={() => startEdit(course.id)}
-                className="shrink-0 rounded-[4px] border border-[#2a2d33] px-[18px] py-2.5 text-sm font-medium text-muted hover:text-body"
+                className="shrink-0 rounded-[4px] border border-line px-[18px] py-2.5 text-sm font-medium text-muted hover:text-body"
               >
                 編輯
               </button>
