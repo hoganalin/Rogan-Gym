@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { postPromoteUserToCoach } from "../../api/coach";
 import { extractErrorMessage } from "../../lib/errors";
+import { Button, Field, WorkspaceHeading } from "../../components/ClubUI";
 
 const STEPS = [
   { n: 1, label: "填寫經歷" },
@@ -45,11 +46,9 @@ export default function BecomeCoachView() {
 
   return (
     <div>
-
-      <h1 className="font-display text-4xl font-extrabold tracking-tight">成為教練</h1>
-      <p className="mt-3 text-sm font-light text-muted">
+      <WorkspaceHeading title="成為教練">
         填寫經歷與自我介紹，升級為 R Fitness 教練。送出後需重新登入以啟用教練權限。
-      </p>
+      </WorkspaceHeading>
 
       <div className="mt-7 flex items-center gap-2.5">
         {STEPS.map((step, i) => (
@@ -70,46 +69,36 @@ export default function BecomeCoachView() {
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 flex max-w-[520px] flex-col gap-4.5">
-        <label className="block">
-          <span className="font-mono text-[11px] tracking-wider text-muted">教學經驗（年）</span>
+        <Field label="教學經驗（年）">
           <input
             type="number"
             min={0}
             value={experienceYears}
             onChange={(e) => setExperienceYears(e.target.value)}
             placeholder="6"
-            className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
             required
           />
-        </label>
-        <label className="block">
-          <span className="font-mono text-[11px] tracking-wider text-muted">自我介紹</span>
+        </Field>
+        <Field label="自我介紹">
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="專注肌力訓練與體態調整…"
             rows={4}
-            className="mt-2.5 w-full resize-y rounded-[4px] border border-line bg-surface px-4 py-[14px] leading-relaxed text-body outline-none focus:border-brand-500"
             required
           />
-        </label>
-        <label className="block">
-          <span className="font-mono text-[11px] tracking-wider text-muted">個人照片網址（選填，需 https）</span>
+        </Field>
+        <Field label="個人照片網址（選填，需 https）" mono>
           <input
             type="url"
             value={profileImageUrl}
             onChange={(e) => setProfileImageUrl(e.target.value)}
             placeholder="https://"
-            className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] font-mono text-sm text-body outline-none focus:border-brand-500"
           />
-        </label>
-        <button
-          type="submit"
-          disabled={submitting}
-          className="mt-2 w-fit rounded-[4px] bg-brand-500 px-[34px] py-[15px] text-[15px] font-bold text-on-brand hover:bg-brand-400 disabled:opacity-50"
-        >
+        </Field>
+        <Button type="submit" disabled={submitting} className="mt-2 w-fit">
           送出申請
-        </button>
+        </Button>
       </form>
     </div>
   );

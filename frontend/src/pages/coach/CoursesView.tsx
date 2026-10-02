@@ -8,6 +8,7 @@ import { extractErrorMessage } from "../../lib/errors";
 import { formatCourseTime } from "../../lib/formatDateTime";
 import type { CoachLayoutContext } from "../../layouts/CoachLayout";
 import type { CoachCourseListItem, Skill } from "../../types/api";
+import { Button, Field, StatusText, WorkspaceHeading } from "../../components/ClubUI";
 
 interface CourseFormState {
   skillId: string;
@@ -29,9 +30,6 @@ const emptyForm: CourseFormState = {
   meetingUrl: "",
 };
 
-const inputClass =
-  "mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500";
-const labelClass = "font-mono text-[11px] tracking-wider text-muted";
 
 export default function CoursesView() {
   const { refreshSummary } = useOutletContext<CoachLayoutContext>();
@@ -124,23 +122,19 @@ export default function CoursesView() {
     }
   }
 
-  if (loading) return <p className="text-muted">載入中…</p>;
-  if (error) return <p className="text-rose-700">{error}</p>;
+  if (loading) return <StatusText>載入中…</StatusText>;
+  if (error) return <StatusText error>{error}</StatusText>;
 
   if (mode === "create" || mode === "edit") {
     return (
       <div>
-        <h1 className="font-display text-[34px] font-extrabold tracking-tight">
-          {mode === "edit" ? "編輯課程" : "新增課程"}
-        </h1>
+        <WorkspaceHeading title={mode === "edit" ? "編輯課程" : "新增課程"} />
 
         <form onSubmit={handleSubmit} className="mt-8 flex max-w-[480px] flex-col gap-4.5">
-          <label className="block">
-            <span className={labelClass}>技能標籤</span>
+          <Field label="技能標籤">
             <select
               value={form.skillId}
               onChange={(e) => setForm({ ...form, skillId: e.target.value })}
-              className={inputClass}
               required
             >
               <option value="" disabled>
@@ -152,85 +146,61 @@ export default function CoursesView() {
                 </option>
               ))}
             </select>
-          </label>
-          <label className="block">
-            <span className={labelClass}>課程名稱</span>
-            <input
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className={inputClass}
-              required
-            />
-          </label>
-          <label className="block">
-            <span className={labelClass}>課程說明</span>
+          </Field>
+          <Field label="課程名稱">
+            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+          </Field>
+          <Field label="課程說明">
             <textarea
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={3}
-              className={`${inputClass} resize-y leading-relaxed`}
               required
             />
-          </label>
-          <label className="block">
-            <span className={labelClass}>開始時間</span>
+          </Field>
+          <Field label="開始時間">
             <input
               type="datetime-local"
               value={form.startAt}
               onChange={(e) => setForm({ ...form, startAt: e.target.value })}
-              className={inputClass}
               required
             />
-          </label>
-          <label className="block">
-            <span className={labelClass}>結束時間</span>
+          </Field>
+          <Field label="結束時間">
             <input
               type="datetime-local"
               value={form.endAt}
               onChange={(e) => setForm({ ...form, endAt: e.target.value })}
-              className={inputClass}
               required
             />
-          </label>
-          <label className="block">
-            <span className={labelClass}>人數上限</span>
+          </Field>
+          <Field label="人數上限">
             <input
               type="number"
               min={0}
               value={form.maxParticipants}
               onChange={(e) => setForm({ ...form, maxParticipants: e.target.value })}
-              className={inputClass}
               required
             />
-          </label>
-          <label className="block">
-            <span className={labelClass}>會議連結（需以 https 開頭）</span>
+          </Field>
+          <Field label="會議連結（需以 https 開頭）" mono>
             <input
               type="url"
               value={form.meetingUrl}
               onChange={(e) => setForm({ ...form, meetingUrl: e.target.value })}
               placeholder="https://"
               pattern="https://.*"
-              className={`${inputClass} font-mono text-sm`}
               required
             />
-          </label>
+          </Field>
 
           <div className="mt-1 flex gap-3">
-            <button
-              type="submit"
-              disabled={saving}
-              className="rounded-[4px] bg-brand-500 px-[26px] py-3 text-sm font-bold text-on-brand hover:bg-brand-400 disabled:opacity-50"
-            >
+            <Button type="submit" disabled={saving}>
               儲存
-            </button>
-            <button
-              type="button"
-              onClick={cancelForm}
-              className="rounded-[4px] border border-line px-[26px] py-3 text-sm font-medium text-muted hover:text-body"
-            >
+            </Button>
+            <Button variant="secondary" onClick={cancelForm}>
               取消
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -239,23 +209,15 @@ export default function CoursesView() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-[34px] font-extrabold tracking-tight">課程管理</h1>
-        <button
-          type="button"
-          onClick={startCreate}
-          className="rounded-[4px] bg-brand-500 px-[22px] py-3 text-sm font-bold text-on-brand hover:bg-brand-400"
-        >
-          新增課程
-        </button>
-      </div>
-      <p className="mt-3 text-sm font-light text-muted">新增、編輯你開設的課程。</p>
+      <WorkspaceHeading title="課程管理" action={<Button onClick={startCreate}>新增課程</Button>}>
+        新增、編輯你開設的課程。
+      </WorkspaceHeading>
 
-      {courses.length === 0 && <p className="mt-8 text-muted">目前沒有課程。</p>}
+      {courses.length === 0 && <StatusText className="mt-8">目前沒有課程。</StatusText>}
 
       <div className="mt-8 flex flex-col gap-3">
         {courses.map((course) => (
-          <div key={course.id} className="rounded-md border border-line bg-surface p-5">
+          <div key={course.id} className="rounded-(--radius-control) border border-line bg-surface p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="font-bold">{course.name}</h3>
@@ -266,13 +228,15 @@ export default function CoursesView() {
                   {course.status} · {course.participants}/{course.max_participants} 人
                 </p>
               </div>
-              <button
-                type="button"
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => startEdit(course.id)}
-                className="shrink-0 rounded-[4px] border border-line px-[18px] py-2.5 text-sm font-medium text-muted hover:text-body"
+                className="shrink-0"
+                aria-label={`編輯 ${course.name}`}
               >
                 編輯
-              </button>
+              </Button>
             </div>
           </div>
         ))}

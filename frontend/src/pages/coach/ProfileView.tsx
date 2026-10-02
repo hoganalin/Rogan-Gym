@@ -5,6 +5,7 @@ import { getSkills } from "../../api/skill";
 import { extractErrorMessage } from "../../lib/errors";
 import { useAuth } from "../../context/AuthContext";
 import { CoachMedia } from "../../components/CoachMedia";
+import { Button, Field, StatusText, WorkspaceHeading } from "../../components/ClubUI";
 import type { Skill } from "../../types/api";
 
 export default function ProfileView() {
@@ -66,53 +67,41 @@ export default function ProfileView() {
     }
   }
 
-  if (loading) return <p className="text-muted">載入中…</p>;
-  if (error) return <p className="text-rose-700">{error}</p>;
+  if (loading) return <StatusText>載入中…</StatusText>;
+  if (error) return <StatusText error>{error}</StatusText>;
 
   const selectedSkillNames = skills.filter((s) => skillIds.includes(s.id)).map((s) => s.name);
 
   return (
     <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_400px]">
       <div>
-        <h1 className="font-display text-[34px] font-extrabold tracking-tight">教練檔案</h1>
-        <p className="mt-3 text-sm font-light text-muted">
+        <WorkspaceHeading title="教練檔案">
           維護個人簡介、經歷年資與技能標籤。右側即時預覽你在教練列表上的樣子。
-        </p>
+        </WorkspaceHeading>
 
         <form onSubmit={handleSubmit} className="mt-8 flex max-w-[560px] flex-col gap-5">
-          <label className="block">
-            <span className="font-mono text-[11px] tracking-wider text-muted">教學經驗（年）</span>
+          <Field label="教學經驗（年）">
             <input
               type="number"
               min={0}
               value={experienceYears}
               onChange={(e) => setExperienceYears(e.target.value)}
-              className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
               required
             />
-          </label>
-          <label className="block">
-            <span className="font-mono text-[11px] tracking-wider text-muted">自我介紹</span>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={5}
-              className="mt-2.5 w-full resize-y rounded-[4px] border border-line bg-surface px-4 py-[14px] leading-relaxed text-body outline-none focus:border-brand-500"
-              required
-            />
-          </label>
-          <label className="block">
-            <span className="font-mono text-[11px] tracking-wider text-muted">個人照片網址（需 https）</span>
+          </Field>
+          <Field label="自我介紹">
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} required />
+          </Field>
+          <Field label="個人照片網址（需 https）" mono>
             <input
               type="url"
               value={profileImageUrl}
               onChange={(e) => setProfileImageUrl(e.target.value)}
               placeholder="https://"
               pattern="https://.*"
-              className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] font-mono text-sm text-body outline-none focus:border-brand-500"
               required
             />
-          </label>
+          </Field>
 
           <div>
             <span className="font-mono text-[11px] tracking-wider text-muted">技能標籤</span>
@@ -125,7 +114,7 @@ export default function ProfileView() {
                 return (
                   <label
                     key={skill.id}
-                    className={`relative flex items-center gap-2 rounded-[4px] px-[15px] py-[11px] text-sm font-medium ${
+                    className={`relative flex items-center gap-2 rounded-(--radius-control) px-[15px] py-[11px] text-sm font-medium ${
                       on ? "border border-brand-500 bg-brand-500/10 text-brand-500" : "border border-line text-muted"
                     }`}
                   >
@@ -145,23 +134,19 @@ export default function ProfileView() {
           </div>
 
           <div className="mt-2 flex items-center gap-3">
-            <button
-              type="submit"
-              disabled={saving}
-              className="rounded-[4px] bg-brand-500 px-[34px] py-[15px] text-[15px] font-bold text-on-brand hover:bg-brand-400 disabled:opacity-50"
-            >
+            <Button type="submit" disabled={saving}>
               儲存變更
-            </button>
+            </Button>
           </div>
         </form>
       </div>
 
-      <div className="rounded-md border border-line bg-ink p-[22px] lg:sticky lg:top-10 lg:self-start">
+      <div className="rounded-(--radius-control) border border-line bg-ink p-[22px] lg:sticky lg:top-10 lg:self-start">
         <div className="font-mono text-[11px] tracking-wider text-muted">LIVE PREVIEW — 教練列表卡片</div>
-        <div className="mt-[18px] overflow-hidden rounded-md border border-line bg-surface">
+        <div className="mt-[18px] overflow-hidden rounded-(--radius-control) border border-line bg-surface">
           <div className="relative h-[240px] bg-soft">
             <CoachMedia src={profileImageUrl || null} name={user?.name ?? "教"} className="h-full w-full" />
-            <span className="absolute top-3.5 right-3.5 rounded-[3px] border border-line bg-ink/70 px-2.5 py-1.5 font-mono text-[11px] text-brand-500">
+            <span className="absolute top-3.5 right-3.5 rounded-(--radius-control) border border-line bg-ink/70 px-2.5 py-1.5 font-mono text-[11px] text-brand-500">
               {experienceYears || 0}Y
             </span>
           </div>
@@ -170,7 +155,7 @@ export default function ProfileView() {
             <p className="mt-2.5 text-[13px] leading-relaxed font-light text-muted">{description}</p>
             <div className="mt-3.5 flex flex-wrap gap-1.5">
               {selectedSkillNames.map((sk) => (
-                <span key={sk} className="rounded-[3px] border border-line px-2.5 py-1 text-[11px] text-body">
+                <span key={sk} className="rounded-(--radius-control) border border-line px-2.5 py-1 text-[11px] text-body">
                   {sk}
                 </span>
               ))}
