@@ -5,6 +5,7 @@ import { useCourseActions } from "../../hooks/useCourseActions";
 import { formatCourseTime } from "../../lib/formatDateTime";
 import type { UserLayoutContext } from "../../layouts/UserLayout";
 import type { UserCourseBooking } from "../../types/api";
+import { Button, Icon, StatusText, WorkspaceHeading } from "../../components/ClubUI";
 
 type ViewMode = "week" | "month" | "list";
 
@@ -87,14 +88,14 @@ export default function DashboardView() {
     [bookings],
   );
 
-  if (loading) return <p className="text-muted">載入中…</p>;
-  if (!dashboard) return <p className="text-rose-700">載入課表失敗，請稍後再試。</p>;
+  if (loading) return <StatusText>載入中…</StatusText>;
+  if (!dashboard) return <StatusText error>載入課表失敗，請稍後再試。</StatusText>;
 
   function bookingCell(b: UserCourseBooking) {
     const cancelled = !!b.cancelled_at;
     return (
       <div
-        className={`h-full rounded-[3px] px-2.5 py-2 ${cancelled ? "bg-soft" : "bg-brand-500/15"}`}
+        className={`h-full rounded-(--radius-control) px-2.5 py-2 ${cancelled ? "bg-soft" : "bg-brand-500/15"}`}
         style={{ borderLeft: `1px solid ${cancelled ? "var(--color-line)" : "var(--color-brand-500)"}` }}
       >
         <div className={`text-xs leading-tight font-bold ${cancelled ? "text-faint" : "text-brand-500"}`}>{b.name}</div>
@@ -108,28 +109,28 @@ export default function DashboardView() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <h1 className="font-display text-[38px] font-extrabold tracking-tight">我的課表</h1>
-          <p className="mt-3 text-sm font-light text-muted">
-            剩餘 {dashboard.credit_remain} 堂 · 已使用 {dashboard.credit_usage} 堂 · 本週 {thisWeekActiveCount} 堂已報名
-          </p>
-        </div>
-        <div className="flex shrink-0 gap-0.5 rounded-[4px] border border-line p-[3px]">
-          {VIEW_TABS.map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => setView(tab.key)}
-              className={`rounded-[3px] px-4.5 py-2.5 text-[13px] font-medium ${
-                view === tab.key ? "bg-brand-500 text-on-brand" : "text-muted"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <WorkspaceHeading
+        title="我的課表"
+        action={
+          <div className="flex shrink-0 gap-0.5 rounded-(--radius-control) border border-line p-[3px]">
+            {VIEW_TABS.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setView(tab.key)}
+                aria-pressed={view === tab.key}
+                className={`px-4.5 py-2.5 text-[13px] font-medium ${
+                  view === tab.key ? "bg-brand-500 text-on-brand" : "text-muted"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        }
+      >
+        剩餘 {dashboard.credit_remain} 堂 · 已使用 {dashboard.credit_usage} 堂 · 本週 {thisWeekActiveCount} 堂已報名
+      </WorkspaceHeading>
 
       {view !== "list" && (
         <div className="mt-6 flex items-center justify-between">
@@ -137,9 +138,12 @@ export default function DashboardView() {
             <button
               type="button"
               onClick={() => (view === "week" ? setWeekOffset((o) => o - 1) : setMonthOffset((o) => o - 1))}
-              className="h-[34px] w-[34px] rounded-[4px] border border-line text-body hover:border-brand-400"
+              aria-label={view === "week" ? "上一週" : "上個月"}
+              className="inline-flex h-11 w-11 items-center justify-center border border-line text-body hover:border-brand-400"
             >
-              ←
+              <span className="inline-flex rotate-180">
+                <Icon size={18} />
+              </span>
             </button>
             <span className="font-display text-base font-bold">
               {view === "week"
@@ -149,18 +153,19 @@ export default function DashboardView() {
             <button
               type="button"
               onClick={() => (view === "week" ? setWeekOffset((o) => o + 1) : setMonthOffset((o) => o + 1))}
-              className="h-[34px] w-[34px] rounded-[4px] border border-line text-body hover:border-brand-400"
+              aria-label={view === "week" ? "下一週" : "下個月"}
+              className="inline-flex h-11 w-11 items-center justify-center border border-line text-body hover:border-brand-400"
             >
-              →
+              <Icon size={18} />
             </button>
           </div>
           <div className="flex items-center gap-4.5 text-xs text-muted">
             <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-[2px] bg-brand-500" />
+              <span className="h-2.5 w-2.5 rounded-(--radius-control) bg-brand-500" />
               已報名
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-[2px] bg-line" />
+              <span className="h-2.5 w-2.5 rounded-(--radius-control) bg-line" />
               已取消
             </span>
           </div>
@@ -168,7 +173,7 @@ export default function DashboardView() {
       )}
 
       {view === "week" && (
-        <div className="mt-5 overflow-x-auto rounded-md border border-line bg-surface">
+        <div className="mt-5 overflow-x-auto rounded-(--radius-control) border border-line bg-surface">
           <div className="grid min-w-[720px] grid-cols-[64px_repeat(7,1fr)]">
             <div className="border-r border-b border-line" />
             {weekDays.map((d) => (
@@ -208,7 +213,7 @@ export default function DashboardView() {
       )}
 
       {view === "month" && (
-        <div className="mt-5 overflow-x-auto rounded-md border border-line bg-surface">
+        <div className="mt-5 overflow-x-auto rounded-(--radius-control) border border-line bg-surface">
           <div className="grid min-w-[720px] grid-cols-7">
             {DOW.map((d) => (
               <div key={d} className="border-r border-b border-line py-3.5 text-center font-mono text-[11px] text-faint">
@@ -232,7 +237,7 @@ export default function DashboardView() {
                   return (
                     <div
                       key={b.course_id}
-                      className={`mt-2 rounded-[3px] px-2 py-1.5 ${cancelled ? "bg-soft" : "bg-brand-500/15"}`}
+                      className={`mt-2 rounded-(--radius-control) px-2 py-1.5 ${cancelled ? "bg-soft" : "bg-brand-500/15"}`}
                       style={{ borderLeft: `1px solid ${cancelled ? "var(--color-line)" : "var(--color-brand-500)"}` }}
                     >
                       <div className={`text-[11px] leading-tight font-bold ${cancelled ? "text-faint" : "text-brand-500"}`}>
@@ -267,7 +272,7 @@ export default function DashboardView() {
                   <div className="flex items-center gap-3">
                     <h3 className={`text-[17px] font-bold ${cancelled ? "text-faint" : "text-body"}`}>{b.name}</h3>
                     {cancelled && (
-                      <span className="rounded-[3px] border border-line px-2.5 py-1 text-[11px] text-muted">
+                      <span className="rounded-(--radius-control) border border-line px-2.5 py-1 text-[11px] text-muted">
                         已取消
                       </span>
                     )}
@@ -284,18 +289,19 @@ export default function DashboardView() {
                         href={b.meeting_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="rounded-[4px] border border-line px-4.5 py-2.5 text-[13px] font-medium hover:border-brand-400"
+                        className="btn btn-compact btn-sm btn-secondary"
                       >
                         會議連結
                       </a>
                     )}
-                    <button
-                      type="button"
+                    <Button
+                      variant="danger"
+                      size="sm"
                       onClick={() => handleCancel(b.course_id, b.name)}
-                      className="rounded-[4px] border border-[#4a2626] px-4.5 py-2.5 text-[13px] font-medium text-rose-700 hover:bg-[#4a2626]/20"
+                      aria-label={`取消報名 ${b.name}`}
                     >
                       取消報名
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>

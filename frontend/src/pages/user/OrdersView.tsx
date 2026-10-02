@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { getUserCreditPackage } from "../../api/users";
 import type { CreditPurchase } from "../../types/api";
+import { StatusText, WorkspaceHeading } from "../../components/ClubUI";
 
 export default function OrdersView() {
   const [purchases, setPurchases] = useState<CreditPurchase[]>([]);
@@ -27,17 +28,21 @@ export default function OrdersView() {
 
   return (
     <div>
-      <h1 className="font-display text-[34px] font-extrabold tracking-tight">購買紀錄</h1>
+      <WorkspaceHeading title="購買紀錄" />
 
-      {loading && <p className="mt-8 text-muted">載入中…</p>}
-      {error && <p className="mt-8 text-rose-700">{error}</p>}
+      {loading && <StatusText className="mt-8">載入中…</StatusText>}
+      {error && (
+        <StatusText error className="mt-8">
+          {error}
+        </StatusText>
+      )}
 
       {!loading && !error && (
         <div className="mt-8 flex flex-col gap-3">
           {purchases.map((purchase, index) => (
             <div
               key={index}
-              className="flex items-center justify-between rounded-md border border-line bg-surface px-6 py-5"
+              className="flex items-center justify-between rounded-(--radius-control) border border-line bg-surface px-6 py-5"
             >
               <div>
                 <h3 className="font-bold">{purchase.name ?? "已下架方案"}</h3>

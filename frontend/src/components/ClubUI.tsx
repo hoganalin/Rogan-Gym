@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
-import type { ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import type { CoachCard, PublicCourse } from "../types/api";
 import { CoachMedia } from "./CoachMedia";
 
@@ -81,6 +81,83 @@ export function DataState({
         </button>
       )}
     </div>
+  );
+}
+/** Title block for member and coach task pages; `action` sits beside the title. */
+export function WorkspaceHeading({
+  title,
+  children,
+  action,
+}: {
+  title: string;
+  children?: ReactNode;
+  action?: ReactNode;
+}) {
+  return (
+    <header className="workspace-heading">
+      <div>
+        <h1>{title}</h1>
+        {children && <p>{children}</p>}
+      </div>
+      {action}
+    </header>
+  );
+}
+/** Labelled form control. Pass the native input / select / textarea as children. */
+export function Field({
+  label,
+  mono = false,
+  className = "",
+  children,
+}: {
+  label: string;
+  mono?: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <label className={`field ${mono ? "field-mono" : ""} ${className}`}>
+      <span className="field-label">{label}</span>
+      {children}
+    </label>
+  );
+}
+/** Workspace button: 2px control radius, primary / secondary / danger. */
+export function Button({
+  variant = "primary",
+  size = "md",
+  type = "button",
+  className = "",
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: "primary" | "secondary" | "danger";
+  size?: "md" | "sm";
+}) {
+  return (
+    <button
+      type={type}
+      className={`btn btn-compact btn-${variant} ${size === "sm" ? "btn-sm" : ""} ${className}`}
+      {...props}
+    />
+  );
+}
+/** Inline loading or error line for workspace pages. */
+export function StatusText({
+  error = false,
+  className = "",
+  children,
+}: {
+  error?: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <p
+      className={`status-text ${error ? "is-error" : ""} ${className}`}
+      role={error ? "alert" : "status"}
+    >
+      {children}
+    </p>
   );
 }
 export function CoachTile({ coach }: { coach: CoachCard }) {

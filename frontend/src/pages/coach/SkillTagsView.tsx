@@ -5,6 +5,7 @@ import { getSkills, postSkill, deleteSkill } from "../../api/skill";
 import { extractErrorMessage } from "../../lib/errors";
 import type { CoachLayoutContext } from "../../layouts/CoachLayout";
 import type { Skill } from "../../types/api";
+import { Button, StatusText, WorkspaceHeading } from "../../components/ClubUI";
 
 export default function SkillTagsView() {
   const { refreshSummary } = useOutletContext<CoachLayoutContext>();
@@ -64,13 +65,12 @@ export default function SkillTagsView() {
     }
   }
 
-  if (loading) return <p className="text-muted">載入中…</p>;
-  if (error) return <p className="text-rose-700">{error}</p>;
+  if (loading) return <StatusText>載入中…</StatusText>;
+  if (error) return <StatusText error>{error}</StatusText>;
 
   return (
     <div>
-      <h1 className="font-display text-[34px] font-extrabold tracking-tight">技能標籤</h1>
-      <p className="mt-3 text-sm font-light text-muted">新增或移除課程與教練檔案可選用的技能標籤。</p>
+      <WorkspaceHeading title="技能標籤">新增或移除課程與教練檔案可選用的技能標籤。</WorkspaceHeading>
 
       <form onSubmit={handleAdd} className="mt-8 flex max-w-[420px] gap-3">
         <label className="sr-only" htmlFor="skill-name">
@@ -81,27 +81,28 @@ export default function SkillTagsView() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="技能名稱"
-          className="flex-1 rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
+          className="field-control flex-1"
           required
         />
-        <button type="submit" className="shrink-0 rounded-[4px] bg-brand-500 px-[22px] py-3 text-sm font-bold text-on-brand hover:bg-brand-400">
+        <Button type="submit" className="shrink-0">
           新增
-        </button>
+        </Button>
       </form>
 
-      {skills.length === 0 && <p className="mt-8 text-muted">目前沒有技能標籤。</p>}
+      {skills.length === 0 && <StatusText className="mt-8">目前沒有技能標籤。</StatusText>}
 
       <ul className="mt-8 flex max-w-[420px] flex-col gap-2.5">
         {skills.map((skill) => (
           <li
             key={skill.id}
-            className="flex items-center justify-between rounded-[4px] border border-line bg-surface px-4 py-3"
+            className="flex items-center justify-between rounded-(--radius-control) border border-line bg-surface px-4 py-3"
           >
             <span>{skill.name}</span>
             <button
               type="button"
               onClick={() => handleDelete(skill)}
-              className="min-h-11 text-sm text-rose-700 hover:text-rose-800"
+              className="btn-ghost-danger"
+              aria-label={`刪除 ${skill.name}`}
             >
               刪除
             </button>
