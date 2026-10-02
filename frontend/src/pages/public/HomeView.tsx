@@ -72,7 +72,7 @@ export default function HomeView() {
         <img className="editorial-hero-image" src="/assets/editorial/runner.webp" alt="藍衣跑者在陽光下的跑道上向前奔跑" fetchPriority="high" />
         <div className="editorial-hero-panel"><div className="editorial-hero-copy">
           <p className="hero-display" aria-hidden="true">MOVE ON<br />YOUR TERMS.</p>
-          <h1>找到你的節奏。</h1><p className="hero-description">找教練、選課程，把運動排進生活。</p>
+          <h1>找教練，預約實體課。</h1><p className="hero-description">買好堂數，挑教練與時段，到場一起練。</p>
           <div className="hero-actions"><Link className="btn btn-yellow" to="/coaches">探索教練<Icon /></Link><Link className="btn btn-outline-white" to="/schedule">查看課表</Link></div>
           <p className="hero-signoff">FIT PEOPLE. STRONGER LIVES.</p>
         </div></div>
@@ -82,6 +82,11 @@ export default function HomeView() {
         <label><Icon name="calendar" /><span>開課日期<input aria-label="選擇開課日期" type="date" value={date} onChange={e => setDate(e.target.value)} /></span></label>
         <button type="submit" className="btn btn-primary">尋找課程<Icon /></button>
       </form>
+      <ol className="how-steps" aria-label="預約流程">
+        <li><span className="how-step-index" aria-hidden="true">1</span><div><strong>選堂數方案</strong><p>依訓練頻率購買堂數。<Link to="/fitness-plans">比較方案</Link></p></div></li>
+        <li><span className="how-step-index" aria-hidden="true">2</span><div><strong>挑教練與時段</strong><p>依專項、日期找到合適的課。</p></div></li>
+        <li><span className="how-step-index" aria-hidden="true">3</span><div><strong>預約，到場上課</strong><p>每預約一堂扣 1 堂，取消後退回。</p></div></li>
+      </ol>
       <section className="training-editorial club-container">
         <div className="section-heading"><h2>每一種目標，都有你的練法。</h2><Link className="text-link" to="/coaches">探索所有教練<Icon /></Link></div>
         <div className="training-grid">

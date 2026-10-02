@@ -1529,6 +1529,23 @@ svg {
 
 @media (max-width: 760px) { .course-date strong { font-size: 22px; } }
 
+/* How-it-works line under the booking strip: three ordered steps split by hairlines. */
+.how-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0 40px; list-style: none; background: var(--color-ink); border-bottom: 1px solid var(--color-body); }
+.how-steps li { display: flex; align-items: flex-start; gap: 16px; padding: 20px 24px; border-right: 1px solid var(--color-line); min-width: 0; }
+.how-steps li:first-child { padding-left: 0; }
+.how-steps li:last-child { border-right: 0; }
+.how-step-index { font-family: var(--font-poster); font-style: italic; font-size: 30px; line-height: 1; color: var(--color-brand-500); font-variant-numeric: tabular-nums; }
+.how-steps strong { display: block; font-size: 16px; font-weight: 800; }
+.how-steps p { margin-top: 4px; font-size: var(--text-sm); color: var(--color-muted); }
+.how-steps a { margin-left: 8px; color: var(--color-brand-500); font-weight: 700; text-decoration: underline; }
+.how-steps a:hover { color: var(--color-brand-700); }
+@media (max-width: 760px) {
+  .how-steps { grid-template-columns: 1fr; padding: 4px 20px; }
+  .how-steps li { padding: 14px 0; border-right: 0; border-bottom: 1px solid var(--color-line); }
+  .how-steps li:last-child { border-bottom: 0; }
+  .how-step-index { font-size: 24px; min-width: 20px; }
+}
+
 /* Workspace primitives: shared by member and coach task pages (ClubUI Field / Button / WorkspaceHeading). */
 .workspace-heading { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 24px; }
 .workspace-heading > div:first-child { flex: 1 1 260px; min-width: 0; }
