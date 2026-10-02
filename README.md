@@ -33,7 +33,7 @@
 
 ## 畫面預覽
 
-以下為本機網站於 2026-10-01 的實際截圖，使用展示資料。品牌圖片為生成素材，來源見 [圖片說明](frontend/public/assets/editorial/PROVENANCE.md)。
+以下為本機網站於 2026-10-02 的實際截圖，使用展示資料。品牌圖片為生成素材，來源見 [圖片說明](frontend/public/assets/editorial/PROVENANCE.md)。
 
 ![R Fitness 首頁](docs/screenshots/home-desktop.png)
 
