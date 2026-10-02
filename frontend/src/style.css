@@ -21,6 +21,7 @@
   --color-on-brand: #ffffff;
   --color-accent: #e4ff43;
   --color-accent-hover: #d3ed24;
+  --color-accent-wash: #daef59;
   --color-on-dark-muted: #d1d5e0;
   --color-danger: #a53434;
   --text-caption: 13px;
@@ -1413,7 +1414,7 @@ svg {
 .package-price { font-size: clamp(36px,4vw,60px); font-weight: 800; }
 .package-perks { border-color: var(--color-body); }
 .package-card:hover { translate: none; background: var(--color-surface); }
-.package-card.featured:hover { background: var(--color-accent-hover); }
+.package-card.featured:hover { background: var(--color-accent-wash); }
 .package-card:focus-within { outline: 2px solid var(--color-brand-500); outline-offset: -2px; }
 .closing-note { margin-top: 16px; padding: 48px; border-radius: 0; background: var(--color-accent); border-block: 1px solid var(--color-body); }
 .closing-note h2 { font-size: 36px; font-weight: 900; }

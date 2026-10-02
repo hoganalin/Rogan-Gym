@@ -82,7 +82,7 @@ test.describe("member journey: signup, buy credits, book a course, view schedule
     await expect(page.getByText(`剩餘 ${creditAmount - 1} 堂`, { exact: false })).toBeVisible();
     await page.reload();
     await expect(page.getByRole("heading", { name: courseName })).toBeVisible();
-    await page.getByRole("button", { name: "取消報名", exact: true }).click();
+    await page.getByRole("button", { name: `取消報名 ${courseName}`, exact: true }).click();
     await page.locator(".swal2-confirm").click();
     await expect(page.locator(".swal2-title")).toHaveText("已取消報名");
     await page.locator(".swal2-confirm").click();
