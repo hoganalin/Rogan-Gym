@@ -59,7 +59,7 @@ test.describe("coach journey: skills, profile, course create/edit, earnings", ()
     await page.getByLabel("開始時間").fill(toLocalInputValue(start));
     await page.getByLabel("結束時間").fill(toLocalInputValue(end));
     await page.getByLabel("人數上限").fill("10");
-    await page.getByLabel(/會議連結/).fill("https://example.com/meeting");
+    await page.getByLabel(/上課地點連結/).fill("https://example.com/meeting");
     await page.getByRole("button", { name: "儲存" }).click();
     await expect(page.locator(".swal2-title")).toHaveText("課程已建立");
     await page.locator(".swal2-confirm").click();

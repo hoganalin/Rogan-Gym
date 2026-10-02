@@ -290,8 +290,9 @@ export default function DashboardView() {
                         target="_blank"
                         rel="noreferrer"
                         className="btn btn-compact btn-sm btn-secondary"
+                        aria-label={`查看 ${b.name} 的上課地點（另開地圖）`}
                       >
-                        會議連結
+                        上課地點
                       </a>
                     )}
                     <Button
