@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import Swal from "sweetalert2";
 import { getUserProfile, putUserProfile, putUserPassword } from "../../api/users";
 import { extractErrorMessage } from "../../lib/errors";
+import { Button, Field, StatusText, WorkspaceHeading } from "../../components/ClubUI";
 
 export default function ProfileView() {
   const [name, setName] = useState("");
@@ -56,77 +57,44 @@ export default function ProfileView() {
     }
   }
 
-  if (loading) return <p className="text-muted">載入中…</p>;
+  if (loading) return <StatusText>載入中…</StatusText>;
 
   return (
     <div>
-      <h1 className="font-display text-[34px] font-extrabold tracking-tight">會員資料</h1>
+      <WorkspaceHeading title="會員資料" />
 
       <form onSubmit={handleNameSubmit} className="mt-8 flex max-w-[420px] flex-col gap-4.5">
         <div className="font-mono text-[11px] tracking-widest text-muted">基本資料</div>
-        <label className="block">
-          <span className="font-mono text-[11px] tracking-wider text-muted">EMAIL</span>
-          <input
-            value={email}
-            disabled
-            className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] text-faint outline-none"
-          />
-        </label>
-        <label className="block">
-          <span className="font-mono text-[11px] tracking-wider text-muted">暱稱</span>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
-            required
-          />
-        </label>
-        <button
-          type="submit"
-          className="mt-1 w-fit rounded-[4px] bg-brand-500 px-[26px] py-3 text-sm font-bold text-on-brand hover:bg-brand-400"
-        >
+        <Field label="EMAIL">
+          <input value={email} disabled />
+        </Field>
+        <Field label="暱稱">
+          <input value={name} onChange={(e) => setName(e.target.value)} required />
+        </Field>
+        <Button type="submit" className="mt-1 w-fit">
           儲存暱稱
-        </button>
+        </Button>
       </form>
 
       <form onSubmit={handlePasswordSubmit} className="mt-12 flex max-w-[420px] flex-col gap-4.5">
         <div className="font-mono text-[11px] tracking-widest text-muted">修改密碼</div>
-        <label className="block">
-          <span className="font-mono text-[11px] tracking-wider text-muted">目前密碼</span>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
-            required
-          />
-        </label>
-        <label className="block">
-          <span className="font-mono text-[11px] tracking-wider text-muted">新密碼</span>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
-            required
-          />
-        </label>
-        <label className="block">
-          <span className="font-mono text-[11px] tracking-wider text-muted">確認新密碼</span>
+        <Field label="目前密碼">
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        </Field>
+        <Field label="新密碼">
+          <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+        </Field>
+        <Field label="確認新密碼">
           <input
             type="password"
             value={confirmNewPassword}
             onChange={(e) => setConfirmNewPassword(e.target.value)}
-            className="mt-2.5 w-full rounded-[4px] border border-line bg-surface px-4 py-[14px] text-body outline-none focus:border-brand-500"
             required
           />
-        </label>
-        <button
-          type="submit"
-          className="mt-1 w-fit rounded-[4px] bg-brand-500 px-[26px] py-3 text-sm font-bold text-on-brand hover:bg-brand-400"
-        >
+        </Field>
+        <Button type="submit" className="mt-1 w-fit">
           更新密碼
-        </button>
+        </Button>
       </form>
     </div>
   );

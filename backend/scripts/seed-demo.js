@@ -27,6 +27,8 @@ const MEMBERS = [
     `demo.member${index + 2}@example.com`,
   ]),
 ];
+// In-person classes: meeting_url holds the venue map link (area-level placeholder for the demo).
+const DEMO_LOCATION_URL = "https://maps.google.com/?q=Taipei+Xinyi";
 const password = process.env.DEMO_PASSWORD || "Demo12345";
 const now = new Date();
 const taipei = new Date(now.getTime() + 8 * 3600000);
@@ -96,7 +98,7 @@ async function main() {
             coach_id: coach.id, skill_id: skill.id, name: `${skill.name}・${m + 1}月${slot ? "進階" : "基礎"}班`,
             description: "示範歷史課程：暖身、動作練習與收操，搭配不同程度的訓練安排。",
             start_at: start, end_at: new Date(start.getTime() + Math.min(3600000, span / 6)),
-            max_participants: 12, meeting_url: "https://example.com/demo-class",
+            max_participants: 12, meeting_url: DEMO_LOCATION_URL,
           }, { updateExisting: true });
           const count = 4 + ((m * 3 + index * 2 + slot) % 8);
           for (let n = 0; n < count; n++) {
@@ -116,7 +118,7 @@ async function main() {
           coach_id: coach.id, skill_id: skill.id, name: `${skill.name}・${series}`,
           description,
           start_at: start, end_at: new Date(start.getTime() + 3600000), max_participants: 12,
-          meeting_url: "https://example.com/demo-class",
+          meeting_url: DEMO_LOCATION_URL,
         }, { updateExisting: true });
       }
     }

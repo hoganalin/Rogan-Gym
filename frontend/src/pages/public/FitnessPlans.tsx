@@ -37,7 +37,7 @@ export default function FitnessPlans() {
       </div>
 
       {loading && <p className="mt-12 text-center text-muted">載入中…</p>}
-      {error && <p className="mt-12 text-center text-rose-700">{error}</p>}
+      {error && <p className="mt-12 text-center text-danger">{error}</p>}
 
       {!loading && !error && (
         <div className="mt-12">

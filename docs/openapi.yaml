@@ -1155,7 +1155,7 @@ paths:
                             meeting_url:
                               type: string
                               description: 線上教室連結
-                              example: https://meet.example.com/yoga-101
+                              example: https://maps.google.com/?q=Taipei+Xinyi
                             coach_name:
                               type: string
                               description: 開課教練的名稱
@@ -1175,14 +1175,14 @@ paths:
                       name: 瑜伽入門體驗
                       start_at: '2026-08-20T10:00:00.000Z'
                       end_at: '2026-08-20T12:00:00.000Z'
-                      meeting_url: https://meet.example.com/yoga-101
+                      meeting_url: https://maps.google.com/?q=Taipei+Xinyi
                       coach_name: 教練小美
                       cancelled_at: null
                     - course_id: 7a2d4f8b-3c5e-4a9d-b1f2-e3a4b5c6d7e8
                       name: 重訓基礎課
                       start_at: '2026-09-01T13:00:00.000Z'
                       end_at: '2026-09-01T15:00:00.000Z'
-                      meeting_url: https://meet.example.com/fitness-201
+                      meeting_url: https://maps.google.com/?q=Taipei+Xinyi
                       coach_name: 教練小明
                       cancelled_at: '2026-08-15T06:30:00.000Z'
         '401':
@@ -1537,7 +1537,7 @@ paths:
                           example: 10
                         meeting_url:
                           type: string
-                          example: 'https://meet.example.com/abc-defg-hij'
+                          example: 'https://maps.google.com/?q=Taipei+Xinyi'
                         participants:
                           type: integer
                           description: 未取消的報名數。⚠️ 實際行為是有報名時回數字字串（如 "2"）、無報名時回數字 0，兩種型別都可接受，建議統一回數字
@@ -1551,7 +1551,7 @@ paths:
                     start_at: '2026-08-20T10:00:00.000Z'
                     end_at: '2026-08-20T12:00:00.000Z'
                     max_participants: 10
-                    meeting_url: 'https://meet.example.com/abc-defg-hij'
+                    meeting_url: 'https://maps.google.com/?q=Taipei+Xinyi'
                     participants: 2
         '401':
           description: |
@@ -1598,7 +1598,7 @@ paths:
 
         行為備註：
         - ⚠️ 全部欄位都是必填，缺一個、或是空字串，就回「欄位未填寫正確」。
-        - ⚠️ `meeting_url` 必須以 `https` 開頭，否則一樣回「欄位未填寫正確」。
+        - ⚠️ `meeting_url` 存放實體課的上課地點連結（例如 Google 地圖網址；欄位名稱沿用既有 API），必須以 `https` 開頭，否則一樣回「欄位未填寫正確」。
         - ⚠️ `max_participants` 必須是「數字型別」的 0 以上整數——送字串 `"10"` 會被擋下來。
         - `start_at`／`end_at` 收 UTC ISO 8601 字串（例 `2026-08-20T10:00:00Z`），原樣存入、原樣吐回。
         - 開課的教練就是 token 裡的本人，body 不用（也不能）指定教練。
@@ -1644,8 +1644,8 @@ paths:
                   example: 10
                 meeting_url:
                   type: string
-                  description: ⚠️ 必須以 https 開頭
-                  example: 'https://meet.example.com/abc-defg-hij'
+                  description: 上課地點連結（例如 Google 地圖網址）。⚠️ 必須以 https 開頭
+                  example: 'https://maps.google.com/?q=Taipei+Xinyi'
             example:
               skill_id: 1c8da31a-5fb2-4f2b-9d3e-6a7b8c9d0e1f
               name: 重訓基礎入門
@@ -1653,7 +1653,7 @@ paths:
               start_at: '2026-08-20T10:00:00Z'
               end_at: '2026-08-20T12:00:00Z'
               max_participants: 10
-              meeting_url: 'https://meet.example.com/abc-defg-hij'
+              meeting_url: 'https://maps.google.com/?q=Taipei+Xinyi'
       responses:
         '201':
           description: 開課成功，回完整課程物件（包在 data.course 裡）
@@ -1699,7 +1699,7 @@ paths:
                             example: 10
                           meeting_url:
                             type: string
-                            example: 'https://meet.example.com/abc-defg-hij'
+                            example: 'https://maps.google.com/?q=Taipei+Xinyi'
                           created_at:
                             type: string
                             example: '2026-08-01T03:00:00.000Z'
@@ -1718,7 +1718,7 @@ paths:
                     start_at: '2026-08-20T10:00:00.000Z'
                     end_at: '2026-08-20T12:00:00.000Z'
                     max_participants: 10
-                    meeting_url: 'https://meet.example.com/abc-defg-hij'
+                    meeting_url: 'https://maps.google.com/?q=Taipei+Xinyi'
                     created_at: '2026-08-01T03:00:00.000Z'
                     updated_at: '2026-08-01T03:00:00.000Z'
         '400':
@@ -1840,7 +1840,7 @@ paths:
                         example: 1c8da31a-5fb2-4f2b-9d3e-6a7b8c9d0e1f
                       meeting_url:
                         type: string
-                        example: 'https://meet.example.com/abc-defg-hij'
+                        example: 'https://maps.google.com/?q=Taipei+Xinyi'
               example:
                 status: success
                 data:
@@ -1852,7 +1852,7 @@ paths:
                   max_participants: 10
                   skill_name: 重量訓練
                   skill_id: 1c8da31a-5fb2-4f2b-9d3e-6a7b8c9d0e1f
-                  meeting_url: 'https://meet.example.com/abc-defg-hij'
+                  meeting_url: 'https://maps.google.com/?q=Taipei+Xinyi'
         '400':
           description: |
             課程 id 不存在、或這堂課不是登入者本人開的（兩種情況回同一句訊息）。
@@ -1908,7 +1908,7 @@ paths:
 
         行為備註：
         - ⚠️ 不支援部分更新：body 的**全部欄位都必填**，就算你只想改課程名稱，其他欄位也要原值帶上（前端表單本來就會整包送）。缺欄位或空字串回 400「欄位未填寫正確」。
-        - ⚠️ `meeting_url` 必須以 `https` 開頭；`max_participants` 必須是數字型別的 0 以上整數。
+        - ⚠️ `meeting_url`（上課地點連結）必須以 `https` 開頭；`max_participants` 必須是數字型別的 0 以上整數。
         - ⚠️ owner-scoped：課程不是你開的、或 id 不存在，都回 400「課程不存在」（先驗欄位、再驗擁有者）。
         - 這支只驗登入、不驗教練身分，靠「只查得到自己開的課」做隔離。
         - 成功回 200，data.course 是更新後的完整課程物件（注意：跟 GET 詳情的扁平形狀不同，這支有包 `course` 一層）。
@@ -1961,8 +1961,8 @@ paths:
                   example: 12
                 meeting_url:
                   type: string
-                  description: ⚠️ 必須以 https 開頭
-                  example: 'https://meet.example.com/abc-defg-hij'
+                  description: 上課地點連結（例如 Google 地圖網址）。⚠️ 必須以 https 開頭
+                  example: 'https://maps.google.com/?q=Taipei+Xinyi'
             example:
               skill_id: 1c8da31a-5fb2-4f2b-9d3e-6a7b8c9d0e1f
               name: 重訓基礎入門（改版）
@@ -1970,7 +1970,7 @@ paths:
               start_at: '2026-08-21T10:00:00Z'
               end_at: '2026-08-21T12:00:00Z'
               max_participants: 12
-              meeting_url: 'https://meet.example.com/abc-defg-hij'
+              meeting_url: 'https://maps.google.com/?q=Taipei+Xinyi'
       responses:
         '200':
           description: 更新成功，回更新後的完整課程物件（包在 data.course 裡）
@@ -2014,7 +2014,7 @@ paths:
                             example: 12
                           meeting_url:
                             type: string
-                            example: 'https://meet.example.com/abc-defg-hij'
+                            example: 'https://maps.google.com/?q=Taipei+Xinyi'
                           created_at:
                             type: string
                             example: '2026-08-01T03:00:00.000Z'
@@ -2033,7 +2033,7 @@ paths:
                     start_at: '2026-08-21T10:00:00.000Z'
                     end_at: '2026-08-21T12:00:00.000Z'
                     max_participants: 12
-                    meeting_url: 'https://meet.example.com/abc-defg-hij'
+                    meeting_url: 'https://maps.google.com/?q=Taipei+Xinyi'
                     created_at: '2026-08-01T03:00:00.000Z'
                     updated_at: '2026-08-10T05:30:00.000Z'
         '400':
