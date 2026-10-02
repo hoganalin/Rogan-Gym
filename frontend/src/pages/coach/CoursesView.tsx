@@ -183,12 +183,12 @@ export default function CoursesView() {
               required
             />
           </Field>
-          <Field label="會議連結（需以 https 開頭）" mono>
+          <Field label="上課地點連結（Google 地圖網址，需以 https 開頭）" mono>
             <input
               type="url"
               value={form.meetingUrl}
               onChange={(e) => setForm({ ...form, meetingUrl: e.target.value })}
-              placeholder="https://"
+              placeholder="https://maps.google.com/?q=…"
               pattern="https://.*"
               required
             />
