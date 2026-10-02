@@ -114,12 +114,22 @@ async function main() {
         const series = COURSE_SERIES[slot];
         const description = getCourseDescription(skill.name, series)
           || "依目前體能安排暖身、主題訓練與收操，循序建立安全且可持續的運動習慣。";
-        await ensure("Course", { id: id(`upcoming:${coach.id}:${start.toISOString()}`) }, {
+        const upcoming = await ensure("Course", { id: id(`upcoming:${coach.id}:${start.toISOString()}`) }, {
           coach_id: coach.id, skill_id: skill.id, name: `${skill.name}・${series}`,
           description,
           start_at: start, end_at: new Date(start.getTime() + 3600000), max_participants: 12,
           meeting_url: DEMO_LOCATION_URL,
         }, { updateExisting: true });
+        // Give the demo member (members[0]) a few upcoming bookings so「我的課表」has real
+        // future classes to show; add a couple more members for participant realism.
+        if (index < 3 && slot === 0) {
+          const attendees = members.slice(0, 3 + index);
+          for (const user of attendees) {
+            await ensure("CourseBooking", { id: id(`upcoming-booking:${upcoming.id}:${user.id}`) }, {
+              course_id: upcoming.id, user_id: user.id, created_at: now, cancelled_at: null,
+            }, { updateExisting: true });
+          }
+        }
       }
     }
     return { year, months: month + 1, coaches: coaches.length, members: members.length };

@@ -83,10 +83,19 @@ export default function DashboardView() {
     });
   }, [monthGridStart, monthGridEnd, monthStart, bookings]);
 
-  const listBookings = useMemo(
-    () => [...bookings].sort((a, b) => dayjs(a.start_at).valueOf() - dayjs(b.start_at).valueOf()),
-    [bookings],
-  );
+  // 「我的課表」以即將到來的課為重點：未取消且尚未結束的課排在最前、由近到遠；
+  // 已結束或已取消的課排在後面、最近的先出現，避免新報名的課被大量歷史紀錄埋在最底。
+  const listBookings = useMemo(() => {
+    const now = Date.now();
+    const isUpcoming = (b: UserCourseBooking) => !b.cancelled_at && dayjs(b.end_at).valueOf() >= now;
+    return [...bookings].sort((a, b) => {
+      const ua = isUpcoming(a);
+      const ub = isUpcoming(b);
+      if (ua !== ub) return ua ? -1 : 1;
+      const diff = dayjs(a.start_at).valueOf() - dayjs(b.start_at).valueOf();
+      return ua ? diff : -diff;
+    });
+  }, [bookings]);
 
   if (loading) return <StatusText>載入中…</StatusText>;
   if (!dashboard) return <StatusText error>載入課表失敗，請稍後再試。</StatusText>;
